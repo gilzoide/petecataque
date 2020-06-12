@@ -3,9 +3,12 @@ require 'globals'
 local objects
 
 function love.load()
+    ObjectLibrary:load('Rectangle')
+    ObjectLibrary:load('Square')
+    
     objects = {
-        ObjectLibrary:instance('Rectangle'),
-        ObjectLibrary:instance('Square'),
+        Rectangle(),
+        Square(),
     }
 end
 
