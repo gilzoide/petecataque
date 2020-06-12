@@ -12,7 +12,7 @@ while read filename; do
             if [ ! -f $modified ]; then
                 rm -f $output
             else
-                cat $modified | lua $SCRIPTPATH/nested2object.lua > $output
+                cat $modified | lua $SCRIPTPATH/nested2object.lua > $output && echo "Updated $modified"
             fi
     esac
 done

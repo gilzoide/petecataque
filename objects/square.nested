@@ -2,10 +2,10 @@ s: 100
 color: [1 1 0]
 speed: 50
 
-'transform = love.math.newTransform(200, 100)'
+transform: [Transform 200 100]
 
 on draw do `
-    love.graphics.replaceTransform(transform)
+    love.graphics.applyTransform(transform)
     love.graphics.setColor(color)
     love.graphics.rectangle('fill', -s*0.5, -s*0.5, s, s)
 `

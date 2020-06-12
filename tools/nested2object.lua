@@ -10,18 +10,20 @@ if args.input == '-' then args.input = io.stdin end
 if args.output == '-' then args.output = io.stdout end
 
 local nested = require 'lib.nested'
+local ObjectLibrary = require 'object_library'.new()
+
+local tablex = require 'pl.tablex'
 local pretty = require 'pl.pretty'
 local List = require 'pl.List'
 local template = require 'pl.template'
 
 local obj = assert(nested.decode_file(args.input, nested.bool_number_filter))
 
-local kv = List()
 local event_listeners = List()
 local other_code = List()
 
-for k, v in nested.metadata(obj) do
-    kv:append({k, v})
+local function object_exists(name)
+    return ObjectLibrary.builtin_objects[name] ~= nil or ObjectLibrary:load(name) ~= nil
 end
 
 local function read_event_listener(t, i)
@@ -54,11 +56,21 @@ while i <= #obj do
     i = i + 1
 end
 
-local function stringify(v)
-    if type(v) == 'table' then
-        return pretty.write(v, '')
+local function stringify(value)
+    if type(value) == 'table' then
+        if type(value[1]) == 'string' and object_exists(value[1]) then
+            local name = value[1]
+            return name .. '(' .. table.concat(value, ', ', 2) .. ')'
+            -- local result = List{  }
+            -- for k, v in nested.metadata(value) do
+            --     result:append(name .. '.' .. k .. ' = ' .. stringify(v))
+            -- end
+            -- return result:concat('\n')
+        else
+            return pretty.write(value, '')
+        end
     else
-        return string.format('%q', v)
+        return string.format('%q', value)
     end
 end
 

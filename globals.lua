@@ -3,7 +3,7 @@ unpack = unpack or table.unpack
 debug_log = require 'debug_log'
 
 EventManager = require 'event_manager'.new()
-ObjectLibrary = require 'object_library'.new()
+ObjectLibrary = require 'object_library'.new():register_love()
 
 function is_type(obj, ...)
     local t = type(obj)
