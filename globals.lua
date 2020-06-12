@@ -1,14 +1,22 @@
 lfs = love.filesystem
-tiny = require 'lib.tiny'
 unpack = unpack or table.unpack
+debug_log = require 'debug_log'
 
-function knext(t, index)
-    local value
-    repeat
-        index, value = next(t, index)
-    until type(index) ~= 'number'
-    return index, value
+EventManager = require 'event_manager'.new()
+ObjectLibrary = require 'object_library'.new()
+
+function is_type(obj, ...)
+    local t = type(obj)
+    for _, v in ipairs{...} do
+        if t == v then return true end
+    end
+    return false
 end
-function kpairs(t)
-    return knext, t, nil
+
+function assertf(cond, fmt, ...)
+    return assert(cond, string.format(fmt, ...))
+end
+
+function errorf(fmt, ...)
+    return error(string.format(error, ...))
 end

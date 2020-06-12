@@ -1,25 +1,17 @@
 require 'globals'
-local entity = require 'entity'
-local scene = require 'scene'
-local systems = require 'systems'
 
-local world
-local current_scene
+local objects
 
 function love.load()
-    entity.loadall()
-    world = tiny.world(unpack(systems.loadall()))
-    current_scene = scene.instantiate('Main')
-    world:add(unpack(current_scene))
-    world:refresh()
-    print(world:getEntityCount(), world:getSystemCount())
+    objects = {
+        ObjectLibrary:instance('rectangle')
+    }
 end
 
-local outside_dt
 function love.update(dt)
-    outside_dt = dt
+    EventManager:update(dt)
 end
 
 function love.draw()
-    world:update(outside_dt)
+    EventManager:draw()
 end

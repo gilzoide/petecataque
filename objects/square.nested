@@ -1,0 +1,8 @@
+x: 10 y: 10
+s: 100
+color: [1 1 0]
+
+on draw do `
+    love.graphics.setColor(color)
+    love.graphics.rectangle('fill', x, y, s, s)
+`
