@@ -1,5 +1,3 @@
-local nested_game_object = require 'nested_game_object'
-
 local ObjectLibrary = {}
 ObjectLibrary.__index = ObjectLibrary
 
@@ -11,15 +9,8 @@ end
 
 function ObjectLibrary:load(name)
     if not self.loaded[name] then
-        local basename = 'objects/' .. name:gsub('%.', '/')
-        local luafile, nestedfile = basename .. '.lua', basename .. '.nested'
-        if luafile then 
-            self.loaded[name] = assert(loadfile(luafile))
-        elseif nestedfile then
-            self.loaded[name] = assert(nested_game_object.loadfile(nestedfile))
-        else
-            errorf('Unable to load object %q', name)
-        end
+        local filename = 'objects/' .. name:gsub('%.', '/') .. '.lua'
+        self.loaded[name] = assert(loadfile(filename))
     end
     return self.loaded[name]
 end

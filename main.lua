@@ -4,7 +4,8 @@ local objects
 
 function love.load()
     objects = {
-        ObjectLibrary:instance('rectangle')
+        ObjectLibrary:instance('Rectangle'),
+        ObjectLibrary:instance('Square'),
     }
 end
 

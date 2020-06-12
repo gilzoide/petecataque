@@ -20,3 +20,10 @@ end
 function errorf(fmt, ...)
     return error(string.format(error, ...))
 end
+
+function deg2rad(angle)
+    return angle * math.pi / 180
+end
+function rad2deg(angle)
+    return angle * 180 / math.pi
+end
