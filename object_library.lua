@@ -1,4 +1,5 @@
 local _ENV = _ENV or getfenv()
+local index_env_metatable = { __index = _ENV }
 
 local function object_filename(name)
     return 'objects/' .. name:gsub('%.', '/') .. '.lua'
@@ -34,10 +35,11 @@ end
 function ObjectLibrary:load(name)
     if not self.loaded[name] then
         local constructor = assert(loadfile(object_filename(name)))
-        self:register(name, function()
-            local obj = setmetatable({}, { __index = _ENV })
+        self:register(name, function(opt_obj)
+            local obj = setmetatable(opt_obj or {}, index_env_metatable)
             obj.self = obj
-            return setfenv(constructor, obj)()
+            setfenv(constructor, obj)()
+            return obj
         end)
     end
     return self.loaded[name]

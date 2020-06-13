@@ -3,12 +3,13 @@ require 'globals'
 local objects
 
 function love.load()
+    ObjectLibrary:load('Node2D')
     ObjectLibrary:load('Rectangle')
     ObjectLibrary:load('Square')
-    
+    ObjectLibrary:load('Scene1')
+
     objects = {
-        Rectangle(),
-        Square(),
+        Scene1(),
     }
 end
 
