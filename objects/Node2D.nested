@@ -1,3 +1,3 @@
-transform: [Transform]
+transform: [Transform x y]
 width: 0
 height: 0

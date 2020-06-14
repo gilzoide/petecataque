@@ -6,17 +6,20 @@
 --   specificity as arguments.
 --]]
 
-local EventManager = {}
-EventManager.__index = EventManager
+local Director = {}
+Director.__index = Director
 
-function EventManager.new()
+function Director.new()
     return setmetatable({
         listeners = {},
         queued_events = {},
-    }, EventManager)
+        __draw = {},
+        __update = {},
+        object_by_types = {},
+    }, Director)
 end
 
-function EventManager:register(obj, ...)
+function Director:register(obj, ...)
     local event = {...}
     local container = self.listeners
     for i, v in ipairs(event) do
@@ -30,10 +33,18 @@ function EventManager:register(obj, ...)
     end
 end
 
-function EventManager:queue()
+function Director:track_object_type(type_name)
+    self.object_by_types[type_name] = {}
 end
 
-function EventManager:process_event(ev)
+function Director:track_object(obj, type_name)
+    local container = self.object_by_types[type_name]
+    container[#container + 1] = obj
+    if obj.draw then self.__draw[#self.__draw + 1] = obj end
+    if obj.update then self.__update[#self.__update + 1] = obj end
+end
+
+function Director:process_event(ev)
     local listeners = self.listeners
     for i, v in ipairs(ev) do
         listeners = listeners[v]
@@ -47,8 +58,10 @@ function EventManager:process_event(ev)
     end
 end
 
-function EventManager:update(dt)
-    self:process_event{'update', dt}
+function Director:update(dt)
+    for i, obj in ipairs(self.__update) do
+        obj.update()
+    end
     
     local queued_events = self.queued_events
     if #queued_events == 0 then return end
@@ -58,8 +71,10 @@ function EventManager:update(dt)
     end
 end
 
-function EventManager:draw()
-    self:process_event{'draw'}
+function Director:draw()
+    for i, obj in ipairs(self.__draw) do
+        obj.draw()
+    end
 end
 
-return EventManager
+return Director

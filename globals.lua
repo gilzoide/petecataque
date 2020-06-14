@@ -2,7 +2,7 @@ lfs = love.filesystem
 unpack = unpack or table.unpack
 debug_log = require 'debug_log'
 
-EventManager = require 'event_manager'.new()
+Director = require 'director'.new()
 ObjectLibrary = require 'object_library'.new():register_love()
 
 function is_type(obj, ...)
@@ -18,7 +18,7 @@ function assertf(cond, fmt, ...)
 end
 
 function errorf(fmt, ...)
-    return error(string.format(error, ...))
+    return error(string.format(fmt, ...))
 end
 
 function deg2rad(angle)

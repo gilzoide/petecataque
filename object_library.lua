@@ -35,10 +35,12 @@ end
 function ObjectLibrary:load(name)
     if not self.loaded[name] then
         local constructor = assert(loadfile(object_filename(name)))
+        Director:track_object_type(name)
         self:register(name, function(opt_obj)
             local obj = setmetatable(opt_obj or {}, index_env_metatable)
             obj.self = obj
             setfenv(constructor, obj)()
+            Director:track_object(obj, name)
             return obj
         end)
     end
