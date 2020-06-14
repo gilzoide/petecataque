@@ -105,14 +105,17 @@ $(code)
 # end
 
 # for listener in event_listeners:iter() do
-function $(listener[1])(...)
+#     local name = listener[1]
+#     local args = name == 'update' and 'dt' or '...'
+function $(name)($(args))
 $(listener.handler)
 end
 
 # end
 # for listener in event_listeners:iter() do
-#     if listener[1] ~= 'draw' and listener[1] ~= 'update' then
-EventManager:register(self, $(stringify(listener[1])))
+#     local name = listener[1]
+#     if name ~= 'draw' and name ~= 'update' then
+EventManager:register(self, $(stringify(name)))
 #     end
 # end
 ]], {

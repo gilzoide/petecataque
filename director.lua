@@ -60,7 +60,7 @@ end
 
 function Director:update(dt)
     for i, obj in ipairs(self.__update) do
-        obj.update()
+        obj.update(dt)
     end
     
     local queued_events = self.queued_events

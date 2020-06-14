@@ -1,3 +1,7 @@
 
 [Rectangle x: 10, y: 10]
-[Rectangle x: 100 y: 100]
+a: [Rectangle x: 100 y: 100]
+
+on update do `
+    a.transform:rotate(dt)
+`
