@@ -3,9 +3,10 @@ import Node2D
 width: 100
 height: 100
 color: [1 1 1]
+pivot: [0.5 0.5]
 
 on draw do `
     love.graphics.replaceTransform(transform)
     love.graphics.setColor(color)
-    love.graphics.rectangle('fill', -width*0.5, -height*0.5, width, height)
+    love.graphics.rectangle('fill', -width*pivot[1], -height*pivot[2], width, height)
 `

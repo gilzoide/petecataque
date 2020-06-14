@@ -2,11 +2,12 @@
 width = width or 100
 height = height or 100
 color = color or {1,1,1}
+pivot = pivot or {0.5,0.5}
 Node2D(self)
 
 function draw(...)
     love.graphics.replaceTransform(transform)
     love.graphics.setColor(color)
-    love.graphics.rectangle('fill', -width*0.5, -height*0.5, width, height)
+    love.graphics.rectangle('fill', -width*pivot[1], -height*pivot[2], width, height)
 end
 

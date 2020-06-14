@@ -29,6 +29,10 @@ local function object_exists(name)
     return ObjectLibrary.builtin_objects[name] ~= nil or ObjectLibrary:load(name) ~= nil
 end
 
+local function strip(s)
+    return s:match('^[ \t\r\f\v]*\n*(.+)'):match('(.-)\n*[ \t\r\f\v]*$')
+end
+
 local function read_event_listener(t, i)
     local listener = {}
     for i = i, #t do
@@ -36,9 +40,7 @@ local function read_event_listener(t, i)
         if v == 'do' then
             assert(#listener > 0, "Event listener must have at least one specifier")
             local handler = assert(t[i + 1], "Expected event handler after 'do' keyword")
-            handler = handler:match('^[ \t\r\f\v]*\n*(.+)')
-            handler = handler:match('(.-)\n*[ \t\r\f\v]*$')
-            listener.handler = handler
+            listener.handler = strip(handler)
             return listener, i + 1
         end
         listener[#listener + 1] = v
@@ -87,7 +89,7 @@ while i <= #obj do
         import_directives:append(imported_name)
         i = i + 1
     else
-        other_code:append(table2call(v))
+        other_code:append(type(v) == 'table' and table2call(v) or v)
     end
     i = i + 1
 end

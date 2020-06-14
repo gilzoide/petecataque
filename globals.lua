@@ -21,6 +21,13 @@ function errorf(fmt, ...)
     return error(string.format(fmt, ...))
 end
 
+function clamp(x, min, max)
+    if x < min then return min
+    elseif x > max then return max
+    else return x
+    end
+end
+
 function deg2rad(angle)
     return angle * math.pi / 180
 end
