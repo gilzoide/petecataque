@@ -4,6 +4,7 @@ debug_log = require 'debug_log'
 
 Director = require 'director'.new()
 ObjectLibrary = require 'object_library'.new():register_love()
+State = require 'state'.new()
 
 function is_type(obj, ...)
     local t = type(obj)

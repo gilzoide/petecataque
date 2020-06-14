@@ -15,7 +15,6 @@ function Director.new()
         queued_events = {},
         __draw = {},
         __update = {},
-        object_by_types = {},
     }, Director)
 end
 
@@ -71,10 +70,18 @@ function Director:update(dt)
     end
 end
 
-function Director:draw()
-    for i, obj in ipairs(self.__draw) do
-        obj.draw()
+local function draw_object(obj)
+    local have_draw = obj.draw ~= nil
+    local may_need_push = have_draw and #obj > 0
+    if may_need_push then love.graphics.push() end
+    if have_draw then obj.draw() end
+    for i = 1, #obj do
+        draw_object(obj[i])
     end
+    if may_need_push then love.graphics.pop() end
+end
+function Director:draw()
+    draw_object(State)
 end
 
 return Director
