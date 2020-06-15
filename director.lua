@@ -20,31 +20,35 @@ function Director.new()
     }, Director)
 end
 
-function Director:register(...)
-    local event = {...}
-    local handler = table.remove(event)
-    assert(is_type(handler, 'function'), 'Event listener must be a function')
-    local container = self.listeners
-    for i = 1, #event do
-        local v = event[i]
-        if container[v] == nil then container[v] = {} end
-        container = container[v]
+function Director:register(event_name, pattern, handler)
+    if handler == nil then handler, pattern = pattern, nil end
+    assert(is_type(event_name, 'string'), 'Event name must be a string')
+    assert(is_type(handler, 'function'), 'Event handler must be a function')
+    local container = self.listeners[event_name]
+    if container == nil then
+        container = {}
+        self.listeners[event_name] = container
     end
-    container[#container + 1] = handler
+    container[#container + 1] = { handler, pattern }
 end
 
-function Director:queue_event(...)
-    self.queued_events[#self.queued_events + 1] = {...}
+function Director:queue_event(ev)
+    assert(is_type(ev, 'table') and is_type(ev[1], 'string'), 'Event must be a table and have a name')
+    self.queued_events[#self.queued_events + 1] = ev
 end
 
+local function check_event_match(ev, pattern)
+    for k, v in pairs(pattern) do
+        if ev[k] ~= v then return false end
+    end
+    return true
+end
 function Director:process_event(ev)
-    local listeners = self.listeners
-    for i = 1, #ev do
-        local specificity = ev[i]
-        listeners = listeners[specificity]
-        if not listeners then return end
-        for _, handler in ipairs(listeners) do
-            handler(unpack(ev, i + 1))
+    local listeners = self.listeners[ev[1]]
+    for i = 1, #listeners do
+        local listener = listeners[i]
+        if listener[2] == nil or check_event_match(ev, listener[2]) then
+            listener[1](unpack(ev, 2))
         end
     end
 end

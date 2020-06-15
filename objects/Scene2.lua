@@ -5,8 +5,7 @@ function draw()
     love.graphics.clear({0.5, 0.5, 0.5})
 end
 
-on('mousepressed', '1', function(istouch, presses, x, y)
-    if presses > 1 then return end
+on('mousepressed', { button = 1, presses = 1 }, function(x, y)
     local circle = Circle{ x = x, y = y }
     State:add_toplevel(circle)
 end)

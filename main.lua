@@ -20,5 +20,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
-    emit('mousepressed', tostring(button), istouch, presses, x, y)
+    emit { 'mousepressed', x, y, button = button, istouch = istouch, presses = presses }
 end
