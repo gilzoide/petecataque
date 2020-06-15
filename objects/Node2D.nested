@@ -1,3 +1,9 @@
 transform: [Transform x y angle sx sy ox oy kx ky]
 width: 0
 height: 0
+
+`
+function refresh_transform()
+    transform:setTransformation(x, y, angle, sx, sy, ox, oy, kx, ky)
+end
+`

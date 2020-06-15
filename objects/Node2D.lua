@@ -3,3 +3,8 @@ transform = transform or Transform(x, y, angle, sx, sy, ox, oy, kx, ky)
 width = width or 0
 height = height or 0
 
+function refresh_transform()
+    transform:setTransformation(x, y, angle, sx, sy, ox, oy, kx, ky)
+end
+
+
