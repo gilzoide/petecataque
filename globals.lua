@@ -14,6 +14,13 @@ function is_type(obj, ...)
     return false
 end
 
+function on(...)
+    Director:register(...)
+end
+function emit(...)
+    Director:queue_event(...)
+end
+
 function assertf(cond, fmt, ...)
     return assert(cond, string.format(fmt, ...))
 end

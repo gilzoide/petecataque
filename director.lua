@@ -20,30 +20,31 @@ function Director.new()
     }, Director)
 end
 
-function Director:register(obj, ...)
+function Director:register(...)
     local event = {...}
+    local handler = table.remove(event)
+    assert(is_type(handler, 'function'), 'Event listener must be a function')
     local container = self.listeners
-    for i, v in ipairs(event) do
+    for i = 1, #event do
+        local v = event[i]
         if container[v] == nil then container[v] = {} end
         container = container[v]
     end
-    if not container[obj] then
-        local key = #container + 1
-        container[key] = obj
-        container[obj] = key
-    end
+    container[#container + 1] = handler
+end
+
+function Director:queue_event(...)
+    self.queued_events[#self.queued_events + 1] = {...}
 end
 
 function Director:process_event(ev)
     local listeners = self.listeners
-    for i, v in ipairs(ev) do
-        listeners = listeners[v]
+    for i = 1, #ev do
+        local specificity = ev[i]
+        listeners = listeners[specificity]
         if not listeners then return end
-        for i, obj in ipairs(listeners) do
-            if not obj.disabled then
-                local f = assert(is_type(obj[v], 'function'), 'Expected event listener to be a function')
-                obj[v](unpack(ev, 2))
-            end
+        for _, handler in ipairs(listeners) do
+            handler(unpack(ev, i + 1))
         end
     end
 end

@@ -20,7 +20,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
-    if button == 1 then
-        State:add_toplevel(Circle{ x = x, y = y, })
-    end
+    emit('mousepressed', tostring(button), istouch, presses, x, y)
 end
