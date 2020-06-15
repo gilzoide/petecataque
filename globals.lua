@@ -2,10 +2,6 @@ lfs = love.filesystem
 unpack = unpack or table.unpack
 debug_log = require 'debug_log'
 
-Director = require 'director'.new()
-ObjectLibrary = require 'object_library'.new():register_love()
-State = require 'state'.new()
-
 function is_type(obj, ...)
     local t = type(obj)
     for _, v in ipairs{...} do
@@ -21,10 +17,14 @@ function emit(...)
     Director:queue_event(...)
 end
 
+Scene = {}
 function addchild(obj)
     local self = getfenv(2)
     self[#self + 1] = obj
     return obj
+end
+function addtoscene(obj)
+    Scene[#Scene + 1] = obj
 end
 
 function assertf(cond, fmt, ...)
@@ -48,3 +48,10 @@ end
 function rad2deg(angle)
     return angle * 180 / math.pi
 end
+
+Director = require 'director'.new()
+Resources = require 'resources'.new()
+State = {
+    scene = Scene,
+    resources = Resources,
+}

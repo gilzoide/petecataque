@@ -55,7 +55,7 @@ function Director:process_event(ev)
 end
 
 function Director:update(dt)
-    for kp, obj in nested.iterate(State) do
+    for kp, obj in nested.iterate(Scene) do
         if obj.update then obj.update(dt) end
     end
     
@@ -68,7 +68,7 @@ function Director:update(dt)
 end
 
 function Director:draw()
-    for kp, obj in nested.iterate(State) do
+    for kp, obj in nested.iterate(Scene) do
         if obj.draw then obj.draw() end
     end
 end

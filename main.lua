@@ -1,17 +1,12 @@
 require 'globals'
 
 function love.load()
-    ObjectLibrary:load('Node2D')
-    ObjectLibrary:load('Rectangle')
-    ObjectLibrary:load('Scene1')
-    ObjectLibrary:load('Scene2')
-    ObjectLibrary:load('Circle')
-
-    State:add_toplevel(Scene2())
+    Resources:loadall('script', 'Circle', 'Scene2')
+    
+    addtoscene(Scene2())
 end
 
 function love.update(dt)
-    State:apply()
     Director:update(dt)
 end
 

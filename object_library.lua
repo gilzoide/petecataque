@@ -2,7 +2,7 @@ local _ENV = _ENV or getfenv()
 local index_env_metatable = { __index = _ENV }
 
 local function object_filename(name)
-    return 'objects/' .. name:gsub('%.', '/') .. '.lua'
+    return 'script/' .. name:gsub('%.', '/') .. '.lua'
 end
 
 local builtin_objects = {

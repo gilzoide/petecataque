@@ -3,7 +3,7 @@
 SCRIPTPATH=$(dirname "$0")
 
 # install fswatch: http://emcrisostomo.github.io/fswatch/
-fswatch objects |
+fswatch script |
 while read filename; do
     modified=$filename
     case $(echo $modified | awk -F . '{print $NF}') in
