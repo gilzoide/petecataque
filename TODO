@@ -1,0 +1,7 @@
+[ ] Criar World e poder por bodies/fixtures nele
+[ ] Criar um World pra UI separado?
+[ ] Dump do estado do jogo, talvez com uma tecla de atalho
+[ ] Por dados da engine no State, pra incluir no tracking
+
+-- Otimizar?
+[ ] Prever antes lista de draw/update ao invés de percorrer geral

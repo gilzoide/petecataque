@@ -21,6 +21,12 @@ function emit(...)
     Director:queue_event(...)
 end
 
+function addchild(obj)
+    local self = getfenv(2)
+    self[#self + 1] = obj
+    return obj
+end
+
 function assertf(cond, fmt, ...)
     return assert(cond, string.format(fmt, ...))
 end
