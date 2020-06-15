@@ -6,6 +6,8 @@
 --   specificity as arguments.
 --]]
 
+local nested = require 'lib.nested'
+
 local Director = {}
 Director.__index = Director
 
@@ -58,8 +60,8 @@ function Director:process_event(ev)
 end
 
 function Director:update(dt)
-    for i, obj in ipairs(self.__update) do
-        obj.update(dt)
+    for kp, obj in nested.iterate(State) do
+        if obj.update then obj.update(dt) end
     end
     
     local queued_events = self.queued_events
@@ -70,18 +72,10 @@ function Director:update(dt)
     end
 end
 
-local function draw_object(obj)
-    local have_draw = obj.draw ~= nil
-    local may_need_push = have_draw and #obj > 0
-    if may_need_push then love.graphics.push() end
-    if have_draw then obj.draw() end
-    for i = 1, #obj do
-        draw_object(obj[i])
-    end
-    if may_need_push then love.graphics.pop() end
-end
 function Director:draw()
-    draw_object(State)
+    for kp, obj in nested.iterate(State) do
+        if obj.draw then obj.draw() end
+    end
 end
 
 return Director
