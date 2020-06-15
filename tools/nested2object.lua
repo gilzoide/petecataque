@@ -1,4 +1,5 @@
-local args = require 'pl.lapp' [[
+require 'pl'
+local args = lapp [[
 Usage: nested2object [--tight] [<input>] [<output>]
 
 Options:
@@ -14,12 +15,7 @@ local empty = require 'lib.empty'
 local ObjectLibrary = require 'object_library'.new()
 Director = empty
 
-local tablex = require 'pl.tablex'
-local pretty = require 'pl.pretty'
-local List = require 'pl.List'
-local template = require 'pl.template'
-
-local obj = assert(nested.decode_file(args.input, nested.bool_number_filter, true))
+local obj = assert(nested.decode_file(args.input, nested.bool_number_filter, OrderedMap))
 
 local import_directives = List()
 local event_listeners = List()
@@ -64,13 +60,13 @@ function table2call(value)
     local ttype = type(value[1])
     if ttype == 'string' then
         local name = value[1]
-        local params = tablex.sub(value, 2)
+        local params = tablex.copy(value)
         local kv = List()
         for k, v in nested.metadata(value) do
             kv:append(k .. ' = ' .. stringify(v))
         end
         if #kv > 0 then params[#params + 1] = '{' .. kv:concat(', ') .. '}' end
-        return name .. '(' .. table.concat(params, ', ') .. ')'
+        return name .. '(' .. table.concat(params, ', ', 2) .. ')'
     elseif ttype == 'table' then
         return table.concat(tablex.map(table2call, t))
     end
