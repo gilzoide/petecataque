@@ -34,17 +34,6 @@ function Director:register(obj, ...)
     end
 end
 
-function Director:track_object_type(type_name)
-    self.object_by_types[type_name] = {}
-end
-
-function Director:track_object(obj, type_name)
-    local container = self.object_by_types[type_name]
-    container[#container + 1] = obj
-    if obj.draw then self.__draw[#self.__draw + 1] = obj end
-    if obj.update then self.__update[#self.__update + 1] = obj end
-end
-
 function Director:process_event(ev)
     local listeners = self.listeners
     for i, v in ipairs(ev) do

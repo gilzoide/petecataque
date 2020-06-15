@@ -6,8 +6,10 @@ pivot = pivot or {0.5,0.5}
 Node2D(self)
 
 function draw(...)
+    love.graphics.push()
     love.graphics.replaceTransform(transform)
     love.graphics.setColor(color)
     love.graphics.rectangle('fill', -width*pivot[1], -height*pivot[2], width, height)
+    love.graphics.pop()
 end
 
