@@ -45,6 +45,7 @@ local function check_event_match(ev, pattern)
 end
 function Director:process_event(ev)
     local listeners = self.listeners[ev[1]]
+    if listeners == nil then return end
     for i = 1, #listeners do
         local listener = listeners[i]
         if listener[2] == nil or check_event_match(ev, listener[2]) then
