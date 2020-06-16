@@ -1,6 +1,7 @@
 lfs = love.filesystem
 unpack = unpack or table.unpack
 debug_log = require 'debug_log'
+nested = require 'lib.nested'
 
 function is_type(obj, ...)
     local t = type(obj)
@@ -15,6 +16,15 @@ function on(...)
 end
 function emit(...)
     Director:queue_event(...)
+end
+
+function index_or_create(t, index)
+    local value = t[index]
+    if value == nil then
+        value = {}
+        t[index] = value
+    end
+    return value
 end
 
 Scene = {}
@@ -55,3 +65,7 @@ State = {
     scene = Scene,
     resources = Resources,
 }
+
+function dump_state()
+    print(nested.encode(State))
+end

@@ -8,7 +8,6 @@ local function script_loader(name)
     local script = assert(loadfile(filename))
     local constructor = function(opt_obj)
         local obj = setmetatable(opt_obj or {}, index_env_metatable)
-        obj.self = obj
         setfenv(script, obj)()
         return obj
     end
@@ -32,26 +31,20 @@ function Resources:register_loader(kind, loader)
     self:set('loader', kind, loader)
 end
 
-function Resources:get(kind, name)
-    local ofkind = self[kind]
-    if ofkind == nil then
-        ofkind = {}
-        self[kind] = ofkind
-    end
-    local resource = ofkind[name]
+function Resources:get(kind, name, ...)
+    local ofkind = index_or_create(self, kind)
+    local resource, err = ofkind[name]
     if resource == nil then
         local loader = assertf(self.loader[kind], "Couldn't find loader for resource of kind %q", kind)
-        return loader(name)
+        resource, err = loader(name, ...)
+        if not resource then return nil, err end
+        ofkind[name] = resource
     end
     return resource
 end
 
 function Resources:set(kind, name, value)
-    local ofkind = self[kind]
-    if ofkind == nil then
-        ofkind = {}
-        self[kind] = ofkind
-    end
+    local ofkind = index_or_create(self, kind)
     ofkind[name] = value
     return value
 end

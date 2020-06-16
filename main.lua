@@ -26,3 +26,11 @@ end
 function love.wheelmoved(x, y)
     emit { 'wheelmoved', x, y }
 end
+
+function love.keypressed(key, scancode, isrepeat)
+    emit { 'keypressed', key, scancode, isrepeat = isrepeat }
+    if key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
+        dump_state()
+        print()
+    end
+end

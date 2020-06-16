@@ -1,11 +1,3 @@
---[[
--- Events are tables with identifiers, like {'draw'} or {'update'} or {'key', 'a', 'pressed'}
--- Listeners can register themselves on events with any specificity, so they can listen for
---   {'key'} or {'key', 'a'} only, for example.
--- Objects receive a call for the method with the first identifier as name, receiving every
---   specificity as arguments.
---]]
-
 local nested = require 'lib.nested'
 
 local Director = {}
@@ -24,11 +16,7 @@ function Director:register(event_name, pattern, handler)
     if handler == nil then handler, pattern = pattern, nil end
     assert(is_type(event_name, 'string'), 'Event name must be a string')
     assert(is_type(handler, 'function'), 'Event handler must be a function')
-    local container = self.listeners[event_name]
-    if container == nil then
-        container = {}
-        self.listeners[event_name] = container
-    end
+    local container = index_or_create(self.listeners, event_name)
     container[#container + 1] = { handler, pattern }
 end
 
