@@ -7,7 +7,8 @@ function love.load()
 end
 
 function love.update(dt)
-    Director:update(dt)
+    Resources:update(dt) -- Worlds
+    Director:update(dt)  -- Scene and events
 end
 
 function love.draw()

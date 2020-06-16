@@ -4,10 +4,6 @@
 background = background or Resources:get('image', 'image/fundo.png')
 world = Resources:get('world', 'world', 0, 9.81 * 10)
 
-function update(dt)
-    world:update(dt)
-end
-
 function draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(background)

@@ -90,4 +90,10 @@ function Resources:unload(kind, name)
     end
 end
 
+function Resources:update(dt)
+    for name, world in pairs(self.world) do
+        world:update(dt)
+    end
+end
+
 return Resources
