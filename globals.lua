@@ -1,6 +1,5 @@
 lfs = love.filesystem
 unpack = unpack or table.unpack
-debug_log = require 'debug_log'
 nested = require 'lib.nested'
 
 function is_type(obj, ...)
