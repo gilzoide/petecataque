@@ -7,8 +7,6 @@ function Director.new()
     return setmetatable({
         listeners = {},
         queued_events = {},
-        __draw = {},
-        __update = {},
     }, Director)
 end
 

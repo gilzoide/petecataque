@@ -199,7 +199,6 @@ local function encode_into(state, t)
     local function append(v) state[#state + 1] = v end
     if type(t) == 'table' then
         local keypath = state.keypath
-        if state[t] then return end  -- don't bother crashing because of cycles
         assert(state[t] == nil, string.format("Cycle detected at keypath %q", table.concat(keypath, ' ')))
         state[t] = true
         local compact = state.compact

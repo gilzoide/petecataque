@@ -27,7 +27,6 @@ function index_or_create(t, index)
     return value
 end
 
-Scene = {}
 function addchild(obj)
     local self = getfenv(2)
     self[#self + 1] = obj
@@ -59,11 +58,13 @@ function rad2deg(angle)
     return angle * 180 / math.pi
 end
 
+Scene = {}
 Director = require 'director'.new()
 Resources = require 'resources'.new()
 State = {
     scene = Scene,
     resources = Resources,
+    director = Director,
 }
 
 function dump_state()
