@@ -3,7 +3,8 @@ require 'globals'
 function love.load()
     Resources:loadall('script', 'Circle', 'Scene2')
     
-    addtoscene(Scene2())
+    local scene = R('tree', 'script/Scene2.nested')()
+    addtoscene(scene)
 end
 
 function love.update(dt)

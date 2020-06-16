@@ -1,5 +1,3 @@
-local nested = require 'lib.nested'
-
 local Director = {}
 Director.__index = Director
 
@@ -10,12 +8,12 @@ function Director.new()
     }, Director)
 end
 
-function Director:register(event_name, pattern, handler)
-    if handler == nil then handler, pattern = pattern, nil end
+function Director:register(event_pattern, handler)
+    local event_name = event_pattern[1]
     assert(is_type(event_name, 'string'), 'Event name must be a string')
     assert(is_type(handler, 'function'), 'Event handler must be a function')
     local container = index_or_create(self.listeners, event_name)
-    container[#container + 1] = { handler, pattern }
+    container[#container + 1] = { event_pattern, handler }
 end
 
 function Director:queue_event(ev)
@@ -34,8 +32,8 @@ function Director:process_event(ev)
     if listeners == nil then return end
     for i = 1, #listeners do
         local listener = listeners[i]
-        if listener[2] == nil or check_event_match(ev, listener[2]) then
-            listener[1](unpack(ev, 2))
+        if check_event_match(ev, listener[1]) then
+            listener[2](unpack(ev, 2))
         end
     end
 end

@@ -2,6 +2,9 @@
 [ ] Criar um World pra UI separado?
 [X] Dump do estado do jogo, talvez com uma tecla de atalho
 [X] Por dados da engine no State, pra incluir no tracking
+[ ] Adicionar mais eventos do love
+[ ] Saber quais eventos do love são necessários pra cena atual?
+[ ] Separar definições de funções dos dados? Assim nāo precisaria setfenv e funções nāo apareceriam no dump
 
 -- Otimizar?
 [ ] Prever antes lista de draw/update ao invés de percorrer geral

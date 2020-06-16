@@ -1,5 +1,6 @@
 lfs = love.filesystem
 unpack = unpack or table.unpack
+loadstring = loadstring or load
 nested = require 'lib.nested'
 
 function is_type(obj, ...)
@@ -10,8 +11,17 @@ function is_type(obj, ...)
     return false
 end
 
-function on(...)
-    Director:register(...)
+function on(event_pattern, handler)
+    local self = getfenv(2)
+    if type(handler) == 'string' then
+        handler = setfenv(assert(loadstring(handler)), self)
+    end
+    if event_pattern == 'draw' or event_pattern == 'update' then
+        self[event_pattern] = handler
+    else
+        if type(event_pattern) ~= 'table' then event_pattern = { event_pattern } end
+        Director:register(event_pattern, handler)
+    end
 end
 function emit(...)
     Director:queue_event(...)
@@ -57,6 +67,16 @@ function rad2deg(angle)
     return angle * 180 / math.pi
 end
 
+function is_callable(v)
+    local vtype = type(v)
+    if vtype == 'table' then
+        local mt = getmetatable(v)
+        return mt and type(mt.__call) == 'function'
+    else
+        return vtype == 'function'
+    end
+end
+
 Scene = {}
 Director = require 'director'.new()
 Resources = require 'resources'.new()
@@ -68,4 +88,8 @@ State = {
 
 function dump_state()
     print(nested.encode(State))
+end
+
+function R(...)
+    return Resources:get(...)
 end
