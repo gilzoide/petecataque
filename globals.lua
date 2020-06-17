@@ -2,6 +2,7 @@ lfs = love.filesystem
 unpack = unpack or table.unpack
 loadstring = loadstring or load
 nested = require 'lib.nested'
+nested_function = require 'lib.nested_function'
 
 function is_type(obj, ...)
     local t = type(obj)
