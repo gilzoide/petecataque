@@ -1,4 +1,4 @@
-local nested = require 'lib.nested'
+local nested = require 'nested'
 local unpack = unpack or table.unpack
 
 local nested_function = {}
@@ -24,7 +24,7 @@ local function read_keypath(s)
     local result = {}
     while true do
         local pattern_first, pattern_last = s:find(KEYPATH_PATTERN)
-        if not pattern_first or pattern_first == 1 then break end
+        if not pattern_first then break end
         local key = s:sub(1, pattern_first - 1)
         result[#result + 1] = tonumber(key) or key
         s = s:sub(pattern_last + 1)
@@ -51,9 +51,22 @@ local function iterate_table(t)
     end
 end
 
-local function evaluate_step(t, env)
+local loadstring_with_env
+if setfenv and loadstring then
+    loadstring_with_env = function(body, env)
+        local chunk, err = loadstring(body)
+        if not chunk then return nil, err end
+        return setfenv(chunk, env)
+    end
+else
+    loadstring_with_env = function(body, env)
+        return load(body, nil, 't', env)
+    end
+end
+
+local function evaluate_step(t, env, rootenv)
     if type(t) == 'table' then
-        env = setmetatable({}, { __index = env })
+        env = rootenv or setmetatable({}, { __index = env })
         if t[1] == 'function' then
             local arguments, body = t[2], t[3]
             if not body then body, arguments = arguments, nil end
@@ -63,13 +76,27 @@ local function evaluate_step(t, env)
                         env[arguments[i]] = select(i, ...)
                     end
                 end
-                return evaluate_step(body, env)
+                if type(body) == 'string' then
+                    local chunk, err = loadstring_with_env(body, env)
+                    if not chunk then return nil, err end
+                    return chunk()
+                else
+                    return evaluate_step(body, env)
+                end
             end
         else
             local have_hash = false
             for k, v in iterate_table(t) do
-                have_hash = have_hash or type(k) ~= 'number'
-                env[k] = evaluate_step(v, env)
+                local key_not_numeric = type(k) ~= 'number'
+                have_hash = have_hash or key_not_numeric
+                v = evaluate_step(v, env)
+                if key_not_numeric then
+                    if nested.set_or_create(env, read_keypath(k), v) == nil then
+                        env[k] = v
+                    end
+                else
+                    env[k] = v
+                end
             end
             if type(env[1]) == 'function' then
                 local f = table.remove(env, 1)
@@ -94,10 +121,19 @@ local function evaluate_step(t, env)
 end
 
 function nested_function.evaluate(t, ...)
-    local env = setmetatable({
+    local fenv = _ENV or getfenv()
+    local env
+    env = setmetatable({
         arg = {...}
-    }, { __index = _ENV or getfenv() })
-    return evaluate_step(t, env)
+    }, {
+        __index = function(t, index)
+            if index == 'self' then return env end
+            local value = rawget(t, index)
+            if value ~= nil then return value end
+            return fenv[index]
+        end,
+    })
+    return evaluate_step(t, env, env)
 end
 nested_function.__call = nested_function.evaluate
 

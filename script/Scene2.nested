@@ -1,11 +1,11 @@
 world: [R world world 0 98.1]
 background: [R image image/fundo.png]
-color: [0 1 0]
+color: [1 1 0]
 
-draw: [function {
-    love.graphics.setColor color;
-    love.graphics.draw background;
-}]
+draw: [function `
+    love.graphics.setColor(color)
+    love.graphics.draw(background)
+`]
 
 [on [mousepressed button: 1 presses: 1] [function(x y) {
     radius: 10
@@ -13,4 +13,9 @@ draw: [function {
     fixture: [love.physics.newFixture body [love.physics.newCircleShape radius]]
     circle: [Circle x: x, y: y, radius: radius, body: body, fixture: fixture, color: (1 1 0)]
     [addtoscene circle]
+}]]
+
+[on [mousepressed button: 2] [function {
+    self.APERTOU: true
+    [print !APERTOU]
 }]]

@@ -1,7 +1,7 @@
 require 'globals'
 
 function love.load()
-    Resources:loadall('script', 'Circle', 'Scene2')
+    assert(R('tree', 'script/Circle.nested'))
     
     local scene = R('tree', 'script/Scene2.nested')()
     addtoscene(scene)
