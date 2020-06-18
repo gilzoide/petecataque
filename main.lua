@@ -1,10 +1,11 @@
 require 'globals'
 
 function love.load()
-    Resources:loadall('script', 'Circle', 'Scene2')
+    -- Resources:loadall('script', 'Circle', 'Scene2')
+    Resources:loadall('script', 'Peteca', 'Buneco', 'CenaPeteca')
     
     -- R('tree', 'script/Scene2.nested')
-    local scene = Scene2()
+    local scene = CenaPeteca()
     addtoscene(scene)
 end
 
@@ -32,9 +33,12 @@ function love.wheelmoved(x, y)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    emit { 'keypressed', key, scancode, isrepeat = isrepeat }
+    Input.keypressed = { key = key, scancode = scancode, isrepeat = isrepeat }
     if key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
         dump_state()
         print()
     end
+end
+function love.keyreleased(key, scancode)
+    Input.keyreleased = { key = key, scancode = scancode }
 end
