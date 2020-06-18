@@ -13,6 +13,7 @@ function love.update(dt)
     Resources:update(dt) -- Worlds
     Director:update(dt)  -- Scene and events
     Input:reset()
+    Collisions:reset()
 end
 
 function love.draw()
@@ -20,16 +21,16 @@ function love.draw()
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-    emit { 'mousemoved', x, y, dx, dy, istouch = istouch }
+    Input.mousemoved = { x = x, y = y, dx = dx, dy = dy, istouch = istouch }
 end
 function love.mousepressed(x, y, button, istouch, presses)
     Input.mousepressed = { x = x, y = y, button = button, istouch = istouch, presses = presses }
 end
 function love.mousereleased(x, y, button, istouch, presses)
-    emit { 'mousereleased', x, y, button = button, istouch = istouch, presses = presses }
+    Input.mousereleased = { x = x, y = y, button = button, istouch = istouch, presses = presses }
 end
 function love.wheelmoved(x, y)
-    emit { 'wheelmoved', x, y }
+    Input.wheelmoved = { x = x, y = y }
 end
 
 function love.keypressed(key, scancode, isrepeat)

@@ -18,22 +18,6 @@ function is_type(obj, ...)
     return false
 end
 
-function on(event_pattern, handler)
-    local self = getfenv(2)
-    if type(handler) == 'string' then
-        handler = setfenv(assert(loadstring(handler)), self)
-    end
-    if event_pattern == 'draw' or event_pattern == 'update' then
-        self[event_pattern] = handler
-    else
-        if type(event_pattern) ~= 'table' then event_pattern = { event_pattern } end
-        Director:register(event_pattern, handler)
-    end
-end
-function emit(...)
-    Director:queue_event(...)
-end
-
 function index_or_create(t, index)
     local value = t[index]
     if value == nil then
@@ -74,6 +58,16 @@ function rad2deg(angle)
     return angle * 180 / math.pi
 end
 
+function bind(f, ...)
+    local bound_args = {...}
+    return function(...)
+        local args = {}
+        for i = 1, #bound_args do args[i] = bound_args[i] end
+        for i = 1, select('#', ...) do args[#args + 1] = select(i, ...) end
+        return f(unpack(args))
+    end
+end
+
 function is_callable(v)
     local vtype = type(v)
     if vtype == 'table' then
@@ -84,8 +78,9 @@ function is_callable(v)
     end
 end
 
-Input = require 'input'.new()
 Scene = {}
+Input = require 'input'.new()
+Collisions = require 'collisions'.new()
 Director = require 'director'.new()
 Resources = require 'resources'.new()
 State = {
@@ -93,6 +88,7 @@ State = {
     resources = Resources,
     director = Director,
     input = Input,
+    collisions = Collisions,
 }
 
 function dump_state()

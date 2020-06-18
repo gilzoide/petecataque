@@ -1,25 +1,14 @@
 local Resources = {}
 Resources.__index = Resources
 
-local function beginContact(a, b, coll)
-    emit { 'beginContact', b, coll, target = a }
-    emit { 'beginContact', a, coll, target = b }
-end
-local function endContact(a, b, coll)
-    emit { 'endContact', b, coll, target = a }
-    emit { 'endContact', a, coll, target = b }
-end
-local function preSolve(a, b, coll)
-    emit { 'preSolve', b, coll, target = a }
-    emit { 'preSolve', a, coll, target = b }
-end
-local function postSolve(a, b, coll, normalimpulse, tangentimpulse)
-    emit { 'postSolve', b, coll, normalimpulse, tangentimpulse, target = a }
-    emit { 'postSolve', a, coll, normalimpulse, tangentimpulse, target = b }
-end
 local function world_loader(name, ...)
     local world = love.physics.newWorld(...)
-    world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+    world:setCallbacks(
+        bind(Collisions.onBeginContact, Collisions),
+        bind(Collisions.onEndContact, Collisions),
+        bind(Collisions.onPreSolve, Collisions),
+        bind(Collisions.onPostSolve, Collisions)
+    )
     return world
 end
 

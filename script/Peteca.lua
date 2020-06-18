@@ -7,6 +7,7 @@ function init()
     local world = R('world', 'world')
     body = love.physics.newBody(world, x, y, 'dynamic')
     body:setMass(massa)
+    body:setAngularDamping(1)
     base_shape_points = {
         -base * 0.5, 0,
         -base * 0.5, -altura_base * 0.5,
@@ -32,4 +33,12 @@ function draw()
     love.graphics.setColor(color)
     love.graphics.polygon('line', body:getWorldPoints(pena_shape:getPoints()))
     love.graphics.polygon('line', body:getWorldPoints(unpack(base_shape_points)))
+end
+
+function impulso(coll)
+    local nx, ny = coll.coll:getNormal()
+    if ny > 0 then ny = -ny end
+    nx = nx * coll.normalimpulse
+    ny = ny * coll.normalimpulse
+    body:applyLinearImpulse(nx, ny)
 end
