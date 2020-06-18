@@ -40,7 +40,16 @@ end
 
 function Director:update(dt)
     for kp, obj in nested.iterate(Scene) do
-        if obj.update then obj.update(dt) end
+        if obj.update then setfenv(obj.update, obj)(dt) end
+        if obj.when then
+            for i = 1, #obj.when do
+                local check = obj.when[i]
+                if nested_match(obj, check[1]) then
+                    local handler = check[2]
+                    setfenv(handler, obj)()
+                end
+            end
+        end
     end
     
     local queued_events = self.queued_events
@@ -53,7 +62,7 @@ end
 
 function Director:draw()
     for kp, obj in nested.iterate(Scene) do
-        if obj.draw then obj.draw() end
+        if obj.draw then setfenv(obj.draw, obj)() end
     end
 end
 

@@ -1,20 +1,6 @@
 local Resources = {}
 Resources.__index = Resources
 
-local _ENV = _ENV or getfenv()
-local index_env_metatable = { __index = _ENV }
-local function script_loader(name)
-    local filename = 'script/' .. name:gsub('%.', '/') .. '.lua'
-    local script = assert(loadfile(filename))
-    local constructor = function(opt_obj)
-        local obj = setmetatable(opt_obj or {}, index_env_metatable)
-        setfenv(script, obj)()
-        return obj
-    end
-    _ENV[name] = constructor
-    return constructor
-end
-
 local function beginContact(a, b, coll)
     emit { 'beginContact', b, coll, target = a }
     emit { 'beginContact', a, coll, target = b }
@@ -42,7 +28,7 @@ function Resources.new()
         loader = {},
     }, Resources)
 
-    resources:register_loader('script', script_loader)
+    resources:register_loader('script', require 'script_loader')
     resources:register_loader('image', love.graphics.newImage)
     resources:register_loader('world', world_loader)
     resources:register_loader('tree', require 'object_tree')

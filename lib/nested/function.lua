@@ -1,12 +1,17 @@
 local nested = require 'nested'
+local nested_keypath = require 'nested.keypath'
 local unpack = unpack or table.unpack
 
 local nested_function = {}
 nested_function.__index = nested_function
 
 local ORDERED_KEY = '__nested_function_order'
-local ESCAPE_CHAR = '!'
-local KEYPATH_PATTERN = '%.'
+nested_function.escape_char = '\\'
+nested_function.keypath_pattern = '%.'
+
+local function read_keypath(s)
+    return nested_keypath.match(s, nested_function.keypath_pattern, nested_function.escape_char)
+end
 
 function nested_function.new()
     return setmetatable({
@@ -20,19 +25,6 @@ function nested_function.__newindex(t, index, value)
     rawset(t, index, value)
 end
 
-local function read_keypath(s)
-    local result = {}
-    while true do
-        local pattern_first, pattern_last = s:find(KEYPATH_PATTERN)
-        if not pattern_first then break end
-        local key = s:sub(1, pattern_first - 1)
-        result[#result + 1] = tonumber(key) or key
-        s = s:sub(pattern_last + 1)
-    end
-    result[#result + 1] = tonumber(s) or s
-    return result
-end
-
 local function iterate_nested_function(t)
     local i = 0
     local keys = t[ORDERED_KEY]
@@ -42,6 +34,7 @@ local function iterate_nested_function(t)
         return idx, t[idx]
     end
 end
+nested_function.__pairs = iterate_nested_function
 
 local function iterate_table(t)
     if t[ORDERED_KEY] then
@@ -64,9 +57,9 @@ else
     end
 end
 
-local function evaluate_step(t, env, rootenv)
+local function evaluate_step(t, env)
     if type(t) == 'table' then
-        env = rootenv or setmetatable({}, { __index = env })
+        env = setmetatable({}, { __index = env })
         if t[1] == 'function' then
             local arguments, body = t[2], t[3]
             if not body then body, arguments = arguments, nil end
@@ -110,8 +103,9 @@ local function evaluate_step(t, env, rootenv)
             end
         end
     elseif type(t) == 'string' then
-        if t:sub(1, 1) == ESCAPE_CHAR then
-            return t:sub(2)
+        local escape_length = #nested_function.escape_char
+        if t:sub(1, escape_length) == nested_function.escape_char then
+            return t:sub(escape_length + 1)
         else
             return nested.get(env, read_keypath(t)) or t
         end
@@ -120,20 +114,11 @@ local function evaluate_step(t, env, rootenv)
     end
 end
 
-function nested_function.evaluate(t, ...)
-    local fenv = _ENV or getfenv()
-    local env
-    env = setmetatable({
+function nested_function.evaluate(t, fenv, ...)
+    local env = setmetatable({
         arg = {...}
-    }, {
-        __index = function(t, index)
-            if index == 'self' then return env end
-            local value = rawget(t, index)
-            if value ~= nil then return value end
-            return fenv[index]
-        end,
-    })
-    return evaluate_step(t, env, env)
+    }, { __index = fenv or _ENV or getfenv() })
+    return evaluate_step(t, env)
 end
 nested_function.__call = nested_function.evaluate
 

@@ -2,7 +2,8 @@ lfs = love.filesystem
 unpack = unpack or table.unpack
 loadstring = loadstring or load
 nested = require 'nested'
-nested_function = require 'nested_function'
+nested_function = require 'nested.function'
+nested_match = require 'nested.match'
 
 function is_type(obj, ...)
     local t = type(obj)
@@ -78,6 +79,7 @@ function is_callable(v)
     end
 end
 
+Input = {}
 Scene = {}
 Director = require 'director'.new()
 Resources = require 'resources'.new()
@@ -85,6 +87,7 @@ State = {
     scene = Scene,
     resources = Resources,
     director = Director,
+    input = Input,
 }
 
 function dump_state()
