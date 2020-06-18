@@ -17,7 +17,7 @@ function init()
     body = love.physics.newBody(world)
     bounds_shape = love.physics.newChainShape(true, unpack(chao_e_paredes))
     fixture = love.physics.newFixture(body, bounds_shape)
-    fixture:setFriction(1)
+    fixture:setFriction(0.9)
     
     peteca = Peteca { x = peteca_init_x, y = peteca_init_y }
     buneco = Buneco { x = WINDOW_WIDTH * 0.2, y = WINDOW_HEIGHT - Buneco.altura * 0.5 }
@@ -34,22 +34,25 @@ function reset()
 end
 
 when = {
-    {{ ['Input.keypressed'] = { key = 'r' } }, function()
+    {{ 'Input.keypressed.r' }, function()
         peteca.body:setPosition(peteca_init_x, peteca_init_y)
         peteca.body:setAngle(0)
         peteca.body:setAngularVelocity(0)
         peteca.body:setLinearVelocity(0, 0.1)
     end},
-    {{ ['Input.keypressed'] = { key = 'left' } }, function()
+    {{ 'Input.keypressed.space' }, function()
+        buneco.jump()
+    end},
+    {{ 'Input.keypressed.left' }, function()
         buneco.going_left = true
     end},
-    {{ ['Input.keyreleased'] = { key = 'left' } }, function()
+    {{ 'Input.keyreleased.left' }, function()
         buneco.going_left = false
     end},
-    {{ ['Input.keypressed'] = { key = 'right' } }, function()
+    {{ 'Input.keypressed.right' }, function()
         buneco.going_right = true
     end},
-    {{ ['Input.keyreleased'] = { key = 'right' } }, function()
+    {{ 'Input.keyreleased.right' }, function()
         buneco.going_right = false
     end},
 }

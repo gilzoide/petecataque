@@ -12,7 +12,7 @@ end
 function love.update(dt)
     Resources:update(dt) -- Worlds
     Director:update(dt)  -- Scene and events
-    Input = {}
+    Input:reset()
 end
 
 function love.draw()
@@ -33,12 +33,12 @@ function love.wheelmoved(x, y)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    Input.keypressed = { key = key, scancode = scancode, isrepeat = isrepeat }
+    Input.keypressed[key] = { scancode = scancode, isrepeat = isrepeat }
     if key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
         dump_state()
         print()
     end
 end
 function love.keyreleased(key, scancode)
-    Input.keyreleased = { key = key, scancode = scancode }
+    Input.keyreleased[key] = { scancode = scancode }
 end

@@ -84,7 +84,7 @@ function is_callable(v)
     end
 end
 
-Input = {}
+Input = require 'input'.new()
 Scene = {}
 Director = require 'director'.new()
 Resources = require 'resources'.new()

@@ -40,7 +40,8 @@ end
 
 function Director:update(dt)
     for kp, obj in nested.iterate(Scene) do
-        if obj.update then setfenv(obj.update, obj)(dt) end
+        local update = obj.update
+        if update then update(dt) end
         if obj.when then
             for i = 1, #obj.when do
                 local check = obj.when[i]
@@ -62,7 +63,8 @@ end
 
 function Director:draw()
     for kp, obj in nested.iterate(Scene) do
-        if obj.draw then setfenv(obj.draw, obj)() end
+        local draw = obj.draw
+        if draw then draw() end
     end
 end
 
