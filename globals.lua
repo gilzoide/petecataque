@@ -4,6 +4,7 @@ loadstring = loadstring or load
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
+denver = require 'denver'
 
 METER_BY_PIXEL = 60
 love.physics.setMeter(METER_BY_PIXEL)

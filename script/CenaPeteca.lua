@@ -29,6 +29,7 @@ function init()
     buneco = Buneco { x = WINDOW_WIDTH * 0.2, y = WINDOW_HEIGHT - Buneco.altura * 0.5 }
     addchild(peteca)
     addchild(buneco)
+    addchild(Sampler())
 end
 
 function draw()

@@ -2,7 +2,7 @@ require 'globals'
 
 function love.load()
     -- Resources:loadall('script', 'Circle', 'Scene2')
-    Resources:loadall('script', 'Peteca', 'Buneco', 'CenaPeteca')
+    Resources:loadall('script', 'Sampler', 'Peteca', 'Buneco', 'CenaPeteca')
     
     -- R('tree', 'script/Scene2.nested')
     local scene = CenaPeteca()
@@ -34,7 +34,7 @@ function love.wheelmoved(x, y)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    Input.keypressed[key] = { scancode = scancode, isrepeat = isrepeat }
+    Input.keypressed[tonumber(key) or key] = { scancode = scancode, isrepeat = isrepeat }
     if key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
         dump_state()
         print()
