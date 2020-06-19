@@ -19,6 +19,24 @@ function init()
     raquete_shape = love.physics.newRectangleShape(raquete_x, 0, largura_raquete, altura_raquete, math.pi / 2)
     raquete_fixture = love.physics.newFixture(body, raquete_shape)
     raquete_fixture:setFriction(1)
+
+    also_when = {}
+    if tecla_esquerda then
+        also_when[#also_when + 1] = {{ {'Input', 'keypressed', tecla_esquerda} }, function()
+            pra_esquerda = true
+        end}
+        also_when[#also_when + 1] = {{ {'Input', 'keyreleased', tecla_esquerda} }, function()
+            pra_esquerda = false
+        end}
+    end
+    if tecla_direita then
+        also_when[#also_when + 1] = {{ {'Input', 'keypressed', tecla_direita} }, function()
+            pra_direita = true
+        end}
+        also_when[#also_when + 1] = {{ {'Input', 'keyreleased', tecla_direita} }, function()
+            pra_direita = false
+        end}
+    end
 end
 
 function draw()
@@ -30,10 +48,10 @@ function draw()
 end
 
 when = {
-    {{'going_left', '!going_right'}, function()
+    {{'pra_esquerda', '!pra_direita'}, function()
         body:setAngularVelocity(-velocidade_angular)
     end},
-    {{'!going_left', 'going_right'}, function()
+    {{'!pra_esquerda', 'pra_direita'}, function()
         body:setAngularVelocity(velocidade_angular)
     end},
 }

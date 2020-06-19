@@ -30,8 +30,8 @@ function init()
     chao_fixture = love.physics.newFixture(body, chao_shape)
     chao_fixture:setFriction(1)
     
-    buneco1 = addchild(Buneco { x = buneco1_x, y = buneco_y, cor = {0, 1, 0} })
-    buneco2 = addchild(Buneco { x = buneco2_x, y = buneco_y, cor = {0, 0, 1}, flipX = true })
+    buneco1 = addchild(Buneco { x = buneco1_x, y = buneco_y, cor = {0, 1, 0}, tecla_esquerda = 'a', tecla_direita = 'd' })
+    buneco2 = addchild(Buneco { x = buneco2_x, y = buneco_y, cor = {0, 0, 1}, flipX = true, tecla_esquerda = 'left', tecla_direita = 'right' })
     vida1 = addchild(Vida { cor = buneco1.cor })
     vida2 = addchild(Vida { cor = buneco2.cor, flipX = true })
     peteca = addchild(Peteca { x = peteca_init_x, y = peteca_init_y })
@@ -42,7 +42,7 @@ function init()
             local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco1.raquete_fixture)
             peteca.impulso(collinfo)
         end},
-        {{ { 'Collisions', 'touching', peteca.fixture, buneco1.main_fixture } }, function()
+        {{ { 'Collisions', 'beginContact', peteca.fixture, buneco1.main_fixture } }, function()
             buneco1.tomou_dano = true
             vida1.tomou_dano = true
         end},
@@ -55,23 +55,23 @@ function init()
             placar.ganhador = 2
             placar.hidden = false
         end},
-        {{ '!vida1.acabou', 'vida2.acabou' }, function()
-            esperando = true
-            placar.ganhador = 1
-            placar.hidden = false
-        end},
 
         {{ { 'Collisions', 'postSolve', peteca.fixture, buneco2.raquete_fixture } }, function()
             local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco2.raquete_fixture)
             peteca.impulso(collinfo)
         end},
-        {{ { 'Collisions', 'touching', peteca.fixture, buneco2.main_fixture } }, function()
+        {{ { 'Collisions', 'beginContact', peteca.fixture, buneco2.main_fixture } }, function()
             buneco2.tomou_dano = true
             vida2.tomou_dano = true
         end},
         {{ { 'Collisions', 'endContact', peteca.fixture, buneco2.main_fixture } }, function()
             buneco2.tomou_dano = false
             vida2.tomou_dano = false
+        end},
+        {{ '!vida1.acabou', 'vida2.acabou' }, function()
+            esperando = true
+            placar.ganhador = 1
+            placar.hidden = false
         end},
     }
 end
@@ -113,32 +113,6 @@ when = {
     end},
 
     {{ 'Input.keypressed.r' }, function()
-        reset()
-    end},
-
-    {{ 'Input.keypressed.a' }, function()
-        buneco1.going_left = true
-    end},
-    {{ 'Input.keyreleased.a' }, function()
-        buneco1.going_left = false
-    end},
-    {{ 'Input.keypressed.d' }, function()
-        buneco1.going_right = true
-    end},
-    {{ 'Input.keyreleased.d' }, function()
-        buneco1.going_right = false
-    end},
-
-    {{ 'Input.keypressed.left' }, function()
-        buneco2.going_left = true
-    end},
-    {{ 'Input.keyreleased.left' }, function()
-        buneco2.going_left = false
-    end},
-    {{ 'Input.keypressed.right' }, function()
-        buneco2.going_right = true
-    end},
-    {{ 'Input.keyreleased.right' }, function()
-        buneco2.going_right = false
+        reset_peteca()
     end},
 }
