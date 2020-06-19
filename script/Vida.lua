@@ -32,11 +32,17 @@ function draw()
     
     love.graphics.setColor(cor_borda)
     love.graphics.rectangle('line', x, y, largura, altura)
+
+    tomou_dano = false
+end
+
+function toma_um_dano()
+    segundos_faltando = math.max(0, segundos_faltando - dt)
+    acabou = segundos_faltando <= 0
 end
 
 when = {
     {{ 'tomou_dano' }, function()
-        segundos_faltando = math.max(0, segundos_faltando - dt)
-        acabou = segundos_faltando <= 0
-    end}
+        toma_um_dano()
+    end},
 }

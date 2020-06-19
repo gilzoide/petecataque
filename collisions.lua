@@ -8,14 +8,16 @@ function Collisions.new()
 end
 
 function Collisions:onBeginContact(a, b, coll)
-    local info = { a = a, b = b, coll = coll }
+    local nx, ny = coll:getNormal()
+    local info = { a = a, b = b, nx = nx, ny = ny }
     nested.set_or_create(self, {'beginContact', a, b}, info)
     nested.set_or_create(self, {'beginContact', b, a}, info)
     nested.set_or_create(self.touching, {a, b}, true)
     nested.set_or_create(self.touching, {b, a}, true)
 end
 function Collisions:onEndContact(a, b, coll)
-    local info = { a = a, b = b, coll = coll }
+    local nx, ny = coll:getNormal()
+    local info = { a = a, b = b, nx = nx, ny = ny }
     nested.set_or_create(self, {'endContact', a, b}, info)
     nested.set_or_create(self, {'endContact', b, a}, info)
     nested.set(self.touching, {a, b}, nil)
@@ -26,7 +28,8 @@ function Collisions:onPreSolve(a, b, coll)
     -- emit { 'preSolve', a, coll, target = b }
 end
 function Collisions:onPostSolve(a, b, coll, normalimpulse, tangentimpulse)
-    local info = { a = a, b = b, coll = coll, normalimpulse = normalimpulse, tangentimpulse = tangentimpulse }
+    local nx, ny = coll:getNormal()
+    local info = { a = a, b = b, nx = nx, ny = ny, normalimpulse = normalimpulse, tangentimpulse = tangentimpulse }
     nested.set_or_create(self, {'postSolve', a, b}, info)
     nested.set_or_create(self, {'postSolve', b, a}, info)
 end
