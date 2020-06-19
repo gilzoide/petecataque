@@ -20,7 +20,6 @@ function Resources.new()
     resources:register_loader('script', require 'script_loader')
     resources:register_loader('image', love.graphics.newImage)
     resources:register_loader('world', world_loader)
-    resources:register_loader('tree', require 'object_tree')
 
     return resources
 end

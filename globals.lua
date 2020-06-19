@@ -1,4 +1,4 @@
-lfs = love.filesystem
+love.filesystem.setRequirePath('?.lua;?/init.lua;lib/?.lua;lib/?/init.lua')
 unpack = unpack or table.unpack
 loadstring = loadstring or load
 nested = require 'nested'
@@ -8,14 +8,6 @@ _ENV = _ENV or getfenv()
 
 METER_BY_PIXEL = 60
 love.physics.setMeter(METER_BY_PIXEL)
-
-function is_type(obj, ...)
-    local t = type(obj)
-    for _, v in ipairs{...} do
-        if t == v then return true end
-    end
-    return false
-end
 
 function index_or_create(t, index)
     local value = t[index]

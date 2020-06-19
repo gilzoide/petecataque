@@ -11,8 +11,7 @@ local function copy(value)
 end
 
 local function script_loader(name)
-    local filename = 'script/' .. name:gsub('%.', '/') .. '.lua'
-    local script = assert(loadfile(filename))
+    local script = assert(love.filesystem.load('script/' .. name:gsub('%.', '/') .. '.lua'))
     local mt = {}
     local index_mt = {
         __index = function(t, index)
