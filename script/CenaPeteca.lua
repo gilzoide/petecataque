@@ -1,5 +1,3 @@
-color = {1, 1, 1}
-
 gravidade = 9.81 * METER_BY_PIXEL
 paredes = {
     0, WINDOW_HEIGHT,
@@ -21,19 +19,17 @@ function init()
     body = love.physics.newBody(world)
     paredes_shape = love.physics.newChainShape(false, unpack(paredes))
     paredes_fixture = love.physics.newFixture(body, paredes_shape)
+    paredes_fixture:setFriction(1)
     chao_shape = love.physics.newEdgeShape(unpack(chao))
     chao_fixture = love.physics.newFixture(body, chao_shape)
-    chao_fixture:setFriction(0.9)
+    chao_fixture:setFriction(1)
     
     peteca = Peteca { x = peteca_init_x, y = peteca_init_y }
-    buneco = Buneco { x = WINDOW_WIDTH * 0.2, y = WINDOW_HEIGHT - Buneco.altura * 0.5 }
+    buneco1 = Buneco { x = WINDOW_WIDTH * 0.25, y = WINDOW_HEIGHT - Buneco.raio }
+    buneco2 = Buneco { x = WINDOW_WIDTH * 0.75, y = WINDOW_HEIGHT - Buneco.raio, cor = {0, 0, 1}, flipX = true }
     addchild(peteca)
-    addchild(buneco)
-    addchild(Sampler())
-end
-
-function draw()
-
+    addchild(buneco1)
+    addchild(buneco2)
 end
 
 function reset_peteca()
@@ -47,25 +43,33 @@ when = {
     {{ 'Input.keypressed.r' }, function()
         reset_peteca()
     end},
-    {{ 'Input.keypressed.space' }, function()
-        if nested.get(Collisions, 'touching', buneco.fixture, chao_fixture) then
-            buneco.jump()
-        end
-    end},
     {{ 'Input.keypressed.left' }, function()
-        buneco.going_left = true
+        buneco1.going_left = true
     end},
     {{ 'Input.keyreleased.left' }, function()
-        buneco.going_left = false
+        buneco1.going_left = false
     end},
     {{ 'Input.keypressed.right' }, function()
-        buneco.going_right = true
+        buneco1.going_right = true
     end},
     {{ 'Input.keyreleased.right' }, function()
-        buneco.going_right = false
+        buneco1.going_right = false
+    end},
+    {{ 'Input.keypressed.a' }, function()
+        buneco2.going_left = true
+    end},
+    {{ 'Input.keyreleased.a' }, function()
+        buneco2.going_left = false
+    end},
+    {{ 'Input.keypressed.d' }, function()
+        buneco2.going_right = true
+    end},
+    {{ 'Input.keyreleased.d' }, function()
+        buneco2.going_right = false
     end},
     {{}, function()
-        local collinfo = nested.get(Collisions, 'postSolve', buneco.fixture, peteca.fixture)
+        local collinfo = nested.get(Collisions, 'postSolve', buneco1.raquete_fixture, peteca.fixture)
+            or nested.get(Collisions, 'postSolve', buneco2.raquete_fixture, peteca.fixture)
         if collinfo then
             peteca.impulso(collinfo)
         end

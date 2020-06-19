@@ -1,7 +1,8 @@
 base = 30
 altura_base = 20
 massa = 1
-color = {1, 1, 0}
+cor = {1, 1, 0}
+intensidade_impulso = 100
 
 function init()
     local world = R('world', 'world')
@@ -30,7 +31,7 @@ function init()
 end
 
 function draw()
-    love.graphics.setColor(color)
+    love.graphics.setColor(cor)
     love.graphics.polygon('line', body:getWorldPoints(pena_shape:getPoints()))
     love.graphics.polygon('line', body:getWorldPoints(unpack(base_shape_points)))
 end
@@ -38,7 +39,7 @@ end
 function impulso(coll)
     local nx, ny = coll.coll:getNormal()
     if ny > 0 then ny = -ny end
-    nx = nx * coll.normalimpulse
-    ny = ny * coll.normalimpulse
+    nx = nx * intensidade_impulso
+    ny = ny * intensidade_impulso
     body:applyLinearImpulse(nx, ny)
 end
