@@ -52,12 +52,12 @@ function init()
         end},
         {{ 'vida1.acabou', '!vida2.acabou' }, function()
             esperando = true
-            placar.ganhador = 1
+            placar.ganhador = 2
             placar.hidden = false
         end},
         {{ '!vida1.acabou', 'vida2.acabou' }, function()
             esperando = true
-            placar.ganhador = 2
+            placar.ganhador = 1
             placar.hidden = false
         end},
 
@@ -116,29 +116,29 @@ when = {
         reset()
     end},
 
-    {{ 'Input.keypressed.left' }, function()
+    {{ 'Input.keypressed.a' }, function()
         buneco1.going_left = true
     end},
-    {{ 'Input.keyreleased.left' }, function()
+    {{ 'Input.keyreleased.a' }, function()
         buneco1.going_left = false
     end},
-    {{ 'Input.keypressed.right' }, function()
+    {{ 'Input.keypressed.d' }, function()
         buneco1.going_right = true
     end},
-    {{ 'Input.keyreleased.right' }, function()
+    {{ 'Input.keyreleased.d' }, function()
         buneco1.going_right = false
     end},
 
-    {{ 'Input.keypressed.a' }, function()
+    {{ 'Input.keypressed.left' }, function()
         buneco2.going_left = true
     end},
-    {{ 'Input.keyreleased.a' }, function()
+    {{ 'Input.keyreleased.left' }, function()
         buneco2.going_left = false
     end},
-    {{ 'Input.keypressed.d' }, function()
+    {{ 'Input.keypressed.right' }, function()
         buneco2.going_right = true
     end},
-    {{ 'Input.keyreleased.d' }, function()
+    {{ 'Input.keyreleased.right' }, function()
         buneco2.going_right = false
     end},
 }
