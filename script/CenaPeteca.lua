@@ -31,16 +31,19 @@ function init()
     addchild(buneco1)
     addchild(buneco2)
 
-    also_when = {
-        {{ { 'Collisions', 'postSolve', peteca.fixture, buneco1.raquete_fixture } }, function()
-            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco1.raquete_fixture)
+    also_when = {}
+    for i, buneco in ipairs{ buneco1, buneco2 } do
+        also_when[#also_when + 1] = {{ { 'Collisions', 'postSolve', peteca.fixture, buneco.raquete_fixture } }, function()
+            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco.raquete_fixture)
             peteca.impulso(collinfo)
-        end},
-        {{ { 'Collisions', 'postSolve', peteca.fixture, buneco2.raquete_fixture } }, function()
-            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco2.raquete_fixture)
-            peteca.impulso(collinfo)
-        end},
-    }
+        end}
+        also_when[#also_when + 1] = {{ { 'Collisions', 'touching', peteca.fixture, buneco.main_fixture } }, function()
+            buneco.tomou_dano = true
+        end}
+        also_when[#also_when + 1] = {{ { 'Collisions', 'endContact', peteca.fixture, buneco.main_fixture } }, function()
+            buneco.tomou_dano = false
+        end}
+    end
 end
 
 function reset_peteca()
@@ -54,6 +57,7 @@ when = {
     {{ 'Input.keypressed.r' }, function()
         reset_peteca()
     end},
+
     {{ 'Input.keypressed.left' }, function()
         buneco1.going_left = true
     end},
@@ -66,6 +70,7 @@ when = {
     {{ 'Input.keyreleased.right' }, function()
         buneco1.going_right = false
     end},
+
     {{ 'Input.keypressed.a' }, function()
         buneco2.going_left = true
     end},

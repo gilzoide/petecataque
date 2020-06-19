@@ -3,6 +3,7 @@ raio = 25
 largura_raquete = 10
 altura_raquete = raio * 4
 cor = {0, 1, 0}
+cor_dano = {1, 0, 0}
 cor_raquete = {0, 1, 1}
 velocidade_angular = 8
 
@@ -21,7 +22,7 @@ function init()
 end
 
 function draw()
-    love.graphics.setColor(cor)
+    love.graphics.setColor(tomou_dano and cor_dano or cor)
     local x, y = body:getWorldPoint(main_shape:getPoint())
     love.graphics.circle('fill', x, y, main_shape:getRadius())
     love.graphics.setColor(cor_raquete)
