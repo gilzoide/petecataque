@@ -4,11 +4,10 @@ loadstring = loadstring or load
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
+_ENV = _ENV or getfenv()
 
 METER_BY_PIXEL = 60
 love.physics.setMeter(METER_BY_PIXEL)
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
 
 function is_type(obj, ...)
     local t = type(obj)

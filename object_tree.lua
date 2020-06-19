@@ -1,5 +1,3 @@
-local _ENV = _ENV or getfenv()
-
 local function load_tree(name)
     local tree, err = assert(nested.decode_file(name, nested.bool_number_filter, nested_function.new))
     if not tree then return nil, err end

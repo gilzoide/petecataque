@@ -10,7 +10,6 @@ local function copy(value)
     end
 end
 
-local _ENV = _ENV or getfenv()
 local function script_loader(name)
     local filename = 'script/' .. name:gsub('%.', '/') .. '.lua'
     local script = assert(loadfile(filename))

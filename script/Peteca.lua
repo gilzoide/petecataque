@@ -1,7 +1,9 @@
 base = 30
 altura_base = 20
 massa = 1
-cor = {1, 1, 0}
+cor_linha = {1, 1, 0}
+cor_base = {0, 0, 0}
+cor_pena = {0, 0, 0, 0.5}
 intensidade_impulso = 100
 
 function init()
@@ -31,7 +33,11 @@ function init()
 end
 
 function draw()
-    love.graphics.setColor(cor)
+    love.graphics.setColor(cor_base)
+    love.graphics.polygon('fill', body:getWorldPoints(unpack(base_shape_points)))
+    love.graphics.setColor(cor_pena)
+    love.graphics.polygon('fill', body:getWorldPoints(pena_shape:getPoints()))
+    love.graphics.setColor(cor_linha)
     love.graphics.polygon('line', body:getWorldPoints(pena_shape:getPoints()))
     love.graphics.polygon('line', body:getWorldPoints(unpack(base_shape_points)))
 end
