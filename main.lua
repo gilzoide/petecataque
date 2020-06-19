@@ -2,7 +2,7 @@ require 'globals'
 
 function love.load()
     -- Resources:loadall('script', 'Circle', 'Scene2')
-    Resources:loadall('script', 'Sampler', 'Peteca', 'Buneco', 'CenaPeteca')
+    Resources:loadall('script', 'Peteca', 'Buneco', 'CenaPeteca')
     
     -- R('tree', 'script/Scene2.nested')
     local scene = CenaPeteca()
