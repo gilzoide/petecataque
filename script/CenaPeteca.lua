@@ -18,6 +18,8 @@ buneco_y = WINDOW_HEIGHT - Buneco.raio
 
 
 function init()
+    esperando = true
+
     background = R('image', 'image/fundo.png')
     world = R('world', 'world', 0, gravidade)
     body = love.physics.newBody(world)
@@ -28,16 +30,12 @@ function init()
     chao_fixture = love.physics.newFixture(body, chao_shape)
     chao_fixture:setFriction(1)
     
-    peteca = Peteca { x = peteca_init_x, y = peteca_init_y }
-    buneco1 = Buneco { x = buneco1_x, y = buneco_y, cor = {0, 1, 0} }
-    buneco2 = Buneco { x = buneco2_x, y = buneco_y, cor = {0, 0, 1}, flipX = true }
-    vida1 = Vida{ cor = buneco1.cor }
-    vida2 = Vida{ cor = buneco2.cor, flipX = true }
-    addchild(buneco1)
-    addchild(buneco2)
-    addchild(vida1)
-    addchild(vida2)
-    addchild(peteca)
+    buneco1 = addchild(Buneco { x = buneco1_x, y = buneco_y, cor = {0, 1, 0} })
+    buneco2 = addchild(Buneco { x = buneco2_x, y = buneco_y, cor = {0, 0, 1}, flipX = true })
+    vida1 = addchild(Vida { cor = buneco1.cor })
+    vida2 = addchild(Vida { cor = buneco2.cor, flipX = true })
+    peteca = addchild(Peteca { x = peteca_init_x, y = peteca_init_y })
+    placar = addchild(Placar {})
 
     also_when = {
         {{ { 'Collisions', 'postSolve', peteca.fixture, buneco1.raquete_fixture } }, function()
@@ -51,6 +49,16 @@ function init()
         {{ { 'Collisions', 'endContact', peteca.fixture, buneco1.main_fixture } }, function()
             buneco1.tomou_dano = false
             vida1.tomou_dano = false
+        end},
+        {{ 'vida1.acabou', '!vida2.acabou' }, function()
+            esperando = true
+            placar.ganhador = 1
+            placar.hidden = false
+        end},
+        {{ '!vida1.acabou', 'vida2.acabou' }, function()
+            esperando = true
+            placar.ganhador = 2
+            placar.hidden = false
         end},
 
         {{ { 'Collisions', 'postSolve', peteca.fixture, buneco2.raquete_fixture } }, function()
@@ -73,6 +81,14 @@ function draw()
     love.graphics.draw(background)
 end
 
+function reset()
+    reset_peteca()
+    reset_buneco(buneco1, buneco1_x)
+    reset_buneco(buneco2, buneco2_x)
+    world:update(1 / 60) -- roda possíveis contatos antes de resetar a vida
+    vida1.reset()
+    vida2.reset()
+end
 function reset_peteca()
     peteca.body:setPosition(peteca_init_x, peteca_init_y)
     peteca.body:setAngle(0)
@@ -87,12 +103,17 @@ function reset_buneco(buneco, x)
 end
 
 when = {
+    {{ '!esperando' }, function()
+        world:update(dt)
+    end},
+    {{ 'esperando', 'Input.keypressed.return' }, function()
+        esperando = false
+        placar.hidden = true
+        reset()
+    end},
+
     {{ 'Input.keypressed.r' }, function()
-        reset_peteca()
-        reset_buneco(buneco1, buneco1_x)
-        reset_buneco(buneco2, buneco2_x)
-        vida1.reset()
-        vida2.reset()
+        reset()
     end},
 
     {{ 'Input.keypressed.left' }, function()

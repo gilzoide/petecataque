@@ -1,7 +1,7 @@
 require 'globals'
 
 function love.load()
-    Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'CenaPeteca')
+    Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
 
     local scene = CenaPeteca()
     addtoscene(scene)
@@ -9,8 +9,7 @@ end
 
 function love.update(dt)
     _ENV.dt = dt
-    Resources:update(dt) -- Worlds
-    Director:update(dt)  -- Scene and events
+    Director:update(dt)
     Input:reset()
     Collisions:reset()
 end

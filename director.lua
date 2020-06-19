@@ -29,7 +29,7 @@ end
 function Director:draw()
     for kp, obj in nested.iterate(Scene) do
         local draw = obj.draw
-        if draw then draw() end
+        if draw and not obj.hidden then draw() end
     end
 end
 
