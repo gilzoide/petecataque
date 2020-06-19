@@ -38,7 +38,7 @@ end
 
 function impulso(coll)
     local nx, ny = coll.coll:getNormal()
-    if ny > 0 then ny = -ny end
+    if ny > 0 then nx, ny = -nx, -ny end
     nx = nx * intensidade_impulso
     ny = ny * intensidade_impulso
     body:applyLinearImpulse(nx, ny)
