@@ -30,6 +30,17 @@ function init()
     addchild(peteca)
     addchild(buneco1)
     addchild(buneco2)
+
+    also_when = {
+        {{ { 'Collisions', 'postSolve', peteca.fixture, buneco1.raquete_fixture } }, function()
+            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco1.raquete_fixture)
+            peteca.impulso(collinfo)
+        end},
+        {{ { 'Collisions', 'postSolve', peteca.fixture, buneco2.raquete_fixture } }, function()
+            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco2.raquete_fixture)
+            peteca.impulso(collinfo)
+        end},
+    }
 end
 
 function reset_peteca()
@@ -67,11 +78,4 @@ when = {
     {{ 'Input.keyreleased.d' }, function()
         buneco2.going_right = false
     end},
-    {{}, function()
-        local collinfo = nested.get(Collisions, 'postSolve', buneco1.raquete_fixture, peteca.fixture)
-            or nested.get(Collisions, 'postSolve', buneco2.raquete_fixture, peteca.fixture)
-        if collinfo then
-            peteca.impulso(collinfo)
-        end
-    end}
 }
