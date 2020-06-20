@@ -115,6 +115,7 @@ end
 when = {
     {{ '!gameover', 'Input.keypressed.return' }, function()
         pausado = not pausado
+        placar.pausado = pausado
         placar.hidden = not pausado
     end},
     {{ 'gameover', 'Input.keypressed.return' }, function()
