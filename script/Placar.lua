@@ -1,6 +1,6 @@
 largura = WINDOW_WIDTH * 0.8
 x = (WINDOW_WIDTH - largura) * 0.5
-y = WINDOW_HEIGHT * 0.5
+y = WINDOW_HEIGHT * 0.4
 cor = {1, 1, 1}
 texto_inicial = "Aperte Enter para começar"
 texto_pausado = "Aperte Enter para continuar"

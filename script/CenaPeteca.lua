@@ -19,6 +19,7 @@ peteca_init_y = 100
 
 function init()
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
+    love.graphics.setNewFont(26)
     pausado = true
 
     world = R('world', 'world', 0, gravidade)
