@@ -2,7 +2,7 @@ local Input = {}
 Input.__index = Input
 
 local events = {
-    'mousepressed',
+    'mousemoved', 'mousepressed', 'mousereleased', 'wheelmoved',
     'keypressed', 'keyreleased'
 }
 

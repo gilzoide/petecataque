@@ -19,7 +19,7 @@ peteca_init_y = 100
 
 function init()
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
-    esperando = true
+    pausado = true
 
     world = R('world', 'world', 0, gravidade)
     body = love.physics.newBody(world)
@@ -62,12 +62,12 @@ function init()
             peteca.ultimo_a_bater = buneco1
             peteca.impulso(collinfo)
         end},
-        {{ { 'Collisions', 'touching', peteca.fixture, buneco1.main_fixture } }, function()
+        {{ '!pausado', { 'Collisions', 'touching', peteca.fixture, buneco1.main_fixture } }, function()
             buneco1.tomou_dano = true
             vida1.tomou_dano = true
         end},
         {{ 'vida1.acabou', '!vida2.acabou' }, function()
-            esperando = true
+            gameover = true
             placar.ganhador = 2
             placar.hidden = false
         end},
@@ -77,12 +77,12 @@ function init()
             peteca.ultimo_a_bater = buneco2
             peteca.impulso(collinfo)
         end},
-        {{ { 'Collisions', 'touching', peteca.fixture, buneco2.main_fixture } }, function()
+        {{ '!pausado', { 'Collisions', 'touching', peteca.fixture, buneco2.main_fixture } }, function()
             buneco2.tomou_dano = true
             vida2.tomou_dano = true
         end},
         {{ '!vida1.acabou', 'vida2.acabou' }, function()
-            esperando = true
+            gameover = true
             placar.ganhador = 1
             placar.hidden = false
         end},
@@ -100,12 +100,14 @@ function reset()
     world:update(1 / 60) -- roda possíveis contatos antes de resetar a vida
     vida1.reset()
     vida2.reset()
+    placar.reset()
 end
 function reset_peteca()
     peteca.body:setPosition(peteca_init_x, peteca_init_y)
     peteca.body:setAngle(0)
     peteca.body:setAngularVelocity(0)
     peteca.body:setLinearVelocity(0, 0.1)
+    peteca.ultimo_a_bater = nil
 end
 function reset_buneco(buneco, x)
     buneco.body:setPosition(x, buneco_y)
@@ -115,13 +117,17 @@ function reset_buneco(buneco, x)
 end
 
 when = {
-    {{ '!esperando' }, function()
-        world:update(dt)
+    {{ '!gameover', 'Input.keypressed.return' }, function()
+        pausado = not pausado
+        placar.hidden = not pausado
     end},
-    {{ 'esperando', 'Input.keypressed.return' }, function()
-        esperando = false
-        placar.hidden = true
+    {{ 'gameover', 'Input.keypressed.return' }, function()
         reset()
+        placar.hidden = true
+        gameover = false
+    end},
+    {{ '!pausado', '!gameover' }, function()
+        world:update(dt)
     end},
 
     {{ 'DEBUG' }, function()
@@ -129,7 +135,7 @@ when = {
             if love.keyboard.isDown('lshift', 'rshift') then
                 reset()
             else
-        reset_peteca()
+                reset_peteca()
             end
         elseif Input.keypressed[1] then
             vida2.acabou = true

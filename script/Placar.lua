@@ -10,3 +10,7 @@ function draw()
     local texto = ganhador and string.format(texto_venceu_fmt, ganhador) or texto_esperando
     love.graphics.printf(texto, x, y, largura, 'center')
 end
+
+function reset()
+    ganhador = nil
+end
