@@ -18,7 +18,7 @@ function love.conf(t)
         description = nil,        -- The project description (string)
         homepage = 'https://github.com/gilzoide/love-nested-test-game',           -- The project homepage (string)
         identifier = 'com.gilzoide.ptkatk',         -- The project Uniform Type Identifier (string)
-        excludeFileList = {'.DS_Store', 'TODO', 'tools/'},     -- File patterns to exclude. (string list)
+        excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'DEBUG.lua'},     -- File patterns to exclude. (string list)
         releaseDirectory = 'release',   -- Where to store the project releases (string)
     }
 end

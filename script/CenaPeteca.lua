@@ -124,7 +124,17 @@ when = {
         reset()
     end},
 
-    {{ 'Input.keypressed.r' }, function()
+    {{ 'DEBUG' }, function()
+        if Input.keypressed.r then
+            if love.keyboard.isDown('lshift', 'rshift') then
+                reset()
+            else
         reset_peteca()
+            end
+        elseif Input.keypressed[1] then
+            vida2.acabou = true
+        elseif Input.keypressed[2] then
+            vida1.acabou = true
+        end
     end},
 }

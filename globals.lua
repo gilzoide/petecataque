@@ -1,6 +1,6 @@
 love.filesystem.setRequirePath('?.lua;?/init.lua;lib/?.lua;lib/?/init.lua')
 unpack = unpack or table.unpack
-loadstring = loadstring or load
+pcall(require, 'DEBUG')  -- DEBUG is excluded on release
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
