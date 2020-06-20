@@ -4,7 +4,7 @@ cor_borda = {1, 1, 1}
 cor_dano = {1, 0, 0}
 largura = WINDOW_WIDTH * 0.4
 altura = 15
-segundos_pra_acabar = 1
+segundos_pra_acabar = 0.5
 
 
 function init()
@@ -36,13 +36,8 @@ function draw()
     tomou_dano = false
 end
 
-function toma_um_dano()
+function toma_dano()
     segundos_faltando = math.max(0, segundos_faltando - dt)
     acabou = segundos_faltando <= 0
+    tomou_dano = true
 end
-
-when = {
-    {{ 'tomou_dano' }, function()
-        toma_um_dano()
-    end},
-}

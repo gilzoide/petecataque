@@ -45,6 +45,12 @@ function draw()
     love.graphics.circle('fill', x, y, main_shape:getRadius())
     love.graphics.setColor(cor_raquete)
     love.graphics.polygon('fill', body:getWorldPoints(raquete_shape:getPoints()))
+    
+    tomou_dano = false
+end
+
+function toma_dano()
+    tomou_dano = true
 end
 
 when = {

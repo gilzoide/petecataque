@@ -39,20 +39,14 @@ function init()
     placar = addchild(Placar {})
 
     also_when = {
-        {{}, function()
-            buneco2.tomou_dano = false
-            vida2.tomou_dano = false
-            buneco1.tomou_dano = false
-            vida1.tomou_dano = false
-        end},
         {{ { 'Collisions', 'postSolve', peteca.fixture, chao_fixture } }, function()
             local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, chao_fixture)
             if peteca.ultimo_a_bater == buneco1 then
-                buneco2.tomou_dano = true
-                vida2.tomou_dano = true
+                buneco2.toma_dano()
+                vida2.toma_dano()
             elseif peteca.ultimo_a_bater == buneco2 then
-                buneco1.tomou_dano = true
-                vida1.tomou_dano = true
+                buneco1.toma_dano()
+                vida1.toma_dano()
             end
             peteca.impulso(collinfo)
         end},
@@ -63,10 +57,11 @@ function init()
             peteca.impulso(collinfo)
         end},
         {{ '!pausado', { 'Collisions', 'touching', peteca.fixture, buneco1.main_fixture } }, function()
-            buneco1.tomou_dano = true
-            vida1.tomou_dano = true
+            buneco1.toma_dano()
+            vida1.toma_dano()
         end},
         {{ 'vida1.acabou', '!vida2.acabou' }, function()
+            buneco1.toma_dano()
             gameover = true
             placar.ganhador = 2
             placar.hidden = false
@@ -78,10 +73,11 @@ function init()
             peteca.impulso(collinfo)
         end},
         {{ '!pausado', { 'Collisions', 'touching', peteca.fixture, buneco2.main_fixture } }, function()
-            buneco2.tomou_dano = true
-            vida2.tomou_dano = true
+            buneco2.toma_dano()
+            vida2.toma_dano()
         end},
         {{ '!vida1.acabou', 'vida2.acabou' }, function()
+            buneco2.toma_dano()
             gameover = true
             placar.ganhador = 1
             placar.hidden = false
