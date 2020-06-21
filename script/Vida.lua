@@ -5,7 +5,7 @@ cor_dano = {1, 0, 0}
 largura = WINDOW_WIDTH * 0.4
 altura = 15
 segundos_pra_acabar = 0.5
-
+acabou = false
 
 function init()
     -- alignment = flipX and 'right' or 'left'

@@ -1,4 +1,4 @@
-[ ] Criar World e poder por bodies/fixtures nele
+[X] Criar World e poder por bodies/fixtures nele
 [ ] Criar um World pra UI separado?
 [X] Dump do estado do jogo, talvez com uma tecla de atalho
 [X] Por dados da engine no State, pra incluir no tracking

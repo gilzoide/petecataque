@@ -33,7 +33,7 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
     Input.keypressed[tonumber(key) or key] = { scancode = scancode, isrepeat = isrepeat }
-    if key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
+    if DEBUG and key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
         dump_state()
         print()
     end
