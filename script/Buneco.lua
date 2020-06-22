@@ -43,7 +43,7 @@ end
 
 function toma_dano()
     tomou_dano = true
-    set_next_frame(self, {'tomou_dano'}, nil)
+    set_next_frame(self, 'tomou_dano', nil)
 end
 
 when = {

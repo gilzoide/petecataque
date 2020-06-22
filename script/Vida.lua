@@ -32,12 +32,11 @@ function draw()
     
     love.graphics.setColor(cor_borda)
     love.graphics.rectangle('line', x, y, largura, altura)
-
-    tomou_dano = false
 end
 
 function toma_dano()
     segundos_faltando = math.max(0, segundos_faltando - dt)
     acabou = segundos_faltando <= 0
     tomou_dano = true
+    set_next_frame(self, 'tomou_dano', nil)
 end

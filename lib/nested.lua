@@ -24,7 +24,13 @@ local TOKEN_BY_PREFIX = {
     [';'] = 'SIBLING_DELIMITER',
     ["'"] = 'QUOTES', ['"'] = 'QUOTES', ['`'] = 'QUOTES',
 }
+local TOKEN_DESCRIPTION = {
+    [TOKEN.OPEN_BRACKETS] = '[', [TOKEN.CLOSE_BRACKETS] = ']',
+    [TOKEN.OPEN_PAREN] = '(', [TOKEN.CLOSE_PAREN] = ')',
+    [TOKEN.OPEN_BRACES] = '{', [TOKEN.CLOSE_BRACES] = '}',
+}
 local MATCHING_CLOSING_BLOCK = {
+    [''] = TOKEN.EOF,
     [TOKEN.OPEN_BRACKETS] = TOKEN.CLOSE_BRACKETS,
     [TOKEN.OPEN_PAREN] = TOKEN.CLOSE_PAREN,
     [TOKEN.OPEN_BRACES] = TOKEN.CLOSE_BRACES,
@@ -51,18 +57,18 @@ local LEXICAL_SCANNERS = {
     KEYVALUE = function(s) return TOKEN.KEYVALUE, 2 end,
     SIBLING_DELIMITER = function(s) return TOKEN.SIBLING_DELIMITER, 2 end,
     QUOTES = function(s)
-        local delimiter = s:match('[\'\"`]')
+        local delimiter = s:sub(1, 1)
         local components = {}
         for m, pos in s:sub(2):gmatch('([^' .. delimiter .. ']*' .. delimiter .. '?)' .. delimiter .. '()') do -- ([^']*'?)'()
             components[#components + 1] = m
             if m:sub(-1) ~= delimiter then
-                return table.concat(components), pos + 1
+                return table.concat(components), pos + 1, delimiter
             end
         end
         error(string.format('Unmatched closing %q', delimiter), 0)
     end,
     TEXT = function(s)
-        return s:match('([^ ,\t\r\n%[%]():;]+)()')
+        return s:match('([^ ,\t\r\n%[%](){}:;]+)()')
     end,
 }
 
@@ -77,21 +83,31 @@ local function read_next_token(s)
 end
 
 local function token_description(t)
-    -- TODO: more user friendly token description
-    return type(t) == 'number' and TOKEN[t] or t
+    if type(t) == 'number' then
+        local description = TOKEN_DESCRIPTION[t]
+        if description then
+            return string.format("%q", description)
+        else
+            return TOKEN[t]
+        end
+    else
+        return t
+    end
 end
 
-local function read_block(state, s, expected_closing)
+local function read_block(state, s, opening_token)
+    local opening_token_description = TOKEN_DESCRIPTION[opening_token]
+    local expected_closing_token = MATCHING_CLOSING_BLOCK[opening_token]
     local table_constructor = state.table_constructor
-    local block = table_constructor()
+    local block = table_constructor(opening_token_description)
     local initial_length = #s
-    local toplevel, key, token, previous_token, advance
+    local toplevel, key, token, previous_token, advance, quotation_mark
     repeat
         previous_token = token
-        token, advance = read_next_token(s)
+        token, advance, quotation_mark = read_next_token(s)
         if type(token) == 'string' then
             if key or peek_token_type_name(s:sub(advance)) ~= 'KEYVALUE' then
-                local value = state.text_filter and state.text_filter(token)
+                local value = state.text_filter and state.text_filter(token, quotation_mark)
                 if value == nil then value = token end
                 block[key or #block + 1], key = value, nil
             else
@@ -100,10 +116,10 @@ local function read_block(state, s, expected_closing)
         elseif token == TOKEN.NEWLINE then
             state.line = state.line + 1
             state.column = 0 -- after advance, column will be 1
-        elseif token ~= expected_closing and (token == TOKEN.EOF or token == TOKEN.CLOSE_BRACKETS or token == TOKEN.CLOSE_PAREN or token == TOKEN.CLOSE_BRACES) then
-            error(string.format('Expected closing block with %s, but found %s', token_description(expected_closing), token_description(token)), 0)
+        elseif token ~= expected_closing_token and (token == TOKEN.EOF or token == TOKEN.CLOSE_BRACKETS or token == TOKEN.CLOSE_PAREN or token == TOKEN.CLOSE_BRACES) then
+            error(string.format('Expected closing block with %s, but found %s', token_description(expected_closing_token), token_description(token)), 0)
         elseif token == TOKEN.OPEN_BRACKETS or token == TOKEN.OPEN_PAREN or token == TOKEN.OPEN_BRACES then
-            local child_block, read_length = read_block(state, s:sub(advance), MATCHING_CLOSING_BLOCK[token])
+            local child_block, read_length = read_block(state, s:sub(advance), token)
             block[key or #block + 1], key = child_block, nil
             advance = advance + read_length
         elseif token == TOKEN.KEYVALUE then
@@ -112,18 +128,18 @@ local function read_block(state, s, expected_closing)
             end
         elseif token == TOKEN.SIBLING_DELIMITER then
             if toplevel == nil then
-                toplevel = table_constructor()
+                toplevel = table_constructor(opening_token_description)
                 toplevel[1] = block
             end
-            block = table_constructor()
+            block = table_constructor(opening_token_description)
             toplevel[#toplevel + 1] = block
         else
              -- TODO: after thorough testing, remove unecessary assertion
-            assert(token == expected_closing or token == TOKEN.SPACE or token == TOKEN.COMMENT, 'FIXME!!!')
+            assert(token == expected_closing_token or token == TOKEN.SPACE or token == TOKEN.COMMENT, 'FIXME!!!')
         end
         s = s:sub(advance)
         state.column = state.column + advance - 1
-    until token == expected_closing
+    until token == expected_closing_token
     return toplevel or block, initial_length - #s
 end
 
@@ -131,7 +147,7 @@ end
 local function decode(s, text_filter, table_constructor)
     table_constructor = table_constructor or function() return {} end
     local state = { line = 1, column = 1, text_filter = text_filter, table_constructor = table_constructor }
-    local success, result = pcall(read_block, state, s, TOKEN.EOF)
+    local success, result = pcall(read_block, state, s, '')
     if not success then return nil, string.format('Error at line %u (col %u): %s', state.line, state.column, result)
     else return result 
     end
@@ -188,12 +204,13 @@ local function iterate(t, options)
 end
 
 ----------  Encoder  ----------
+local encode
 local function encode_into(state, t)
     local function append(v) state[#state + 1] = v end
     if type(t) == 'table' then
         local keypath = state.keypath
         if state[t] ~= nil then return end
-        -- assert(state[t] == nil, string.format("Cycle detected at keypath %q", nested.encode(keypath)))
+        -- assert(state[t] == nil, string.format("Cycle detected at keypath %s", encode(keypath)))
         state[t] = true
         local compact = state.compact
         if compact and state[#state] == ' ' then state[#state] = nil end
@@ -230,7 +247,7 @@ local function encode_into(state, t)
     end
 end
 
-local function encode(t, compact)
+encode = function(t, compact)
     local state = { compact = compact, keypath = {} }
     local success, err = pcall(encode_into, state, t)
     if not success then
@@ -249,12 +266,15 @@ local function encode_to_file(stream, ...)
     stream = io.output(stream)
     stream:write(encoded_value)
     stream:close()
+    io.output(previous)
     return true
 end
 
 ----------  Keypaths  ----------
 local function get_internal(t, create_subtables, keypath, ...)
-    if type(keypath) ~= 'table' then keypath = { keypath, ...} end
+    if select('#', ...) > 0 then keypath = { keypath, ... }
+    elseif type(keypath) ~= 'table' then keypath = { keypath }
+    end
     for i = 1, #keypath do
         local key = keypath[i]
         local ttype = type(t)
@@ -283,10 +303,12 @@ end
 
 local function set_internal(t, create_subtables, keypath, ...)
     local value
-    if type(keypath) ~= 'table' then
-        keypath = { keypath, ...}
-        value = table.remove(keypath)
+    local n = select('#', ...)
+    if n > 1 then
+        keypath = { keypath, ... }
+        value, keypath[n + 1] = keypath[n + 1], nil
     else
+        if type(keypath) ~= 'table' then keypath = { keypath } end
         value = ...
     end
     local subtable, key = t, nil
@@ -318,8 +340,9 @@ local function set_or_create(t, ...)
 end
 
 ----------  Filter  ----------
-local function bool_number_filter(s)
-    if s == 'true' then return true
+local function bool_number_filter(s, quoted)
+    if quoted then return nil
+    elseif s == 'true' then return true
     elseif s == 'false' then return false
     else return tonumber(s)
     end
