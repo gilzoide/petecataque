@@ -7,6 +7,7 @@ function love.conf(t)
     t.window.title = 'PETECATAQUE'
     t.window.icon = 'icon.png'
     t.window.highdpi = true
+    t.window.msaa = 16
     
     t.releases = {
         title = 'PETECATAQUE',              -- The project title (string)

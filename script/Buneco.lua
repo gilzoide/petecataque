@@ -1,11 +1,11 @@
-massa = 10
+massa = 1
 raio = 25
 largura_raquete = 10
 altura_raquete = raio * 4
 cor = {1, 1, 1}
 cor_dano = {1, 0, 0}
 cor_raquete = {0, 1, 1}
-velocidade_angular = 8
+velocidade_angular = 10
 
 function init()
     local world = R('world', 'world')
@@ -22,19 +22,13 @@ function init()
 
     also_when = {}
     if tecla_esquerda then
-        also_when[#also_when + 1] = {{ {'Input', 'keypressed', tecla_esquerda} }, function()
-            pra_esquerda = true
-        end}
-        also_when[#also_when + 1] = {{ {'Input', 'keyreleased', tecla_esquerda} }, function()
-            pra_esquerda = false
+        also_when[#also_when + 1] = {{ {'key', tecla_esquerda} }, function()
+            pra_esquerda = not key[tecla_esquerda].released
         end}
     end
     if tecla_direita then
-        also_when[#also_when + 1] = {{ {'Input', 'keypressed', tecla_direita} }, function()
-            pra_direita = true
-        end}
-        also_when[#also_when + 1] = {{ {'Input', 'keyreleased', tecla_direita} }, function()
-            pra_direita = false
+        also_when[#also_when + 1] = {{ {'key', tecla_direita} }, function()
+            pra_direita = not key[tecla_direita].released
         end}
     end
 end
@@ -45,12 +39,11 @@ function draw()
     love.graphics.circle('fill', x, y, main_shape:getRadius())
     love.graphics.setColor(cor_raquete)
     love.graphics.polygon('fill', body:getWorldPoints(raquete_shape:getPoints()))
-    
-    tomou_dano = false
 end
 
 function toma_dano()
     tomou_dano = true
+    set_next_frame(self, {'tomou_dano'}, nil)
 end
 
 when = {

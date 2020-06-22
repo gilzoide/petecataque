@@ -10,12 +10,12 @@ end
 function love.update(dt)
     _ENV.dt = dt
     Director:update(dt)
-    Input:reset()
     Collisions:reset()
 end
 
 function love.draw()
     Director:draw()
+    Setqueue:update()
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
@@ -31,13 +31,5 @@ function love.wheelmoved(x, y)
     Input.wheelmoved = { x = x, y = y }
 end
 
-function love.keypressed(key, scancode, isrepeat)
-    Input.keypressed[tonumber(key) or key] = { scancode = scancode, isrepeat = isrepeat }
-    if DEBUG and key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
-        dump_state()
-        print()
-    end
-end
-function love.keyreleased(key, scancode)
-    Input.keyreleased[key] = { scancode = scancode }
-end
+love.keypressed = Input.keypressed
+love.keyreleased = Input.keyreleased

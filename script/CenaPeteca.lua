@@ -114,12 +114,12 @@ function reset_buneco(buneco, x)
 end
 
 when = {
-    {{ '!gameover', 'Input.keypressed.return' }, function()
+    {{ '!gameover', 'key.return.pressed' }, function()
         pausado = not pausado
         placar.pausado = pausado
         placar.hidden = not pausado
     end},
-    {{ 'gameover', 'Input.keypressed.return' }, function()
+    {{ 'gameover', 'key.return.pressed' }, function()
         reset()
         placar.hidden = true
         gameover = false
@@ -129,15 +129,15 @@ when = {
     end},
 
     {{ 'DEBUG' }, function()
-        if Input.keypressed.r then
+        if nested.get(key, 'r', 'pressed') then
             if love.keyboard.isDown('lshift', 'rshift') then
                 reset()
             else
                 reset_peteca()
             end
-        elseif Input.keypressed[1] then
+        elseif nested.get(key, '1', 'pressed') then
             vida2.acabou = true
-        elseif Input.keypressed[2] then
+        elseif nested.get(key, '2', 'pressed') then
             vida1.acabou = true
         end
     end},

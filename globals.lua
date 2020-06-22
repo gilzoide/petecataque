@@ -69,8 +69,16 @@ function is_callable(v)
     end
 end
 
+function set_next_frame(...)
+    Setqueue:queue(...)
+end
+
+key = {}
+mouse = {}
+Input = require 'input'
+
 Scene = {}
-Input = require 'input'.new()
+Setqueue = require 'setqueue'.new()
 Collisions = require 'collisions'.new()
 Director = require 'director'.new()
 Resources = require 'resources'.new()
@@ -78,8 +86,10 @@ State = {
     scene = Scene,
     resources = Resources,
     director = Director,
-    input = Input,
+    key = key,
+    mouse = mouse,
     collisions = Collisions,
+    setqueue = Setqueue,
 }
 
 function dump_state()

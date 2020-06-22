@@ -15,6 +15,7 @@ local function script_loader(name)
     local mt = {}
     local index_mt = {
         __index = function(t, index)
+            if index == 'self' then return t end
             local value = rawget(t, index)
             if value ~= nil then return value end
             value = rawget(mt, index)

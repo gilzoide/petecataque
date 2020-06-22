@@ -12,6 +12,7 @@ function init()
     body:setMass(massa)
     body:setAngularDamping(1)
     body:setBullet(true)
+    body:setGravityScale(1.4)
     base_shape_points = {
         -base * 0.5, 0,
         -base * 0.5, -altura_base * 0.5,
