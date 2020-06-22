@@ -22,16 +22,19 @@ function Input.mousemoved(x, y, dx, dy, istouch)
     _ENV.mouse.moved = { x = x, y = y, dx = dx, dy = dy, istouch = istouch }
     set_next_frame(_ENV.mouse, { 'moved' }, nil)
 end
+
 function Input.mousepressed(x, y, button, istouch, presses)
     local info = { pressed = true, x = x, y = y, istouch = istouch, presses = presses }
     _ENV.mouse[button] = info
     set_next_frame(info, { 'pressed' }, nil)
 end
+
 function Input.mousereleased(x, y, button, istouch, presses)
     local info = { released = true, x = x, y = y, istouch = istouch, presses = presses }
     _ENV.mouse[button] = info
     set_next_frame(_ENV.mouse, { button }, nil)
 end
+
 function Input.wheelmoved(x, y)
     _ENV.mouse.wheelmoved = { x = x, y = y }
     set_next_frame(_ENV.mouse, { 'wheelmoved' }, nil)

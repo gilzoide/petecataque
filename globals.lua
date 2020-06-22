@@ -69,10 +69,6 @@ function is_callable(v)
     end
 end
 
-function set_next_frame(...)
-    Setqueue:queue(...)
-end
-
 key = {}
 mouse = {}
 Input = require 'input'
@@ -94,6 +90,10 @@ State = {
 
 function dump_state()
     print(nested.encode(State))
+end
+
+function set_next_frame(...)
+    Setqueue:queue(...)
 end
 
 function R(...)

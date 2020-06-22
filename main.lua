@@ -18,18 +18,10 @@ function love.draw()
     Setqueue:update()
 end
 
-function love.mousemoved(x, y, dx, dy, istouch)
-    Input.mousemoved = { x = x, y = y, dx = dx, dy = dy, istouch = istouch }
-end
-function love.mousepressed(x, y, button, istouch, presses)
-    Input.mousepressed = { x = x, y = y, button = button, istouch = istouch, presses = presses }
-end
-function love.mousereleased(x, y, button, istouch, presses)
-    Input.mousereleased = { x = x, y = y, button = button, istouch = istouch, presses = presses }
-end
-function love.wheelmoved(x, y)
-    Input.wheelmoved = { x = x, y = y }
-end
+love.mousemoved = Input.mousemoved
+love.mousepressed = Input.mousepressed
+love.mousereleased = Input.mousereleased
+love.wheelmoved = Input.wheelmoved
 
 love.keypressed = Input.keypressed
 love.keyreleased = Input.keyreleased
