@@ -9,6 +9,11 @@ _ENV = _ENV or getfenv()
 METER_BY_PIXEL = 60
 love.physics.setMeter(METER_BY_PIXEL)
 
+get = nested.get
+get_or_create = nested.get_or_create
+set = nested.set
+set_or_create = nested.set_or_create
+
 function index_or_create(t, index)
     local value = t[index]
     if value == nil then

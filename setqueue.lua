@@ -11,7 +11,7 @@ end
 
 function Setqueue:update()
     for i = 1, #self do
-        nested.set(unpack(self[i]))
+        set(unpack(self[i]))
         self[i] = nil
     end
 end

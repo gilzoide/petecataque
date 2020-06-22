@@ -41,7 +41,7 @@ function init()
 
     also_when = {
         {{ { 'Collisions', 'postSolve', peteca.fixture, chao_fixture } }, function()
-            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, chao_fixture)
+            local collinfo = get(Collisions, 'postSolve', peteca.fixture, chao_fixture)
             if peteca.ultimo_a_bater == buneco1 then
                 buneco2.toma_dano()
                 vida2.toma_dano()
@@ -53,7 +53,7 @@ function init()
         end},
 
         {{ { 'Collisions', 'postSolve', peteca.fixture, buneco1.raquete_fixture } }, function()
-            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco1.raquete_fixture)
+            local collinfo = get(Collisions, 'postSolve', peteca.fixture, buneco1.raquete_fixture)
             peteca.ultimo_a_bater = buneco1
             peteca.impulso(collinfo)
         end},
@@ -69,7 +69,7 @@ function init()
         end},
 
         {{ { 'Collisions', 'postSolve', peteca.fixture, buneco2.raquete_fixture } }, function()
-            local collinfo = nested.get(Collisions, 'postSolve', peteca.fixture, buneco2.raquete_fixture)
+            local collinfo = get(Collisions, 'postSolve', peteca.fixture, buneco2.raquete_fixture)
             peteca.ultimo_a_bater = buneco2
             peteca.impulso(collinfo)
         end},
@@ -129,15 +129,15 @@ when = {
     end},
 
     {{ 'DEBUG' }, function()
-        if nested.get(key, 'r', 'pressed') then
+        if get(key, 'r', 'pressed') then
             if love.keyboard.isDown('lshift', 'rshift') then
                 reset()
             else
                 reset_peteca()
             end
-        elseif nested.get(key, '1', 'pressed') then
+        elseif get(key, '1', 'pressed') then
             vida2.acabou = true
-        elseif nested.get(key, '2', 'pressed') then
+        elseif get(key, '2', 'pressed') then
             vida1.acabou = true
         end
     end},

@@ -22,13 +22,14 @@ local function script_loader(name)
             if type(value) == 'function' then
                 return setfenv(value, t)
             end
-            if value ~= nil then return value end
-            return _ENV[index]
+            if value ~= nil then return value
+            else return _ENV[index]
+            end
         end
     }
     local constructor = function(self, obj)
         obj = setmetatable(obj or {}, index_mt)
-        for k, v in nested.metadata(mt) do
+        for k, v in nested.kpairs(mt) do
             if obj[k] == nil and k ~= 'when' and type(v) ~= 'function' then
                 obj[k] = copy(v)
             end
