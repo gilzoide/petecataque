@@ -96,9 +96,6 @@ function deepcopy(value)
     end
 end
 
-World = require 'wrapper.world'
-Body = require 'wrapper.body'
-
 key = {}
 mouse = {}
 Input = require 'input'
@@ -106,13 +103,12 @@ Input = require 'input'
 Scene = require 'scene'.new()
 Setqueue = require 'setqueue'.new()
 Collisions = require 'collisions'.new()
-Director = require 'director'.new()
+Director = require 'director'
 Resources = require 'resources'.new()
 R = Resources
 State = {
     scene = Scene,
     resources = Resources,
-    director = Director,
     key = key,
     mouse = mouse,
     collisions = Collisions,

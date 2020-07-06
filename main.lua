@@ -13,12 +13,12 @@ end
 
 function love.update(dt)
     _ENV.dt = dt
-    Director:update(dt)
+    Director.update(dt)
     Collisions:reset()
 end
 
 function love.draw()
-    Director:draw()
+    Director.draw()
     Setqueue:update()
 end
 

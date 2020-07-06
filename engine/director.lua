@@ -1,9 +1,4 @@
 local Director = {}
-Director.__index = Director
-
-function Director.new()
-    return setmetatable({}, Director)
-end
 
 local function process_events(obj, index)
     if obj[index] then
@@ -17,19 +12,17 @@ local function process_events(obj, index)
     end
 end
 
-function Director:update(dt)
+function Director.update(dt)
     for kp, obj in nested.iterate(Scene) do
-        local update = obj.update
-        if update then update(dt) end
+        if obj.update then obj:update(dt) end
         process_events(obj, 'when')
         process_events(obj, 'also_when')
     end
 end
 
-function Director:draw()
+function Director.draw()
     for kp, obj in nested.iterate(Scene) do
-        local draw = obj.draw
-        if draw and not obj.hidden then draw() end
+        if obj.draw and not obj.hidden then obj:draw() end
     end
 end
 
