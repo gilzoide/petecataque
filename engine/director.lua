@@ -15,25 +15,28 @@ end
 -- Set this in a recipe to skip iterating it's children
 Director.SKIP_CHILDREN = 'SKIP_CHILDREN'
 
-function Director.update(dt)
+local function iterate_scene()
     local iterator, skip = nested.iterate(Scene), false
-    while true do
-        local kp, obj = iterator(skip)
-        if not kp then break end
+    return function()
+        local kp, obj, parent = iterator(skip)
+        if kp then
+            skip = obj.SKIP_CHILDREN
+            return kp, obj, parent
+        end
+    end
+end
+
+function Director.update(dt)
+    for kp, obj in iterate_scene() do
         if obj.update then obj:update(dt) end
         process_events(obj, 'when')
         process_events(obj, 'also_when')
-        skip = obj.SKIP_CHILDREN
     end
 end
 
 function Director.draw()
-    local iterator, skip = nested.iterate(Scene), false
-    while true do
-        local kp, obj = iterator(skip)
-        if not kp then break end
+    for kp, obj in iterate_scene() do
         if obj.draw and not obj.hidden then obj:draw() end
-        skip = obj.SKIP_CHILDREN
     end
 end
 
