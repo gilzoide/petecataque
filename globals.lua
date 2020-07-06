@@ -14,8 +14,7 @@ get_or_create = nested.get_or_create
 set = nested.set
 set_or_create = nested.set_or_create
 
-function self_or_first(self, index, ...)
-    if index == 'self' then return self end
+function index_first_of(index, ...)
     for i = 1, select('#', ...) do
         local t = select(i, ...)
         if t then

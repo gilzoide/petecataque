@@ -7,7 +7,6 @@ end
 
 function Scene:add(obj)
     self[#self + 1] = obj
-    self:track(obj)
 end
 
 function Scene:byId(id)

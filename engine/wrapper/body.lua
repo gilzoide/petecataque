@@ -1,7 +1,7 @@
 local Body = {'Body'}
 
 function Body:__index(index)
-    return self_or_first(self, index, rawget(self, 'body'), Body)
+    return index_first_of(index, rawget(self, 'body'), Body)
 end
 
 function Body:init()

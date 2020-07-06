@@ -1,7 +1,7 @@
 local World = {'World'}
 
 function World:__index(index)
-    return self_or_first(self, index, rawget(self, 'world'), World)
+    return index_first_of(index, rawget(self, 'world'), World)
 end
 
 function World:init()

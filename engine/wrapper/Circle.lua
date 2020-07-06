@@ -5,7 +5,7 @@ local Circle = {
 }
 
 function Circle:__index(index)
-    return self_or_first(self, index, rawget(self, 'shape'), Circle)
+    return index_first_of(index, rawget(self, 'shape'), Circle)
 end
 
 function Circle:init()

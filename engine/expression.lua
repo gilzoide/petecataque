@@ -13,12 +13,15 @@ else
     end
 end
 
-function Expression.new(literal, relative_to)
-    local callable = assert(loadstring_with_env('return ' .. literal, relative_to))
-    return setmetatable({
-        'Expression',
-        literal,
-    }, { __call = callable })
+function Expression.new(literal, relative_to, root)
+    local expr = { 'Expression', literal }
+    local mt = {
+        __index = function(t, index)
+            return index_first_of(index, relative_to, root, _ENV)
+        end,
+        __call = assert(loadstring_with_env('return ' .. literal, expr)),
+    }
+    return setmetatable(expr, mt)
 end
 
 return Expression

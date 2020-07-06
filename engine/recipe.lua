@@ -56,14 +56,10 @@ function Recipe:instantiate(overrides, root_param)
         __index = function(t, index)
             if index == 'root' then return root end
             if type(index) == 'string' then
-                local expr_index = '$' .. index
-                local expr = rawget(t, expr_index)
+                local expr = rawget(t, '$' .. index)
                 if expr then return expr() end
             end
-            local value = fallback_index(t, index)
-            if value ~= nil then return value
-            elseif root_param then return root_param[index]
-            else return nil end
+            return fallback_index(t, index)
         end, 
         __newindex = self.__newindex,
     })
@@ -71,8 +67,11 @@ function Recipe:instantiate(overrides, root_param)
     if overrides then
         for k, v in nested.kpairs(overrides) do
             if type(k) == 'string' and k:sub(1, 1) == '$' then
-                newobj[k] = Expression.new(v, newobj)
+                newobj[k] = Expression.new(v, newobj, root_param)
             else
+                if k == 'id' then
+                    root[v] = newobj
+                end
                 newobj[k] = deepcopy(v)
             end
         end

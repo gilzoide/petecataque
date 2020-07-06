@@ -10,3 +10,5 @@ circleX: 100
 [Circle $x: `circleX + y` y: 50 mode: fill]
 [Graphics [pop]]
 [Circle $x: circleX y: 150 mode: line]
+
+[FPS]
