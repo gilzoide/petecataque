@@ -1,9 +1,9 @@
-love.filesystem.setRequirePath('?.lua;?/init.lua;lib/?.lua;lib/?/init.lua')
 unpack = unpack or table.unpack
 pcall(require, 'DEBUG')  -- DEBUG is excluded on release
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
+log = require 'log'
 _ENV = _ENV or getfenv()
 
 METER_BY_PIXEL = 60
@@ -13,6 +13,15 @@ get = nested.get
 get_or_create = nested.get_or_create
 set = nested.set
 set_or_create = nested.set_or_create
+
+function self_or_first(self, index, ...)
+    if index == 'self' then return self end
+    for _, t in ipairs{...} do
+        local value = t[index]
+        if value ~= nil then return value end
+    end
+    return nil
+end
 
 function index_or_create(t, index)
     local value = t[index]
@@ -26,10 +35,11 @@ end
 function addchild(obj)
     local self = getfenv(2)
     self[#self + 1] = obj
+    Scene:track(obj)
     return obj
 end
 function addtoscene(obj)
-    Scene[#Scene + 1] = obj
+    Scene:add(obj)
 end
 
 function assertf(cond, fmt, ...)
@@ -74,15 +84,19 @@ function is_callable(v)
     end
 end
 
+World = require 'wrapper.world'
+Body = require 'wrapper.body'
+
 key = {}
 mouse = {}
 Input = require 'input'
 
-Scene = {}
+Scene = require 'scene'.new()
 Setqueue = require 'setqueue'.new()
 Collisions = require 'collisions'.new()
 Director = require 'director'.new()
 Resources = require 'resources'.new()
+R = Resources
 State = {
     scene = Scene,
     resources = Resources,
@@ -99,8 +113,4 @@ end
 
 function set_next_frame(...)
     Setqueue:queue(...)
-end
-
-function R(...)
-    return Resources:get(...)
 end

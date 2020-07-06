@@ -1,3 +1,5 @@
+love.filesystem.setRequirePath('?.lua;?/init.lua;engine/?.lua;engine/?/init.lua;lib/?.lua;lib/?/init.lua')
+
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 

@@ -16,8 +16,6 @@ local function script_loader(name)
     local index_mt = {
         __index = function(t, index)
             if index == 'self' then return t end
-            local value = rawget(t, index)
-            if value ~= nil then return value end
             value = rawget(mt, index)
             if type(value) == 'function' then
                 return setfenv(value, t)
@@ -29,6 +27,7 @@ local function script_loader(name)
     }
     local constructor = function(self, obj)
         obj = setmetatable(obj or {}, index_mt)
+        obj[0] = name
         for k, v in nested.kpairs(mt) do
             if obj[k] == nil and k ~= 'when' and type(v) ~= 'function' then
                 obj[k] = copy(v)

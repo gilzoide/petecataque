@@ -1,10 +1,14 @@
 require 'globals'
 
 function love.load()
-    Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
-
-    local scene = CenaPeteca()
+    -- Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
+    -- local scene = CenaPeteca()
+    -- addtoscene(scene)
+    
+    local scene = R.recipe.Cena2 { id = 'root' }
     addtoscene(scene)
+
+    print(nested.encode(Scene:byId 'root'))
 end
 
 function love.update(dt)
