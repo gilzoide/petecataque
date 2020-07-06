@@ -3,7 +3,7 @@ local Graphics = {
     SKIP_CHILDREN = true,
 }
 
-local function graphics_call(name, ...)
+function Graphics.call(name, ...)
     local operation = log.warnassert(love.graphics[name], "Invalid graphics operation %q", name)
     if operation then operation(...) end
 end
@@ -14,10 +14,10 @@ function Graphics:draw()
         if type(key) == 'number' then
             local first = t[1]
             if type(first) == 'string' then
-                graphics_call(unpack(t))
+                Graphics.call(unpack(t))
             end
         else
-            graphics_call(key, unpack(t))
+            Graphics.call(key, unpack(t))
         end
     end
 end

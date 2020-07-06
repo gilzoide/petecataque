@@ -16,9 +16,12 @@ set_or_create = nested.set_or_create
 
 function self_or_first(self, index, ...)
     if index == 'self' then return self end
-    for _, t in ipairs{...} do
-        local value = t[index]
-        if value ~= nil then return value end
+    for i = 1, select('#', ...) do
+        local t = select(i, ...)
+        if t then
+            local value = t[index]
+            if value ~= nil then return value end
+        end
     end
     return nil
 end

@@ -1,3 +1,5 @@
+local Expression = require 'expression'
+
 local Recipe = {}
 
 Recipe.path = {'engine/wrapper/%s.lua', 'script/%s.lua'}
@@ -8,7 +10,10 @@ function Recipe.load(name)
     if recipe ~= nil then
         assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
         assertf(recipe[1] == nil or recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
-        return setmetatable(recipe, { __index = Recipe, __call = Recipe.instantiate })
+        return setmetatable(recipe, {
+            __index = Recipe,
+            __call = Recipe.instantiate
+        })
     end
 end
 
@@ -33,27 +38,53 @@ function Recipe.tryloadnested(lowername)
     return nil
 end
 
-local function instantiate_into(dest, recipe)
+local function instantiate_into(dest, recipe, root)
     for i = 2, #recipe do
         local t = recipe[i]
         local constructor = t[1] and R.recipe[t[1]] or deepcopy
-        dest[#dest + 1] = constructor(t)
+        dest[#dest + 1] = constructor(t, root)
     end
-end
+end 
 
-function Recipe:instantiate(overrides)
+function Recipe:instantiate(overrides, root_param)
     local newobj = { self[1] }
-    setmetatable(newobj, { __recipe = self, __index = self.__index or self, __newindex = self.__newindex })
-    instantiate_into(newobj, self)
+    local root = root_param or newobj
+    local fallback_index = self.__index or function(t, index) return rawget(self, index) end
+    setmetatable(newobj, {
+        __recipe = self,
+        __root = root,
+        __index = function(t, index)
+            if index == 'root' then return root end
+            if type(index) == 'string' then
+                local expr_index = '$' .. index
+                local expr = rawget(t, expr_index)
+                if expr then return expr() end
+            end
+            local value = fallback_index(t, index)
+            if value ~= nil then return value
+            elseif root_param then return root_param[index]
+            else return nil end
+        end, 
+        __newindex = self.__newindex,
+    })
+    instantiate_into(newobj, self, root)
     if overrides then
         for k, v in nested.kpairs(overrides) do
-            newobj[k] = deepcopy(v)
+            if type(k) == 'string' and k:sub(1, 1) == '$' then
+                newobj[k] = Expression.new(v, newobj)
+            else
+                newobj[k] = deepcopy(v)
+            end
         end
-        instantiate_into(newobj, overrides)
+        instantiate_into(newobj, overrides, root)
     end
 
-    if self.init then self:init(newobj) end
+    if self.init then self.init(newobj) end
     return newobj
+end
+
+function Recipe:getRoot()
+    return getmetatable(self).__root
 end
 
 return Recipe

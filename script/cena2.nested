@@ -1,10 +1,12 @@
 Cena2
 
-[Graphics {
+circleX: 100
+
+[Graphics [
     clear 0.4 0.3 0.2;
     push all;
     setColor: (1, 1, 0)
-}]
-[Circle x: 50 y: 50]
+]]
+[Circle $x: `circleX + y` y: 50 mode: fill]
 [Graphics [pop]]
-[Circle x: 50 y: 150]
+[Circle $x: circleX y: 150 mode: line]
