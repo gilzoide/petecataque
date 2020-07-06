@@ -84,6 +84,18 @@ function is_callable(v)
     end
 end
 
+function deepcopy(value)
+    if type(value) == 'table' then
+        local newvalue = {}
+        for k, v in pairs(value) do
+            newvalue[k] = deepcopy(v)
+        end
+        return newvalue
+    else
+        return value
+    end
+end
+
 World = require 'wrapper.world'
 Body = require 'wrapper.body'
 

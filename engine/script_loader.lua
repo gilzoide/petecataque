@@ -1,15 +1,3 @@
-local function copy(value)
-    if type(value) == 'table' then
-        local newvalue = {}
-        for k, v in pairs(value) do
-            newvalue[k] = copy(v)
-        end
-        return newvalue
-    else
-        return value
-    end
-end
-
 local function script_loader(name)
     local script = assert(love.filesystem.load('script/' .. name:gsub('%.', '/') .. '.lua'))
     local mt = {}
@@ -30,7 +18,7 @@ local function script_loader(name)
         obj[0] = name
         for k, v in nested.kpairs(mt) do
             if obj[k] == nil and k ~= 'when' and type(v) ~= 'function' then
-                obj[k] = copy(v)
+                obj[k] = deepcopy(v)
             end
         end
         if obj.init then setfenv(obj.init, obj)() end

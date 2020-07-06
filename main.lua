@@ -8,7 +8,7 @@ function love.load()
     local scene = R.recipe.Cena2 { id = 'root' }
     addtoscene(scene)
 
-    print(nested.encode(Scene:byId 'root'))
+    -- print(nested.encode(Scene:byId 'root'))
 end
 
 function love.update(dt)

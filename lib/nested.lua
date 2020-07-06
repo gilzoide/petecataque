@@ -139,11 +139,10 @@ local function read_block(state, s, opening_token)
     return toplevel or block, initial_length - #s
 end
 
---- TODO: support streamed IO
-local function decode(s, text_filter, table_constructor)
+local function decode(text, text_filter, table_constructor)
     table_constructor = table_constructor or function() return {} end
     local state = { line = 1, column = 1, text_filter = text_filter, table_constructor = table_constructor }
-    local success, result = pcall(read_block, state, s, '')
+    local success, result = pcall(read_block, state, text, '')
     if not success then return nil, string.format('Error at line %u (col %u): %s', state.line, state.column, result)
     else return result 
     end
@@ -158,7 +157,7 @@ local function decode_file(stream, ...)
     return decode(contents, ...)
 end
 
-----------  Non numeric pairs iterator  ----------
+----------  Iterators  ----------
 local function kpairs(t)
     return coroutine.wrap(function()
         for k, v in pairs(t) do
@@ -167,17 +166,18 @@ local function kpairs(t)
     end)
 end
 
-----------  Iterators  ----------
 local ORDER = 'order'
 local PREORDER = 'preorder'
 local POSTORDER = 'postorder'
 local TABLE_ONLY = 'table_only'
 local INCLUDE_KV = 'include_kv'
+local SKIP_ROOT = 'skip_root'
 local function iterate_step(keypath, t, parent, options)
     local is_table = type(t) == 'table'
     if options[TABLE_ONLY] and not is_table then return end
+    local skip = options[SKIP_ROOT] and #keypath == 0
     local is_postorder = options[ORDER] == POSTORDER
-    if not is_postorder then coroutine.yield(keypath, t, parent) end
+    if not skip and not is_postorder then coroutine.yield(keypath, t, parent) end
     if is_table then
         local keypath_index = #keypath + 1
         for i = 1, #t do
@@ -192,7 +192,7 @@ local function iterate_step(keypath, t, parent, options)
         end
         keypath[keypath_index] = nil
     end
-    if is_postorder then coroutine.yield(keypath, t, parent) end
+    if not skip and is_postorder then coroutine.yield(keypath, t, parent) end
 end
 local function iterate(t, options)
     options = options or {}
@@ -205,9 +205,15 @@ local function encode_into(state, t)
     local function append(v) state[#state + 1] = v end
     if type(t) == 'table' then
         local keypath = state.keypath
-        if state[t] ~= nil then return end
-        -- assert(state[t] == nil, string.format("Cycle detected at keypath %s", encode(keypath)))
-        state[t] = true
+        if state[t] ~= nil then
+            if type(state[t]) == 'number' then
+                state.anchor_count = state.anchor_count + 1
+                table.insert(state, state[t], string.format('&%d ', state.anchor_count))
+                state[t] = string.format('*%d', state.anchor_count)
+            end
+            append(state[t])
+            return
+        end
         local compact = state.compact
         if compact and state[#state] == ' ' then state[#state] = nil end
         if state[#state] == ']' then
@@ -215,6 +221,7 @@ local function encode_into(state, t)
         else
             append('[')
         end
+        state[t] = #state + 1
         for i, v in ipairs(t) do
             keypath[#keypath + 1] = i
             encode_into(state, v)
@@ -244,7 +251,7 @@ local function encode_into(state, t)
 end
 
 encode = function(t, compact)
-    local state = { compact = compact, keypath = {} }
+    local state = { compact = compact, keypath = {}, anchor_count = 0 }
     local success, err = pcall(encode_into, state, t)
     if not success then
         return nil, err
@@ -358,6 +365,5 @@ return {
     POSTORDER = POSTORDER,
     TABLE_ONLY = TABLE_ONLY,
     INCLUDE_KV = INCLUDE_KV,
+    SKIP_ROOT = SKIP_ROOT,
 }
-
--- TODO: document stuff
