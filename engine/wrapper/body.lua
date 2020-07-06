@@ -5,7 +5,7 @@ function Body:__index(index)
 end
 
 function Body:init()
-    self.body = love.physics.newWorld(self.world, self.x, self.y, self.type)
+    self.body = love.physics.newBody(self.world, self.x, self.y, self.type)
 end
 
 function Body:release()

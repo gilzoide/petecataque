@@ -5,9 +5,11 @@ Recipe.nestedpath = {'script/%s.nested'}
 
 function Recipe.load(name)
     local recipe = Recipe.tryloadlua(name) or Recipe.tryloadnested(name)
-    assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
-    assertf(recipe[1] == nil or recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
-    return setmetatable(recipe, { __index = Recipe, __call = Recipe.instantiate })
+    if recipe ~= nil then
+        assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
+        assertf(recipe[1] == nil or recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
+        return setmetatable(recipe, { __index = Recipe, __call = Recipe.instantiate })
+    end
 end
 
 function Recipe.tryloadlua(lowername)
@@ -34,7 +36,7 @@ end
 local function instantiate_into(dest, recipe)
     for i = 2, #recipe do
         local t = recipe[i]
-        local constructor = assert(R.recipe[t[1]])
+        local constructor = t[1] and R.recipe[t[1]] or deepcopy
         dest[#dest + 1] = constructor(t)
     end
 end

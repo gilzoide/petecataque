@@ -2,7 +2,7 @@ local log = {}
 
 if DEBUG then 
     function log.warnassert(cond, fmt, ...)
-        if not cond then
+        if not cond and fmt then
             print('WARNING: ' .. string.format(fmt, ...))
         end
         return cond
