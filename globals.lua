@@ -4,6 +4,7 @@ nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
 log = require 'log'
+Expression = require 'expression'
 _ENV = _ENV or getfenv()
 
 METER_BY_PIXEL = 60

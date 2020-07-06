@@ -1,9 +1,10 @@
 Cena2
 
+backgroundColor: [0.4 0.3 0.2]
 circleX: 100
 
 [Graphics [
-    clear 0.4 0.3 0.2;
+    clear $backgroundColor;
     push all;
     setColor: (1, 1, 0)
 ]]

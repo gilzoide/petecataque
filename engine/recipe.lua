@@ -1,5 +1,3 @@
-local Expression = require 'expression'
-
 local Recipe = {}
 
 Recipe.path = {'engine/wrapper/%s.lua', 'script/%s.lua'}
