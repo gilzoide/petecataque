@@ -15,11 +15,17 @@ end
 
 function Expression.new(literal, index_chain)
     local expr = { 'Expression', literal }
+    local callable
+    if type(literal) == 'table' then
+        callable = function(mt)
+            return nested_function.evaluate(literal, mt)
+        end
+    else
+        callable = assert(loadstring_with_env('return ' .. literal, expr))
+    end
     local mt = {
-        __index = function(t, index)
-            return index_first_of(index, index_chain)
-        end,
-        __call = assert(loadstring_with_env('return ' .. literal, expr)),
+        __index = create_index_first_of(index_chain),
+        __call = callable,
     }
     return setmetatable(expr, mt)
 end

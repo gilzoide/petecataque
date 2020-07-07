@@ -29,7 +29,7 @@ function Object.new(recipe, overrides, parent, root_param)
     if overrides then
         for k, v in nested.kpairs(overrides) do
             if type(k) == 'string' and k:sub(1, 1) == '$' then
-                newobj[k] = Expression.new(v, { newobj, root_param })
+                newobj[k] = Expression.new(v, { newobj, root_param, _ENV })
             else
                 if k == 'id' then
                     root[v] = newobj
@@ -45,13 +45,14 @@ function Object.new(recipe, overrides, parent, root_param)
 end
 
 function Object:__index(index)
+    if index == 'self' then return self end
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
     if type(index) == 'string' then
         local value = rawget(self, '$' .. index)
         if value then
-            value = value()
+            value = value(self)
             Object.__newindex(self, index, value)
             return value
         end
@@ -78,6 +79,14 @@ function Object:__pairs()
             end
         end
     end)
+end
+
+function Object:expressionify(field_name, ...)
+    if self[field_name] then
+        local index_chain = { self, self.root, _ENV }
+        table_extend(index_chain, ...)
+        self[field_name] = Expression.new(self[field_name], index_chain)
+    end
 end
 
 return Object

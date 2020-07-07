@@ -35,8 +35,19 @@ function Director.update(dt)
 end
 
 function Director.draw()
+    local pop_list = { {-1} }
     for kp, obj in iterate_scene() do
-        if obj.draw and not obj.hidden then obj:draw() end
+        if #kp <= pop_list[#pop_list][1] then
+            local t = table.remove(pop_list)
+            t[2]:draw_pop()
+        end
+        if not obj.hidden then
+            if obj.draw then obj:draw() end
+            if obj.draw_pop then pop_list[#pop_list + 1] = { #kp, obj } end
+        end
+    end
+    for i = #pop_list, 2, -1 do
+        pop_list[i][2]:draw_pop()
     end
 end
 

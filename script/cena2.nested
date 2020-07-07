@@ -3,14 +3,19 @@ Cena2
 backgroundColor: [0.4 0.3 0.2]
 circleX: 100
 
-[Graphics [
-    clear backgroundColor;
-    push all;
-    setColor 1 1 0;
-    circle \line 10 10 100
-]]
-[Circle $x: `circleX + y` y: 50 mode: fill]
-[Graphics [pop]]
-[Circle $x: circleX y: 150 mode: line]
+[Graphics push: all
+    do: {
+        clear backgroundColor;
+        setColor 1 1 0;
+    }
+
+    [Circle $x: `circleX + y` y: 50 $radius: `20 + 10 * math.sin(TIME)` mode: fill]
+]
+
+[Rectangle x: 500 y: 200 width: 200 $height: `width * 1.5`
+    [Graphics push: transform do: `setColor(1, 0, 0)`
+        [Rectangle x: 10 y: 10 rx: 8]
+    ]
+]
 
 [FPS]

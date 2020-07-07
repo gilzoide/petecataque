@@ -51,6 +51,13 @@ function string.startswith(s, prefix)
     return s:sub(1, #prefix) == prefix
 end
 
+function table_extend(t, ...)
+    for i = 1, select('#', ...) do
+        t[#t + 1] = select(i, ...)
+    end
+    return t
+end
+
 function index_or_create(t, index)
     local value = t[index]
     if value == nil then
@@ -97,7 +104,7 @@ function bind(f, ...)
     return function(...)
         local args = {}
         for i = 1, #bound_args do args[i] = bound_args[i] end
-        for i = 1, select('#', ...) do args[#args + 1] = select(i, ...) end
+        table_extend(args, ...)
         return f(unpack(args))
     end
 end

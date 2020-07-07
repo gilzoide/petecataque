@@ -11,8 +11,10 @@ function love.load()
     -- print(nested.encode(scene))
 end
 
+_ENV.TIME = 0
 function love.update(dt)
     _ENV.dt = dt
+    _ENV.TIME = _ENV.TIME + dt
     Director.update(dt)
     Collisions:reset()
 end
