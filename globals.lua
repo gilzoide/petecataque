@@ -1,8 +1,10 @@
 unpack = unpack or table.unpack
-local __pairs = pairs
+function rawpairs(t)
+    return next, t, nil
+end
 function pairs(t)
     local mt = getmetatable(t)
-    return (mt and mt.__pairs or __pairs)(t)
+    return (mt and mt.__pairs or rawpairs)(t)
 end
 pcall(require, 'DEBUG')  -- DEBUG is excluded on release
 nested = require 'nested'
@@ -30,6 +32,11 @@ function index_first_of(index, index_chain)
     end
     return nil
 end
+function create_index_first_of(index_chain)
+    return function(t, index)
+        return index_first_of(index, index_chain)
+    end
+end
 
 function safeunpack(v)
     if type(v) == 'table' then
@@ -42,10 +49,6 @@ end
 
 function string.startswith(s, prefix)
     return s:sub(1, #prefix) == prefix
-end
-
-function rawpairs(t)
-    return next, t, nil
 end
 
 function index_or_create(t, index)

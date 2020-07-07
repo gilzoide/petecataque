@@ -4,9 +4,10 @@ backgroundColor: [0.4 0.3 0.2]
 circleX: 100
 
 [Graphics [
-    clear $backgroundColor;
+    clear backgroundColor;
     push all;
-    setColor: (1, 1, 0)
+    setColor 1 1 0;
+    circle \line 10 10 100
 ]]
 [Circle $x: `circleX + y` y: 50 mode: fill]
 [Graphics [pop]]
