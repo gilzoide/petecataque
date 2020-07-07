@@ -13,6 +13,15 @@ circleX: 100
 ]
 
 [Rectangle x: 500 y: 200 width: 200 $height: `width * 1.5`
+    [MouseArea 
+        when: {
+            [hover; set parent \width 300]
+            [!hover; set parent \width 200]
+            [pressed; print PRESSED]
+            [released: inside; print \released released]
+        }
+    ]
+
     [Graphics push: transform do: `setColor(1, 0, 0)`
         [Rectangle x: 10 y: 10 rx: 8]
     ]

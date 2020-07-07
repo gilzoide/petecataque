@@ -16,12 +16,14 @@ end
 function Expression.new(literal, index_chain)
     local expr = { 'Expression', literal }
     local callable
-    if type(literal) == 'table' then
+    if type(literal) == 'function' then
+        callable = literal
+    elseif type(literal) == 'string' then
+        callable = assert(loadstring_with_env('return ' .. literal, expr))
+    else
         callable = function(mt)
             return nested_function.evaluate(literal, mt)
         end
-    else
-        callable = assert(loadstring_with_env('return ' .. literal, expr))
     end
     local mt = {
         __index = create_index_first_of(index_chain),

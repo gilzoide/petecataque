@@ -20,6 +20,7 @@ end
 -- Mouse
 function Input.mousemoved(x, y, dx, dy, istouch)
     _ENV.mouse.moved = { x = x, y = y, dx = dx, dy = dy, istouch = istouch }
+    _ENV.mouse.position = { x, y }
     set_next_frame(_ENV.mouse, 'moved', nil)
 end
 

@@ -41,6 +41,12 @@ function Object.new(recipe, overrides, parent, root_param)
     end
 
     if recipe.init then recipe.init(newobj) end
+    if newobj.when then
+        for i = 1, #newobj.when do
+            local t = newobj.when[i]
+            t[2] = newobj:create_expression(t[2])
+        end
+    end
     return newobj
 end
 
@@ -81,12 +87,31 @@ function Object:__pairs()
     end)
 end
 
+function Object:iter_parents()
+    local current = self
+    return function()
+        current = current.parent
+        return current
+    end
+end
+
 function Object:expressionify(field_name, ...)
     if self[field_name] then
-        local index_chain = { self, self.root, _ENV }
-        table_extend(index_chain, ...)
-        self[field_name] = Expression.new(self[field_name], index_chain)
+        local expression = self:create_expression(self[field_name], ...)
+        self[field_name] = expression
+        return expression
     end
+end
+
+function Object:create_expression(v, ...)
+    local index_chain = { self, self.root, _ENV }
+    table_extend(index_chain, ...)
+    return Expression.new(v, index_chain)
+end
+
+function Object:add_when(condition, func)
+    if not self.also_when then self.also_when = {} end
+    self.also_when[#self.also_when + 1] = { condition, self:create_expression(func) }
 end
 
 return Object

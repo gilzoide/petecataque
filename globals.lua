@@ -132,7 +132,9 @@ function deepcopy(value)
 end
 
 key = {}
-mouse = {}
+mouse = {
+    position = {0, 0}
+}
 Input = require 'input'
 
 Scene = require 'scene'.new()

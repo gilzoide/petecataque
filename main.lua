@@ -15,13 +15,15 @@ _ENV.TIME = 0
 function love.update(dt)
     _ENV.dt = dt
     _ENV.TIME = _ENV.TIME + dt
+    Setqueue:update(dt)
     Director.update(dt)
     Collisions:reset()
 end
 
 function love.draw()
+    Setqueue:flip()
     Director.draw()
-    Setqueue:update()
+    Setqueue:frame_ended()
 end
 
 love.mousemoved = Input.mousemoved

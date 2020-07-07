@@ -5,8 +5,7 @@ local function process_events(obj, index)
         for i = 1, #obj[index] do
             local check = obj[index][i]
             if nested_match(obj, check[1]) then
-                local handler = check[2]
-                setfenv(handler, obj)()
+                check[2](obj)
             end
         end
     end

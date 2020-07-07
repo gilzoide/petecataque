@@ -7,10 +7,6 @@ local Rectangle = {
     mode = 'fill',
 }
 
-function Rectangle:init()
-    
-end
-
 function Rectangle:draw()
     love.graphics.push('all')
     if self.mode == 'fill' or self.mode == 'line' then
@@ -25,6 +21,11 @@ end
 
 function Rectangle:draw_pop()
     love.graphics.pop()
+end
+
+function Rectangle:hitTestFromOrigin(x, y)
+    return x >= 0 and x <= self.width
+        and y >= 0 and y <= self.height
 end
 
 return Rectangle
