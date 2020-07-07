@@ -1,4 +1,9 @@
 unpack = unpack or table.unpack
+local __pairs = pairs
+function pairs(t)
+    local mt = getmetatable(t)
+    return (mt and mt.__pairs or __pairs)(t)
+end
 pcall(require, 'DEBUG')  -- DEBUG is excluded on release
 nested = require 'nested'
 nested_function = require 'nested.function'
@@ -15,15 +20,32 @@ get_or_create = nested.get_or_create
 set = nested.set
 set_or_create = nested.set_or_create
 
-function index_first_of(index, ...)
-    for i = 1, select('#', ...) do
-        local t = select(i, ...)
+function index_first_of(index, index_chain)
+    for i = 1, #index_chain do
+        local t = index_chain[i]
         if t then
             local value = t[index]
             if value ~= nil then return value end
         end
     end
     return nil
+end
+
+function safeunpack(v)
+    if type(v) == 'table' then
+        return unpack(v)
+    elseif v ~= nil then
+        return v
+    end
+    -- if v == nil, don't return any values
+end
+
+function string.startswith(s, prefix)
+    return s:sub(1, #prefix) == prefix
+end
+
+function rawpairs(t)
+    return next, t, nil
 end
 
 function index_or_create(t, index)

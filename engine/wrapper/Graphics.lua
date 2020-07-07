@@ -8,7 +8,7 @@ function Graphics:init()
     if self.root ~= self then root = self.root end
     for kp, v in nested.iterate(self) do
         if type(v) == 'string' and v:sub(1, 1) == '$' then
-            local expr = Expression.new(v:sub(2), self, root)
+            local expr = Expression.new(v:sub(2), { self, root })
             set(self, kp, expr)
         end
     end
