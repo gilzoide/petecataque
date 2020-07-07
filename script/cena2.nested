@@ -3,9 +3,9 @@ Cena2
 backgroundColor: [0.4 0.3 0.2]
 circleX: 100
 
+[Graphics do: [clear backgroundColor]]
 [Graphics push: all
     do: {
-        clear backgroundColor;
         setColor 1 1 0;
     }
 
@@ -22,7 +22,7 @@ circleX: 100
         }
     ]
 
-    [Graphics push: transform do: `setColor(1, 0, 0)`
+    [Graphics push: all do: `setColor(1, 0, 0)`
         [Rectangle x: 10 y: 10 rx: 8]
     ]
 ]

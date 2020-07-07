@@ -36,7 +36,7 @@ end
 function Director.draw()
     local pop_list = { {-1} }
     for kp, obj in iterate_scene() do
-        if #kp <= pop_list[#pop_list][1] then
+        while #kp <= pop_list[#pop_list][1] do
             local t = table.remove(pop_list)
             t[2]:draw_pop()
         end
@@ -47,6 +47,10 @@ function Director.draw()
     end
     for i = #pop_list, 2, -1 do
         pop_list[i][2]:draw_pop()
+    end
+    local stackDepth = love.graphics.getStackDepth()
+    if not log.warnassert(stackDepth == 0, "MISSING POP, stackDepth = %d", stackDepth) then
+        for i = 1, stackDepth do love.graphics.pop() end
     end
 end
 
