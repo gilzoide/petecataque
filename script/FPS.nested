@@ -1,0 +1,3 @@
+FPS
+
+[Text $text: `string.format("FPS: %d", love.timer.getFPS())` $limit: WINDOW_WIDTH align: right]
