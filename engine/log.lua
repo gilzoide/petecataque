@@ -5,11 +5,11 @@ if DEBUG then
         if not cond and fmt then
             print('WARNING: ' .. string.format(fmt, ...))
         end
-        return cond
+        return cond, fmt, ...
     end
 else
-    function log.warnassert(cond, fmt, ...)
-        return cond
+    function log.warnassert(...)
+        return ...
     end
 end
 

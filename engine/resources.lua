@@ -31,4 +31,8 @@ function Resources:register_loader(kind, loader)
     })
 end
 
+function Resources:__call(kind, name)
+    return get(self, kind, name)
+end
+
 return Resources

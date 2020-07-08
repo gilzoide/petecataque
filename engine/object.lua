@@ -8,9 +8,20 @@ function Object:typeOf(t)
     return self:type() == t
 end
 
-local function instantiate_into(dest, recipe, root)
-    for i = 2, #recipe do
-        local t = recipe[i]
+local function instantiate_into(dest, src, root_param, index_chain)
+    local root = root_param or dest
+    for k, v in nested.kpairs(src) do
+        if type(k) == 'string' and k:sub(1, 1) == '$' then
+            dest[k] = Expression.new(v, index_chain)
+        elseif k ~= 'init' then
+            if k == 'id' then
+                root[v] = dest
+            end
+            dest[k] = deepcopy(v)
+        end
+    end
+    for i = 2, #src do
+        local t = src[i]
         local constructor = t[1] and R.recipe[t[1]] or deepcopy
         dest[#dest + 1] = constructor(t, dest, root)
     end
@@ -24,23 +35,14 @@ function Object.new(recipe, overrides, parent, root_param)
         __root = root_param,
         __index_chain = { recipe, Object }
     }, Object)
-    local root = root_param or newobj
-    instantiate_into(newobj, recipe, root)
+    local index_chain = { newobj, root_param, _ENV }
+    instantiate_into(newobj, recipe, root_param, index_chain)
     if overrides then
-        for k, v in nested.kpairs(overrides) do
-            if type(k) == 'string' and k:sub(1, 1) == '$' then
-                newobj[k] = Expression.new(v, { newobj, root_param, _ENV })
-            else
-                if k == 'id' then
-                    root[v] = newobj
-                end
-                newobj[k] = deepcopy(v)
-            end
-        end
-        instantiate_into(newobj, overrides, root)
+        instantiate_into(newobj, overrides, root_param, index_chain)
     end
 
-    if recipe.init then recipe.init(newobj) end
+    if recipe.init then Expression.call(recipe.init, index_chain, newobj) end
+    if overrides and overrides.init then Expression.call(overrides.init, index_chain, newobj) end
     if newobj.when then
         for i = 1, #newobj.when do
             local t = newobj.when[i]

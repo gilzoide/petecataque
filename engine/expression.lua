@@ -14,15 +14,16 @@ else
 end
 
 function Expression.new(literal, index_chain)
+    if not literal then return log.warnassert(nil, 'Expression literal is falsey') end
     local expr = { 'Expression', literal }
     local callable
     if type(literal) == 'function' then
-        callable = literal
+        callable = function(mt, ...) return literal(...) end
     elseif type(literal) == 'string' then
         callable = assert(loadstring_with_env('return ' .. literal, expr))
     else
-        callable = function(mt)
-            return nested_function.evaluate(literal, mt)
+        callable = function(mt, ...)
+            return nested_function.evaluate(literal, mt, ...)
         end
     end
     local mt = {
@@ -30,6 +31,11 @@ function Expression.new(literal, index_chain)
         __call = callable,
     }
     return setmetatable(expr, mt)
+end
+
+function Expression.call(literal, index_chain, ...)
+    local expr = Expression.new(literal, index_chain)
+    return expr and expr(...)
 end
 
 return Expression

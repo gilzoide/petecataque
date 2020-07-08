@@ -109,16 +109,6 @@ function bind(f, ...)
     end
 end
 
-function is_callable(v)
-    local vtype = type(v)
-    if vtype == 'table' then
-        local mt = getmetatable(v)
-        return mt and type(mt.__call) == 'function'
-    else
-        return vtype == 'function'
-    end
-end
-
 function deepcopy(value)
     if type(value) == 'table' then
         local newvalue = {}
