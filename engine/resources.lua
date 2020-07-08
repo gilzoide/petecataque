@@ -1,11 +1,20 @@
 local Resources = {}
 Resources.__index = Resources
 
+local function loader_with_nested(loader)
+    return function(s)
+        local t = nested.decode(s, nested.bool_number_filter)
+        if t then return loader(unpack(t))
+        else return loader(s) end
+    end
+end
+
 function Resources.new()
     local resources = setmetatable({}, Resources)
 
     resources:register_loader('recipe', require 'recipe'.load)
-    resources:register_loader('image', love.graphics.newImage)
+    resources:register_loader('image', loader_with_nested(love.graphics.newImage))
+    resources:register_loader('font', loader_with_nested(love.graphics.newFont))
 
     return resources
 end
