@@ -37,7 +37,7 @@ circleX: 100
         [CircleShape radius: 50 drawmode: fill]
         [EdgeShape points: [50 0 60 0] drawmode: line]
         [Graphics push: all do: [setColor 0 0 0]
-            [PolygonShape points: [0 0, -70 0, 0 -70] loop: false drawmode: fill]
+            [PolygonShape points: [0 0, -70 0, 0 -70] drawmode: fill]
         ]
         [ChainShape points: [0 0, -80 0, 0 -80] loop: false drawmode: line]
         [RectangleShape x: 70 y: 70 width: 100 height: 200 drawmode: fill]

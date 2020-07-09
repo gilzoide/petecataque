@@ -1,7 +1,7 @@
 local Object = {}
 
 Object.GET_METHOD_PREFIX = '$'
-Object.SET_METHOD_PREFIX = '$set'
+Object.SET_METHOD_PREFIX = '$set '
 
 function Object:type()
     return self[1]
@@ -88,7 +88,7 @@ function Object:__newindex(index, value)
     if type(index) == 'string' then
         if index:match('^[^_$]') then
             local set_method = rawget_self_or_recipe(self, Object.SET_METHOD_PREFIX .. index)
-            if set_method then return set_method(self, value) end
+            if set_method and set_method(self, value) then return end
             index = '_' .. index
         end
     end

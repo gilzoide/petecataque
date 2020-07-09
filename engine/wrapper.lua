@@ -37,11 +37,12 @@ function wrapper.new(name, getters, setters, othermethods)
         recipe[setter_name] = function(self, value)
             local wrapped = self.__wrapped
             if wrapped then
-                return wrapped[setter](wrapped, safeunpack(value))
+                wrapped[setter](wrapped, safeunpack(value))
             else
                 if not self._wrapped_defer then self._wrapped_defer = {} end
                 self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
             end
+            return true
         end
     end
 
