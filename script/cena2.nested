@@ -16,7 +16,7 @@ circleX: 100
 ]
 
 [Graphics push: all do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
-    [Rectangle width: 200 $height: `width * 1.1`
+    [Rectangle width: 200 $height: `width * 1.1` anchorPoint: [-50 0.5]
         [MouseArea 
             when: {
                 [hover; set parent \width 300]
@@ -27,7 +27,7 @@ circleX: 100
         ]
 
         [Graphics push: all do: `setColor(1, 0, 0)`
-            [Rectangle x: 10 y: 10 rx: 8]
+            [Rectangle x: 10 y: 10 rx: 8 drawmode: line]
         ]
     ]
 ]

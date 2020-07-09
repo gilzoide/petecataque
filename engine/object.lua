@@ -2,6 +2,7 @@ local Object = {}
 
 Object.GET_METHOD_PREFIX = '$'
 Object.SET_METHOD_PREFIX = '$set '
+Object.SET_METHOD_NO_RAWSET = 'SET_METHOD_NO_RAWSET'
 
 function Object:type()
     return self[1]
@@ -88,7 +89,12 @@ function Object:__newindex(index, value)
     if type(index) == 'string' then
         if index:match('^[^_$]') then
             local set_method = rawget_self_or_recipe(self, Object.SET_METHOD_PREFIX .. index)
-            if set_method and set_method(self, value) then return end
+            if set_method then
+                local result = set_method(self, value)
+                if result == Object.SET_METHOD_NO_RAWSET then return
+                elseif result ~= nil then value = result
+                end
+            end
             index = '_' .. index
         end
     end
@@ -129,6 +135,18 @@ function Object:first_parent_of(typename)
             return p
         end
     end
+end
+
+function Object:iter_children()
+    local i = 1
+    return function()
+        i = i + 1
+        return self[i]
+    end
+end
+function Object:child_count()
+    assert(#self >= 1, "FIXME object with '< 1' children")
+    return #self - 1
 end
 
 function Object:expressionify(field_name, ...)

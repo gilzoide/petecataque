@@ -42,7 +42,7 @@ function wrapper.new(name, getters, setters, othermethods)
                 if not self._wrapped_defer then self._wrapped_defer = {} end
                 self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
             end
-            return true
+            return Object.SET_METHOD_NO_RAWSET
         end
     end
 
