@@ -9,7 +9,7 @@ local ChainShape = wrapper.new('ChainShape', {
     'getPoint', 'computeAABB', 'computeMass', 'rayCast', 'testPoint',
 })
 
-ChainShape.points = { 0, 0, 0, 1 }
+ChainShape.points = { 0,0, 0,1 }
 ChainShape.loop = true
 
 function ChainShape:create_wrapped()
