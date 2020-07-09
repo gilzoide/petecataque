@@ -42,15 +42,13 @@ function Object.new(recipe, overrides, parent, root_param)
     local index_chain = { newobj, root_param, _ENV }
     local root = root_param or newobj
     copy_into(newobj, recipe, root, index_chain)
+    copy_into(newobj, overrides, root, index_chain)
     if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
     instantiate_into(newobj, recipe, root)
-    if overrides then
-        copy_into(newobj, overrides, root, index_chain)
-        instantiate_into(newobj, overrides, root)
-    end
+    instantiate_into(newobj, overrides, root)
 
     if recipe.init then Expression.call(recipe.init, index_chain, newobj) end
-    if overrides and overrides.init then Expression.call(overrides.init, index_chain, newobj) end
+    if overrides.init then Expression.call(overrides.init, index_chain, newobj) end
     if newobj.when then
         for i = 1, #newobj.when do
             local t = newobj.when[i]

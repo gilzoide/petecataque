@@ -35,6 +35,7 @@ circleX: 100
 [World gravity: [0 100]
     [Body x: 100 y: 100 type: dynamic
         [CircleShape radius: 50 drawmode: fill]
+        [EdgeShape points: [50 0 60 0] drawmode: line]
     ]
 ]
 
