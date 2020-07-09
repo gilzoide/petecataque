@@ -1,6 +1,7 @@
 require 'globals'
 
 function love.load()
+    DEBUG.starttimer('load')
     -- Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
     -- local scene = CenaPeteca()
     -- addtoscene(scene)
@@ -9,6 +10,7 @@ function love.load()
     addtoscene(scene)
 
     -- print(nested.encode(scene))
+    DEBUG.reporttimer('load')
 end
 
 _ENV.TIME = 0

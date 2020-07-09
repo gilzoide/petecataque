@@ -1,6 +1,6 @@
 local log = {}
 
-if DEBUG then 
+if DEBUG.enabled then 
     function log.warnassert(cond, fmt, ...)
         if not cond and fmt then
             print('WARNING: ' .. string.format(fmt, ...))

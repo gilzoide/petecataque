@@ -4,12 +4,7 @@ local MouseArea = {
 }
 
 function MouseArea:init()
-    for p in self:iter_parents() do
-        if p.hitTestFromOrigin then
-            self.target = p
-            break
-        end
-    end
+    self.target = self:first_parent_with('hitTestFromOrigin')
     if not log.warnassert(self.target, "Couldn't find hitTestFromOrigin in MouseArea parent") then
         rawset(self, 'draw', false)
     end

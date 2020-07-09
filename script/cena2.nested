@@ -15,18 +15,26 @@ circleX: 100
     [Circle $x: `circleX + y` y: 50 $radius: `20 + 10 * math.sin(TIME)` mode: fill]
 ]
 
-[Rectangle x: 300 y: 200 width: 200 $height: `width * 1.1`
-    [MouseArea 
-        when: {
-            [hover; set parent \width 300]
-            [!hover; set parent \width 200]
-            [pressed; print PRESSED]
-            [released: inside; print \released released]
-        }
-    ]
+[Graphics push: all do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
+    [Rectangle width: 200 $height: `width * 1.1`
+        [MouseArea 
+            when: {
+                [hover; set parent \width 300]
+                [!hover; set parent \width 200]
+                [pressed; print PRESSED]
+                [released: inside; print \released released]
+            }
+        ]
 
-    [Graphics push: all do: `setColor(1, 0, 0)`
-        [Rectangle x: 10 y: 10 rx: 8]
+        [Graphics push: all do: `setColor(1, 0, 0)`
+            [Rectangle x: 10 y: 10 rx: 8]
+        ]
+    ]
+]
+
+[World gravity: [0 100]
+    [Body x: 100 y: 100 type: dynamic
+        [CircleShape radius: 50 drawmode: fill]
     ]
 ]
 

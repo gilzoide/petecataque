@@ -11,7 +11,7 @@ function Recipe.load(name)
         assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
         assertf(recipe[1] == nil or recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
         return setmetatable(recipe, {
-            __index = Recipe,
+            __index = recipe.__index,
             __call = Object.new
         })
     end

@@ -5,7 +5,7 @@ function Input.keypressed(key, scancode, isrepeat)
     local info = { pressed = true, scancode = scancode, isrepeat = isrepeat }
     _ENV.key[key] = info
     set_next_frame(info, 'pressed', nil)
-    if DEBUG and key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
+    if DEBUG.enabled and key == 'd' and love.keyboard.isDown('lctrl', 'rctrl') then
         dump_state()
         print()
     end

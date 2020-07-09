@@ -1,4 +1,6 @@
-love.filesystem.setRequirePath('?.lua;?/init.lua;engine/?.lua;engine/?/init.lua;lib/?.lua;lib/?/init.lua')
+if love.filesystem then
+    love.filesystem.setRequirePath('?.lua;?/init.lua;engine/?.lua;engine/?/init.lua;lib/?.lua;lib/?/init.lua')
+end
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -21,7 +23,7 @@ function love.conf(t)
         description = nil,        -- The project description (string)
         homepage = 'https://github.com/gilzoide/love-nested-test-game',           -- The project homepage (string)
         identifier = 'com.gilzoide.petecataque',         -- The project Uniform Type Identifier (string)
-        excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'DEBUG.lua'},     -- File patterns to exclude. (string list)
+        excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'DEBUG.lua', 'engine/*.md'},     -- File patterns to exclude. (string list)
         releaseDirectory = 'release',   -- Where to store the project releases (string)
     }
 end

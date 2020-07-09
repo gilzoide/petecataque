@@ -6,7 +6,11 @@ function pairs(t)
     local mt = getmetatable(t)
     return (mt and mt.__pairs or rawpairs)(t)
 end
-pcall(require, 'DEBUG')  -- DEBUG is excluded on release
+do
+    local success, m = pcall(require, 'DEBUG')  -- DEBUG is excluded on release
+    DEBUG = success and m or setmetatable({ enabled = false }, require 'empty')
+    assert(DEBUG.enabled ~= nil, "FIXME")
+end
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_match = require 'nested.match'
@@ -33,7 +37,7 @@ function index_first_of(index, index_chain)
     return nil
 end
 function create_index_first_of(index_chain)
-    return function(t, index)
+    return index_chain and function(t, index)
         return index_first_of(index, index_chain)
     end
 end
@@ -45,6 +49,13 @@ function safeunpack(v)
         return v
     end
     -- if v == nil, don't return any values
+end
+function safepack(...)
+    if select('#', ...) > 1 then
+        return {...}
+    else
+        return ...
+    end
 end
 
 function string.startswith(s, prefix)
