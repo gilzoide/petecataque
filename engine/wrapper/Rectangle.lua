@@ -15,6 +15,7 @@ local function anchor_position(self)
 end
 
 Rectangle.draw_push = 'transform'
+
 function Rectangle:draw()
     local ax, ay = anchor_position(self)
     local x, y = self.x - ax, self.y - ay

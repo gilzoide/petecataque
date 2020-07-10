@@ -14,10 +14,21 @@ function Recipe.load(name)
     if recipe ~= nil then
         assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
         assertf(recipe[1] == nil or recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
+        Recipe.preprocess(recipe)
         return setmetatable(recipe, {
             __index = recipe.__index,
             __call = Object.new
         })
+    end
+end
+
+function Recipe.preprocess(recipe)
+    for kp, v, parent in nested.iterate(recipe, { include_kv = true }) do
+        local key = kp[#kp]
+        local is_init_or_update = key == 'init' or key == 'update'
+        if is_init_or_update or Object.IS_GET_METHOD_PREFIX(key) then
+            parent[key] = Expression.template(v, is_init_or_update)
+        end
     end
 end
 

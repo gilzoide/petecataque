@@ -4,6 +4,16 @@ Object.GET_METHOD_PREFIX = '$'
 Object.SET_METHOD_PREFIX = '$set '
 Object.SET_METHOD_NO_RAWSET = 'SET_METHOD_NO_RAWSET'
 
+function Object.IS_GET_OR_SET_METHOD_PREFIX(v)
+    return type(v) == 'string' and v:startswith(Object.GET_METHOD_PREFIX)
+end
+function Object.IS_GET_METHOD_PREFIX(v)
+    return Object.IS_GET_OR_SET_METHOD_PREFIX(v) and not v:startswith(Object.SET_METHOD_PREFIX)
+end
+function Object.IS_SET_METHOD_PREFIX(v)
+    return Object.IS_GET_OR_SET_METHOD_PREFIX(v) and v:startswith(Object.SET_METHOD_PREFIX)
+end
+    
 function Object:type()
     return self[1]
 end
@@ -14,8 +24,8 @@ end
 
 local function copy_into(dest, src, root, index_chain)
     for k, v in nested.kpairs(src) do
-        if type(k) == 'string' and k:startswith(Object.GET_METHOD_PREFIX) then
-            dest[k] = Expression.new(v, index_chain)
+        if k == 'update' or Object.IS_GET_OR_SET_METHOD_PREFIX(k) then
+            dest[k] = Expression.instantiate(v, index_chain)
         elseif k ~= 'init' then
             if k == 'id' then
                 root[v] = dest
@@ -26,8 +36,8 @@ local function copy_into(dest, src, root, index_chain)
 end
 local function copy_expression_only_into(dest, src, root, index_chain)
     for k, v in nested.kpairs(src) do
-        if type(k) == 'string' and k:startswith(Object.GET_METHOD_PREFIX) then
-            dest[k] = Expression.new(v, index_chain)
+        if Object.IS_GET_OR_SET_METHOD_PREFIX(k) then
+            dest[k] = Expression.instantiate(v, index_chain)
         end
     end
 end
@@ -45,9 +55,9 @@ function Object.new(recipe, overrides, parent, root_param)
         __recipe = recipe,
         __parent = parent,
         __root = root_param,
-        __index_chain = { recipe, Object }
+        __index_chain = { recipe, Object },
     }, Object)
-    local index_chain = { newobj, root_param, _ENV }
+    local index_chain = { _ENV, newobj, root_param }
     local root = root_param or newobj
     copy_expression_only_into(newobj, recipe, root, index_chain)
     copy_into(newobj, overrides, root, index_chain)
@@ -78,12 +88,16 @@ function Object:__index(index)
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
     if type(index) == 'string' then
-        local expr = rawget_self_or_recipe(self, Object.GET_METHOD_PREFIX .. index)
-        if expr then
-            local value = expr(self)
-            if value ~= nil then
-                Object.__newindex(self, index, value)
-                return value
+        if rawget(self, '__indexing') ~= index then
+            local expr = rawget_self_or_recipe(self, Object.GET_METHOD_PREFIX .. index)
+            if expr then
+                rawset(self, '__indexing', index) -- avoid infinite recursion
+                local value = expr(self)
+                rawset(self, '__indexing', nil)
+                if value ~= nil then
+                    Object.__newindex(self, index, value)
+                    return value
+                end
             end
         end
         local value = rawget(self, '_' .. index)
@@ -116,12 +130,13 @@ function Object:__pairs()
     return coroutine.wrap(function()
         for k, v in rawpairs(self) do
             if type(k) == 'string' then
-                if k:match('^_[^_]') then
-                    coroutine.yield(k:sub(2), v)
+                if k:startswith('__') or k:startswith('$') then
+                    k = nil
+                elseif k:startswith('_') then
+                    k = k:sub(2)
                 end
-            else
-                coroutine.yield(k, v)
             end
+            if k then coroutine.yield(k, v) end
         end
     end)
 end
