@@ -5,15 +5,6 @@ init: {
     love.graphics.setFont font;
     love.graphics.setBackgroundColor 0.4 0.3 0.2;
 }
-circleX: 100
-
-[Graphics push: all
-    do: {
-        setColor 1 1 0;
-    }
-
-    [Circle $x: `circleX + y` y: 50 $radius: `20 + 10 * math.sin(TIME)` mode: fill]
-]
 
 [Graphics do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
     [Rectangle width: 200 $height: `width * 1.1` anchorPoint: [-50 0.5]
@@ -28,6 +19,7 @@ circleX: 100
 
         [Graphics do: `setColor(1, 0, 0)`
             [Rectangle x: 10 y: 10 rx: 8 drawmode: line]
+            [Text x: 12 y: 12 text: OLARS]
         ]
     ]
 ]
