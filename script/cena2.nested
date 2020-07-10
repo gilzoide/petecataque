@@ -1,12 +1,12 @@
 Cena2
 
-$font: `R.font['Gontserrat-Medium.ttf 14']`
+!font: [R font 'Gontserrat-Medium.ttf 14']
 init: {
     love.graphics.setFont font;
     love.graphics.setBackgroundColor 0.4 0.3 0.2;
 }
 
-[Graphics do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
+[Transform x: 300 y: 200 update: `self:rotate(dt)`
     [Rectangle width: 200 $height: `width * 1.1` anchorPoint: [-50 0.5]
         [MouseArea 
             when: {

@@ -1,3 +1,5 @@
+local Object = require 'object'
+
 local Expression = {}
 
 local loadstring_with_env
@@ -16,43 +18,53 @@ end
 local loadstring = loadstring or load
 local nested_function_evaluate = nested_function.evaluate
 
-function Expression.is_expression(v)
-    return type(v) == 'table' and v[1] == 'Expression'
+function Expression.is_expression_template(v)
+    return type(v) == 'table' and v.__expression
+end
+
+local function call_expression_literal(expr, ...)
+    return nested_function_evaluate(expr[2], expr, ...)
+end
+
+local function call_expression_self(expr, ...)
+    return nested_function_evaluate(expr, expr, ...)
+end
+
+function Expression.empty_template()
+    local template = { __call = call_expression_self, __pairs = Object.__pairs }
+    template.__expression = template
+    return setmetatable(template, template)
 end
 
 function Expression.template(literal, no_return)
-    if not literal then return log.warnassert(nil, 'Expression literal is falsey')
-    elseif type(literal) == 'function' then return literal
-    end
+    if type(literal) == 'function' or Expression.is_expression_template(literal) then return literal end
 
-    local expr = { 'Expression', literal }
+    local template = { 'Expression', literal, __expression = literal, __pairs = Object.__pairs }
     if type(literal) == 'string' then
         if not no_return then
             literal = 'return ' .. literal
         end
         local chunk = assert(loadstring(literal))
-        expr.callable = function(expr, ...)
+        template.__call = function(expr, ...)
             return setfenv(chunk, expr)()
         end
     else
-        expr.callable = function(expr, ...)
-            return nested_function_evaluate(expr[2], expr, ...)
-        end
+        template.__call = call_expression_literal
     end
 
-    return expr
+    return setmetatable(template, template)
 end
 
 function Expression.instantiate(template, index_chain)
     if type(template) == 'function' then return template end
-    assertf(Expression.is_expression(template), "FIXME invalid expression template %q", nested.encode(template))
+    assertf(Expression.is_expression_template(template), "FIXME invalid expression template %q", nested.encode(template))
 
-    local expr = { 'Expression', template[2] }
-    local mt = {
+    local expr = { 'Expression', template.__expression,
         __index = create_index_first_of(index_chain),
-        __call = template.callable,
+        __call = template.__call,
+        __pairs = template.__pairs,
     }
-    return setmetatable(expr, mt)
+    return setmetatable(expr, expr)
 end
 
 function Expression.new(literal, index_chain)
