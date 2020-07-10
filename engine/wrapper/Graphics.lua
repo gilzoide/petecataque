@@ -1,6 +1,4 @@
-local Graphics = {
-    'Graphics',
-}
+local Graphics = {'Graphics'}
 
 function Graphics:init()
     self:expressionify('do', love.graphics)

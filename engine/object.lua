@@ -158,7 +158,7 @@ function Object:expressionify(field_name, ...)
 end
 
 function Object:create_expression(v, ...)
-    local index_chain = { self, self.root, _ENV }
+    local index_chain = { _ENV, self, self.root }
     table_extend(index_chain, ...)
     return Expression.new(v, index_chain)
 end
@@ -166,6 +166,11 @@ end
 function Object:add_when(condition, func)
     if not self.also_when then self.also_when = {} end
     self.also_when[#self.also_when + 1] = { condition, self:create_expression(func) }
+end
+
+function Object:enable_method(method_name, enable)
+    rawset(self, method_name, enable and nil)
+    return enable
 end
 
 return Object

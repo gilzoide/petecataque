@@ -32,6 +32,15 @@ circleX: 100
     ]
 ]
 
+[Sprite texture: icon.png x: 500 y: 400
+    [MouseArea 
+        when: {
+            [hover; set parent sx 2]
+            [!hover; unset parent sx]
+        }
+    ]
+]
+
 [World gravity: [0 100]
     [Body x: 100 y: 100 type: dynamic
         [CircleShape radius: 50 drawmode: fill]

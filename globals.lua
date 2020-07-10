@@ -25,6 +25,10 @@ get = nested.get
 get_or_create = nested.get_or_create
 set = nested.set
 set_or_create = nested.set_or_create
+function unset(obj, ...)
+    local kp = select('#', ...) > 1 and {...} or ...
+    set(obj, kp, nil)
+end
 
 function index_first_of(index, index_chain)
     for i = 1, #index_chain do
