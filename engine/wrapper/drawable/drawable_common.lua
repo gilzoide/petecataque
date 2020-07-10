@@ -6,25 +6,14 @@ function drawable_common.disable_draw_if_nil(self, drawable)
     end
 end
 
-function drawable_common.disable_pop_if_no_children(self)
-    self:enable_method('draw_pop', self:child_count() > 0)
-end
-
 function drawable_common.draw(self)
     local transform = love.math.newTransform(self.x, self.y, self.r, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
+    love.graphics.applyTransform(transform)
     if self.quad then
-        love.graphics.draw(self.drawable, self.quad, transform)
+        love.graphics.draw(self.drawable, self.quad)
     else
-        love.graphics.draw(self.drawable, transform)
+        love.graphics.draw(self.drawable)
     end
-    if self.draw_pop then
-        love.graphics.push('transform')
-        love.graphics.applyTransform(transform)
-    end
-end
-
-function drawable_common.draw_pop(self)
-    love.graphics.pop()
 end
 
 function drawable_common.hitTestFromOrigin(self, x, y)

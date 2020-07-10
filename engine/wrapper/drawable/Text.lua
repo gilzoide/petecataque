@@ -1,3 +1,5 @@
+local drawable_common = require 'wrapper.drawable.drawable_common'
+
 local Text = {
     'Text',
     x = 0, y = 0,

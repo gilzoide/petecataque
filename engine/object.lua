@@ -16,11 +16,18 @@ local function copy_into(dest, src, root, index_chain)
     for k, v in nested.kpairs(src) do
         if type(k) == 'string' and k:startswith(Object.GET_METHOD_PREFIX) then
             dest[k] = Expression.new(v, index_chain)
-        elseif k ~= 'init' and type(v) ~= 'function' then
+        elseif k ~= 'init' then
             if k == 'id' then
                 root[v] = dest
             end
             dest[k] = deepcopy(v)
+        end
+    end
+end
+local function copy_expression_only_into(dest, src, root, index_chain)
+    for k, v in nested.kpairs(src) do
+        if type(k) == 'string' and k:startswith(Object.GET_METHOD_PREFIX) then
+            dest[k] = Expression.new(v, index_chain)
         end
     end
 end
@@ -42,7 +49,7 @@ function Object.new(recipe, overrides, parent, root_param)
     }, Object)
     local index_chain = { newobj, root_param, _ENV }
     local root = root_param or newobj
-    copy_into(newobj, recipe, root, index_chain)
+    copy_expression_only_into(newobj, recipe, root, index_chain)
     copy_into(newobj, overrides, root, index_chain)
     if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
     instantiate_into(newobj, recipe, root)
@@ -86,7 +93,11 @@ function Object:__index(index)
 end
 
 function Object:__newindex(index, value)
-    if type(index) == 'string' then
+    if index == 'draw_push' then
+        local valid = value == 'all' or value == 'transform'
+        value = valid and value
+        index = '_' .. index
+    elseif type(index) == 'string' then
         if index:match('^[^_$]') then
             local set_method = rawget_self_or_recipe(self, Object.SET_METHOD_PREFIX .. index)
             if set_method then
@@ -169,7 +180,7 @@ function Object:add_when(condition, func)
 end
 
 function Object:enable_method(method_name, enable)
-    rawset(self, method_name, enable and nil)
+    rawset(self, method_name, (enable or false) and nil)
     return enable
 end
 

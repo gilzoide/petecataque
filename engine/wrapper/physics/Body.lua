@@ -21,6 +21,8 @@ local Body = wrapper.new('Body', {
     'getWorldVector', 'isTouching', 'resetMassData',
 })
 
+Body.draw_push = 'transform'
+
 function Body:create_wrapped()
     local world = log.warnassert(self:first_parent_of('World'), "Couldn't find World in Body parent")
     if world then
@@ -29,12 +31,7 @@ function Body:create_wrapped()
 end
 
 function Body:draw()
-    love.graphics.push('transform')
     love.graphics.replaceTransform(love.math.newTransform(self.x, self.y, self.angle))
-end
-
-function Body:draw_pop()
-    love.graphics.pop()
 end
 
 Body["$body"] = wrapper.get_wrapped

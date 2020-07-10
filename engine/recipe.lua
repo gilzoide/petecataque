@@ -2,7 +2,11 @@ local Object = require 'object'
 
 local Recipe = {}
 
-Recipe.path = {'engine/wrapper/%s.lua', 'script/%s.lua'}
+Recipe.path = {
+    'engine/wrapper/%s.lua', 'engine/wrapper/drawable/%s.lua', 
+    'engine/wrapper/graphics/%s.lua', 'engine/wrapper/physics/%s.lua',
+    'script/%s.lua'
+}
 Recipe.nestedpath = {'script/%s.nested'}
 
 function Recipe.load(name)

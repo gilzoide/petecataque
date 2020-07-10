@@ -15,7 +15,7 @@ circleX: 100
     [Circle $x: `circleX + y` y: 50 $radius: `20 + 10 * math.sin(TIME)` mode: fill]
 ]
 
-[Graphics push: all do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
+[Graphics do: [translate 300 200; rotate rotation] $rotation: `rotationSpeed * TIME` rotationSpeed: 0.5
     [Rectangle width: 200 $height: `width * 1.1` anchorPoint: [-50 0.5]
         [MouseArea 
             when: {
@@ -26,7 +26,7 @@ circleX: 100
             }
         ]
 
-        [Graphics push: all do: `setColor(1, 0, 0)`
+        [Graphics do: `setColor(1, 0, 0)`
             [Rectangle x: 10 y: 10 rx: 8 drawmode: line]
         ]
     ]

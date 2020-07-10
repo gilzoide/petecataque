@@ -14,8 +14,8 @@ local function anchor_position(self)
     return x, y
 end
 
+Rectangle.draw_push = 'transform'
 function Rectangle:draw()
-    love.graphics.push('all')
     local ax, ay = anchor_position(self)
     local x, y = self.x - ax, self.y - ay
     if self.drawmode == 'fill' or self.drawmode == 'line' then
@@ -26,10 +26,6 @@ function Rectangle:draw()
         end
     end
     love.graphics.translate(x, y)
-end
-
-function Rectangle:draw_pop()
-    love.graphics.pop()
 end
 
 function Rectangle:hitTestFromOrigin(x, y)
