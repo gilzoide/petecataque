@@ -11,8 +11,10 @@ local World = wrapper.new('World', {
     'destroy', 'queryBoundingBox', 'rayCast', 'translateOrigin', 'update',
 })
 
+World.gravity = {0, 0}
+
 function World:create_wrapped()
-    local world = love.physics.newWorld(self.xg, self.yg, self.sleep)
+    local world = love.physics.newWorld()
     world:setCallbacks(
         bind(Collisions.onBeginContact, Collisions),
         bind(Collisions.onEndContact, Collisions),
@@ -22,6 +24,20 @@ function World:create_wrapped()
     return world
 end
 
+World["$xg"] = function(self)
+    return self.gravity[1]
+end
+World["$yg"] = function(self)
+    return self.gravity[2]
+end
+World["$set xg"] = function(self, xg)
+    local gravity = self.gravity
+    self.gravity = { xg, gravity[2] }
+end
+World["$set yg"] = function(self, yg)
+    local gravity = self.gravity
+    self.gravity = { gravity[1], yg }
+end
 World["$world"] = wrapper.get_wrapped
 
 return World

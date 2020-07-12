@@ -9,6 +9,9 @@ local Transform = wrapper.new('Transform', {
     'reset', 'rotate', 'scale', 'shear', 'transformPoint', 'translate',
 })
 
+Transform.x = 0
+Transform.y = 0
+
 function Transform:create_wrapped()
     local transform = love.math.newTransform(self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
     self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky = nil, nil, nil, nil, nil, nil, nil, nil, nil

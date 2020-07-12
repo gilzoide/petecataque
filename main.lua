@@ -1,15 +1,16 @@
 require 'globals'
 
-function love.load()
+function love.load(arg)
     DEBUG.starttimer('load')
     -- Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
     -- local scene = CenaPeteca()
     -- addtoscene(scene)
     
-    local scene = R.recipe.Cena2 { id = 'root' }
+    local initial_scene = arg[1] or 'Cena2'
+    local scene = assert(R.recipe[initial_scene])()
     addtoscene(scene)
 
-    -- print(nested.encode(scene))
+    print(nested.encode(scene))
     DEBUG.reporttimer('load')
 end
 

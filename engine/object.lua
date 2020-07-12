@@ -8,14 +8,14 @@ Object.SET_METHOD_NO_RAWSET = 'SET_METHOD_NO_RAWSET'
 function Object.IS_SPECIAL_METHOD_PREFIX(v)
     if type(v) == 'string' then
         if v:startswith(Object.SET_METHOD_PREFIX) then
-            return 'set'
+            return 'set', v:sub(#Object.SET_METHOD_PREFIX + 1)
         elseif v:startswith(Object.GET_METHOD_PREFIX) then
-            return 'get'
+            return 'get', v:sub(#Object.GET_METHOD_PREFIX + 1)
         elseif v:startswith(Object.GET_ONCE_METHOD_PREFIX) then
-            return 'once'
+            return 'once', v:sub(#Object.GET_ONCE_METHOD_PREFIX + 1)
         end
     end
-    return false
+    return false, v
 end
     
 function Object:type()
@@ -27,14 +27,15 @@ function Object:typeOf(t)
 end
 
 local function copy_into(dest, src, root, index_chain, defer_index_once)
+    local special
     for k, v in nested.kpairs(src) do
-        local getset = Object.IS_SPECIAL_METHOD_PREFIX(k)
-        if getset == 'get' then
-            dest.__index_expression[k:sub(#Object.GET_METHOD_PREFIX + 1)] = Expression.instantiate(v, index_chain)
-        elseif getset == 'set' then
-            dest.__newindex_expression[k:sub(#Object.SET_METHOD_PREFIX + 1)] = Expression.instantiate(v, index_chain)
-        elseif getset == 'once' then
-            defer_index_once[#defer_index_once + 1] = { k:sub(#Object.GET_ONCE_METHOD_PREFIX + 1), v }
+        special, k = Object.IS_SPECIAL_METHOD_PREFIX(k)
+        if special == 'get' then
+            dest.__index_expression[k] = Expression.instantiate(v, index_chain)
+        elseif special == 'set' then
+            dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
+        elseif special == 'once' then
+            defer_index_once[#defer_index_once + 1] = { k, v }
         elseif k == 'update' then
             dest[k] = Expression.instantiate(v, index_chain)
         else
@@ -46,14 +47,15 @@ local function copy_into(dest, src, root, index_chain, defer_index_once)
     end
 end
 local function copy_expression_only_into(dest, src, root, index_chain, defer_index_once)
+    local special
     for k, v in nested.kpairs(src) do
-        local getset = Object.IS_SPECIAL_METHOD_PREFIX(k)
-        if getset == 'get' then
-            dest.__index_expression[k:sub(#Object.GET_METHOD_PREFIX + 1)] = Expression.instantiate(v, index_chain)
-        elseif getset == 'set' then
-            dest.__newindex_expression[k:sub(#Object.SET_METHOD_PREFIX + 1)] = Expression.instantiate(v, index_chain)
-        elseif getset == 'once' then
-            defer_index_once[#defer_index_once + 1] = { k:sub(#Object.GET_ONCE_METHOD_PREFIX + 1), v }
+        special, k = Object.IS_SPECIAL_METHOD_PREFIX(k)
+        if special == 'get' then
+            dest.__index_expression[k] = Expression.instantiate(v, index_chain)
+        elseif special == 'set' then
+            dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
+        elseif special == 'once' then
+            defer_index_once[#defer_index_once + 1] = { k, v }
         end
     end
 end
@@ -74,15 +76,16 @@ function Object.new(recipe, overrides, parent, root_param)
         __index_chain = { recipe, Object },
         __index_expression = {},
         __newindex_expression = {},
+        __in_middle_of_indexing = {},
     }, Object)
     local index_chain = { _ENV, newobj, root_param }
     local defer_index_once = {}
     local root = root_param or newobj
     copy_expression_only_into(newobj, recipe, root, index_chain, defer_index_once)
-    copy_into(newobj, overrides, root, index_chain, defer_index_once)
+    if overrides then copy_into(newobj, overrides, root, index_chain, defer_index_once) end
     if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
     instantiate_into(newobj, recipe, root)
-    instantiate_into(newobj, overrides, root)
+    if overrides then instantiate_into(newobj, overrides, root) end
 
     for i = 1, #defer_index_once do
         local k, v = unpack(defer_index_once[i])
@@ -90,7 +93,7 @@ function Object.new(recipe, overrides, parent, root_param)
     end
 
     if recipe.init then Expression.call(recipe.init, index_chain, newobj) end
-    if overrides.init then Expression.call(overrides.init, index_chain, newobj) end
+    if overrides and overrides.init then Expression.call(overrides.init, index_chain, newobj) end
     if newobj.when then
         for i = 1, #newobj.when do
             local t = newobj.when[i]
@@ -112,12 +115,13 @@ function Object:__index(index)
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
     if type(index) == 'string' and index:match('^[^_$]') then
-        if rawget(self, '__indexing') ~= index then
+        local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
+        if not in_middle_of_indexing[index] then 
             local expr = self.__index_expression[index]
             if expr then
-                rawset(self, '__indexing', index) -- avoid infinite recursion
+                in_middle_of_indexing[index] = true
                 local value = expr(self)
-                rawset(self, '__indexing', nil)
+                in_middle_of_indexing[index] = nil
                 if value ~= nil then
                     Object.__newindex(self, index, value)
                     return value
@@ -143,8 +147,8 @@ function Object:__newindex(index, value)
                 if result == Object.SET_METHOD_NO_RAWSET then return
                 elseif result ~= nil then value = result
                 end
+                index = '_' .. index
             end
-            index = '_' .. index
         end
     end
     rawset(self, index, value)
