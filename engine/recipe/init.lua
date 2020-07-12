@@ -23,9 +23,6 @@ function Recipe.load(name)
 end
 
 function Recipe.preprocess(recipe)
-    recipe.index_expressions = {}
-    recipe.newindex_expressions = {}
-    recipe.preinit_expressions = {}
     for kp, v, parent in nested.iterate(recipe, { include_kv = true }) do
         local key = kp[#kp]
         local is_init_or_update = key == 'init' or key == 'update'

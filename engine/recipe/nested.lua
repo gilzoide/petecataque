@@ -28,7 +28,7 @@ function recipe_nested:__newindex(index, value)
     elseif special == 'set' then
         local newindex_expressions = rawget(self, recipe_nested.NEWINDEX_EXPRESSIONS)
         if not newindex_expressions then newindex_expressions = {}; rawset(self, recipe_nested.NEWINDEX_EXPRESSIONS, newindex_expressions) end
-        value = Expression.template(value)
+        value = Expression.template(value, true)
         newindex_expressions[index] = value
     elseif special == 'once' then
         local preinit_expressions = rawget(self, recipe_nested.PREINIT_EXPRESSIONS)

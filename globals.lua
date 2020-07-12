@@ -150,6 +150,16 @@ function iter_chain(...)
     end)
 end
 
+function print_nested(...)
+    local t = {}
+    for i = 1, select('#', ...) do
+        local v = select(i, ...)
+        t[i] = nested.encode(v)
+    end
+    print(unpack(t))
+    print()
+end
+
 key = {}
 mouse = {
     position = {0, 0}
@@ -172,7 +182,7 @@ State = {
 }
 
 function dump_state()
-    print(nested.encode(State))
+    print_nested(State)
 end
 
 function set_next_frame(...)

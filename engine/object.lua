@@ -81,20 +81,23 @@ function Object.new(recipe, overrides, parent, root_param)
     }, Object)
     local index_chain = { _ENV, newobj, root_param }
     local defer_index_once = {}
-    local root = root_param or newobj
-    copy_expression_only_into(newobj, recipe, root, index_chain, defer_index_once)
-    if overrides then copy_into(newobj, overrides, root, index_chain, defer_index_once) end
-    if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
-    instantiate_into(newobj, recipe, root)
-    if overrides then instantiate_into(newobj, overrides, root) end
+    local root_or_newobj = root_param or newobj
 
+    copy_expression_only_into(newobj, recipe, root_or_newobj, index_chain, defer_index_once)
+    if overrides then copy_into(newobj, overrides, root_or_newobj, index_chain, defer_index_once) end
     for i = 1, #defer_index_once do
         local k, v = unpack(defer_index_once[i])
         newobj[k] = Expression.call(v, index_chain, newobj)
     end
 
+    if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
+
+    instantiate_into(newobj, recipe, newobj)
+    if overrides then instantiate_into(newobj, overrides, root_or_newobj) end
+
     if recipe.init then Expression.call(recipe.init, index_chain, newobj) end
     if overrides and overrides.init then Expression.call(overrides.init, index_chain, newobj) end
+    
     if newobj.when then
         for i = 1, #newobj.when do
             local t = newobj.when[i]
