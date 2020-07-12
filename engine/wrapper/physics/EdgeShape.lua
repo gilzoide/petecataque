@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local EdgeShape = wrapper.new('EdgeShape', {
+local EdgeShape = Recipe.wrapper.new('EdgeShape', {
     'getNextVertex', 'getPoints', 'getPreviousVertex',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -22,6 +20,6 @@ function EdgeShape:draw()
     end
 end
 
-EdgeShape["$shape"] = wrapper.get_wrapped
+EdgeShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return EdgeShape

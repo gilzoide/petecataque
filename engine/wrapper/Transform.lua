@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local Transform = wrapper.new('Transform', {
+local Transform = Recipe.wrapper.new('Transform', {
     'getMatrix',
 }, {
     'setMatrix', 'setTransformation',
@@ -28,6 +26,6 @@ function Transform:draw()
     love.graphics.applyTransform(self.__wrapped)
 end
 
-Transform["$transform"] = wrapper.get_wrapped
+Transform["$transform"] = Recipe.wrapper.get_wrapped
 
 return Transform

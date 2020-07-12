@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local PolygonShape = wrapper.new('PolygonShape', {
+local PolygonShape = Recipe.wrapper.new('PolygonShape', {
     'getPoints',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -22,6 +20,6 @@ function PolygonShape:draw()
     end
 end
 
-PolygonShape["$shape"] = wrapper.get_wrapped
+PolygonShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return PolygonShape

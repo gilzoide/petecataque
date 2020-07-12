@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local ChainShape = wrapper.new('ChainShape', {
+local ChainShape = Recipe.wrapper.new('ChainShape', {
     'getChildEdge', 'getNextVertex', 'getPoints', 'getPreviousVertex', 'getVertexCount',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -23,6 +21,6 @@ function ChainShape:draw()
     end
 end
 
-ChainShape["$shape"] = wrapper.get_wrapped
+ChainShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return ChainShape

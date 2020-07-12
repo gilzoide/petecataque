@@ -1,8 +1,7 @@
 local drawable_common = require 'wrapper.drawable.drawable_common'
-local wrapper = require 'wrapper'
 local Object = require 'Object'
 
-local Text = wrapper.new('Text', {
+local Text = Recipe.wrapper.new('Text', {
     'getDimensions', 'getFont', 'getHeight', 'getWidth',
 }, {
     'setFont'
@@ -39,6 +38,6 @@ Text["$set width"] = function(self, width)
     return Object.SET_METHOD_NO_RAWSET
 end
 
-Text["$drawable"] = wrapper.get_wrapped
+Text["$drawable"] = Recipe.wrapper.get_wrapped
 
 return Text

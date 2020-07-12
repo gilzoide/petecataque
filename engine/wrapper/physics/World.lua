@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local World = wrapper.new('World', {
+local World = Recipe.wrapper.new('World', {
     'getBodies', 'getBodyCount',
     'getContactCount', 'getContactFilter', 'getContacts',
     'getGravity', 'getJointCount', 'getJoints',
@@ -38,6 +36,6 @@ World["$set yg"] = function(self, yg)
     local gravity = self.gravity
     self.gravity = { gravity[1], yg }
 end
-World["$world"] = wrapper.get_wrapped
+World["$world"] = Recipe.wrapper.get_wrapped
 
 return World

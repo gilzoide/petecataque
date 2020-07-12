@@ -16,6 +16,7 @@ nested_function = require 'nested.function'
 nested_match = require 'nested.match'
 log = require 'log'
 Expression = require 'expression'
+Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
 METER_BY_PIXEL = 60
@@ -134,6 +135,19 @@ function deepcopy(value)
     else
         return value
     end
+end
+
+function iter_chain(...)
+    local n = select('#', ...)
+    local chain = {...}
+    return coroutine.wrap(function()
+        for i = 1, n do
+            local t = chain[i]
+            if t then
+                for k, v in pairs(t) do coroutine.yield(k, v) end
+            end
+        end
+    end)
 end
 
 key = {}

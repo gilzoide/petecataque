@@ -1,6 +1,4 @@
-local wrapper = require 'wrapper'
-
-local RectangleShape = wrapper.new('RectangleShape', {
+local RectangleShape = Recipe.wrapper.new('RectangleShape', {
     'getPoints',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -29,6 +27,6 @@ function RectangleShape:draw()
     end
 end
 
-RectangleShape["$shape"] = wrapper.get_wrapped
+RectangleShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return RectangleShape

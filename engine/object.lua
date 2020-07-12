@@ -62,7 +62,8 @@ end
 local function instantiate_into(dest, src, root)
     for i = 2, #src do
         local t = src[i]
-        local constructor = t[1] and R.recipe[t[1]] or deepcopy
+        local recipe_name = assert(t[1], "Recipe must have a name")
+        local constructor = assertf(R.recipe[recipe_name], "Recipe %q couldn't be loaded", recipe_name)
         dest[#dest + 1] = constructor(t, dest, root)
     end
 end
@@ -147,6 +148,9 @@ function Object:__newindex(index, value)
                 if result == Object.SET_METHOD_NO_RAWSET then return
                 elseif result ~= nil then value = result
                 end
+                index = '_' .. index
+            elseif self.__index_expression[index] then
+                -- avoid ignoring getter expressions
                 index = '_' .. index
             end
         end
