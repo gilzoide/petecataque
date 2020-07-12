@@ -16,44 +16,56 @@ local function get_setter_name(s)
     return Object.SET_METHOD_PREFIX .. s
 end
 
+local function create_getter(wrapped_getter_name)
+    return function(self)
+        local wrapped = self.__wrapped
+        if wrapped then
+            return safepack(wrapped[wrapped_getter_name](wrapped))
+        else
+            return nil
+        end
+    end
+end
+
+local function create_setter(wrapped_setter_name, setter_name)
+    return function(self, value)
+        local wrapped = self.__wrapped
+        if wrapped then
+            wrapped[wrapped_setter_name](wrapped, safeunpack(value))
+        else
+            if not self._wrapped_defer then self._wrapped_defer = {} end
+            self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
+        end
+        return Object.SET_METHOD_NO_RAWSET
+    end
+end
+
+local function create_method(method_name)
+    return function(self, ...)
+        local wrapped = self.__wrapped
+        if wrapped then
+            return wrapped[method_name](wrapped, ...)
+        end
+    end
+end
+
 function wrapper.new(name, getters, setters, othermethods)
     local recipe = { name }
     for i = 1, #getters do
         local getter = getters[i]
         local getter_name = get_getter_name(getter)
-        recipe[getter_name] = function(self)
-            local wrapped = self.__wrapped
-            if wrapped then
-                return safepack(wrapped[getter](wrapped))
-            else
-                return nil
-            end
-        end
+        recipe[getter_name] = create_getter(getter)
     end
 
     for i = 1, #setters do
         local setter = setters[i]
         local setter_name = get_setter_name(setter)
-        recipe[setter_name] = function(self, value)
-            local wrapped = self.__wrapped
-            if wrapped then
-                wrapped[setter](wrapped, safeunpack(value))
-            else
-                if not self._wrapped_defer then self._wrapped_defer = {} end
-                self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
-            end
-            return Object.SET_METHOD_NO_RAWSET
-        end
+        recipe[setter_name] = create_setter(setter, setter_name)
     end
 
     for i = 1, #othermethods do
         local method = othermethods[i]
-        recipe[method] = function(self, ...)
-            local wrapped = self.__wrapped
-            if wrapped then
-                return wrapped[method](wrapped, ...)
-            end
-        end
+        recipe[method] = create_method(method)
     end
 
     recipe.preinit = function(self)
