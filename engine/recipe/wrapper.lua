@@ -18,17 +18,17 @@ end
 
 local function create_getter(wrapped_getter_name)
     return function(self)
+        DEBUG.PUSH_CALL(self[1], wrapped_getter_name)
         local wrapped = self.__wrapped
-        if wrapped then
-            return safepack(wrapped[wrapped_getter_name](wrapped))
-        else
-            return nil
-        end
+        local value = wrapped and safepack(wrapped[wrapped_getter_name](wrapped)) or nil
+        DEBUG.POP_CALL(self[1], wrapped_getter_name)
+        return value
     end
 end
 
 local function create_setter(wrapped_setter_name, setter_name)
     return function(self, value)
+        DEBUG.PUSH_CALL(self[1], wrapped_setter_name)
         local wrapped = self.__wrapped
         if wrapped then
             wrapped[wrapped_setter_name](wrapped, safeunpack(value))
@@ -36,16 +36,18 @@ local function create_setter(wrapped_setter_name, setter_name)
             if not self._wrapped_defer then self._wrapped_defer = {} end
             self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
         end
+        DEBUG.POP_CALL(self[1], wrapped_setter_name)
         return Object.SET_METHOD_NO_RAWSET
     end
 end
 
 local function create_method(method_name)
     return function(self, ...)
+        DEBUG.PUSH_CALL(self[1], method_name)
         local wrapped = self.__wrapped
-        if wrapped then
-            return wrapped[method_name](wrapped, ...)
-        end
+        local value = wrapped and safepack(wrapped[method_name](wrapped, ...))
+        DEBUG.POP_CALL(self[1], method_name)
+        return value
     end
 end
 

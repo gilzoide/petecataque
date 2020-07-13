@@ -69,6 +69,7 @@ local function instantiate_into(dest, src, root)
 end
 
 function Object.new(recipe, overrides, parent, root_param)
+    DEBUG.PUSH_CALL(recipe[1], "new", recipe.__line or overrides.__line)
     local newobj = setmetatable({
         recipe[1],
         __recipe = recipe,
@@ -87,16 +88,30 @@ function Object.new(recipe, overrides, parent, root_param)
     if overrides then copy_into(newobj, overrides, root_or_newobj, index_chain, defer_index_once) end
     for i = 1, #defer_index_once do
         local k, v = unpack(defer_index_once[i])
+        DEBUG.PUSH_CALL(recipe[1], Object.GET_ONCE_METHOD_PREFIX .. k)
         newobj[k] = Expression.call(v, index_chain, newobj)
+        DEBUG.POP_CALL(recipe[1], Object.GET_ONCE_METHOD_PREFIX .. k)
     end
 
-    if recipe.preinit then Expression.call(recipe.preinit, index_chain, newobj) end
+    if recipe.preinit then
+        DEBUG.PUSH_CALL(recipe[1], 'preinit')
+        Expression.call(recipe.preinit, index_chain, newobj)
+        DEBUG.POP_CALL(recipe[1], 'preinit')
+    end
 
     instantiate_into(newobj, recipe, newobj)
     if overrides then instantiate_into(newobj, overrides, root_or_newobj) end
 
-    if recipe.init then Expression.call(recipe.init, index_chain, newobj) end
-    if overrides and overrides.init then Expression.call(overrides.init, index_chain, newobj) end
+    if recipe.init then
+        DEBUG.PUSH_CALL(recipe[1], 'init')
+        Expression.call(recipe.init, index_chain, newobj)
+        DEBUG.POP_CALL(recipe[1], 'init')
+    end
+    if overrides and overrides.init then
+        DEBUG.PUSH_CALL(recipe[1], 'overrides.init', overrides.__line)
+        Expression.call(overrides.init, index_chain, newobj)
+        DEBUG.POP_CALL(recipe[1], 'overrides.init', overrides.__line)
+    end
     
     if newobj.when then
         for i = 1, #newobj.when do
@@ -104,6 +119,7 @@ function Object.new(recipe, overrides, parent, root_param)
             t[2] = newobj:create_expression(t[2])
         end
     end
+    DEBUG.POP_CALL(recipe[1], "new")
     return newobj
 end
 
@@ -123,9 +139,11 @@ function Object:__index(index)
         if not in_middle_of_indexing[index] then 
             local expr = self.__index_expression[index]
             if expr then
+                DEBUG.PUSH_CALL(self[1], Object.GET_METHOD_PREFIX .. index)
                 in_middle_of_indexing[index] = true
                 local value = expr(self)
                 in_middle_of_indexing[index] = nil
+                DEBUG.POP_CALL(self[1], Object.GET_METHOD_PREFIX .. index)
                 if value ~= nil then
                     Object.__newindex(self, index, value)
                     return value
@@ -147,7 +165,9 @@ function Object:__newindex(index, value)
         if index:match('^[^_$]') then
             local set_method = self.__newindex_expression[index]
             if set_method then
+                DEBUG.PUSH_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
                 local result = set_method(self, value)
+                DEBUG.POP_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
                 if result == Object.SET_METHOD_NO_RAWSET then return
                 elseif result ~= nil then value = result
                 end
@@ -221,7 +241,7 @@ end
 function Object:create_expression(v, ...)
     local index_chain = { _ENV, self, self.root }
     table_extend(index_chain, ...)
-    return Expression.new(v, index_chain)
+    return Expression.new(v, index_chain, true)
 end
 
 function Object:add_when(condition, func)

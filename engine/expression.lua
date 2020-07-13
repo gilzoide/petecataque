@@ -67,8 +67,8 @@ function Expression.instantiate(template, index_chain)
     return setmetatable(expr, expr)
 end
 
-function Expression.new(literal, index_chain)
-    local template = Expression.template(literal)
+function Expression.new(literal, index_chain, no_return)
+    local template = Expression.template(literal, no_return)
     return Expression.instantiate(template, index_chain)
 end
 

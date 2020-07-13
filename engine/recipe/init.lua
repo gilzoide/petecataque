@@ -12,7 +12,7 @@ Recipe.path = {
 Recipe.nestedpath = {'script/%s.nested'}
 
 function Recipe.load(name)
-    local recipe = Recipe.tryloadlua(name) or Recipe.tryloadnested(name)
+    local recipe = Recipe.tryloadnested(name) or Recipe.tryloadlua(name)
     if recipe ~= nil then
         assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
         assertf(recipe[1] ~= nil, "Recipe name expected as %q", name)
