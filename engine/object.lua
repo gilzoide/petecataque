@@ -27,7 +27,7 @@ function Object:typeOf(t)
     return self:type() == t
 end
 
-local function copy_when_into(dest, when, root, index_chain)
+local function copy_when_into(dest, when, index_chain)
     local dest_when = rawget(dest, 'when')
     if not dest_when then dest_when = {}; rawset(dest, 'when', dest_when) end
     for i = 1, #when do
