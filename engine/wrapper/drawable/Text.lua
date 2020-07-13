@@ -1,5 +1,5 @@
 local drawable_common = require 'wrapper.drawable.drawable_common'
-local Object = require 'Object'
+local Object = require 'object'
 
 local Text = Recipe.wrapper.new('Text', {
     'getDimensions', 'getFont', 'getHeight', 'getWidth',
