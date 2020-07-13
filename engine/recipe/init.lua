@@ -7,6 +7,7 @@ Recipe.nested = require 'recipe.nested'
 Recipe.path = {
     'engine/wrapper/%s.lua', 'engine/wrapper/drawable/%s.lua', 
     'engine/wrapper/graphics/%s.lua', 'engine/wrapper/physics/%s.lua',
+    'engine/wrapper/input/%s.lua',
     'script/%s.lua'
 }
 Recipe.nestedpath = {'script/%s.nested'}

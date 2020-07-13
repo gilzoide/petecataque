@@ -10,8 +10,9 @@ damageColor: [1 0 0]
 racketColor: [0 1 1]
 angularVelocity: 10
 # flipX
+# toTheLeft toTheRight
 
-[Body !x: x !y: y type: dynamic
+[Body id: body !x: x !y: y type: dynamic
     !mass: mass
     angularDamping: 1
 
@@ -26,3 +27,11 @@ angularVelocity: 10
         [Fixture friction: 1]
     ]
 ]
+
+[KeyDetector id: toTheLeft !key: leftKey]
+[KeyDetector id: toTheRight !key: rightKey]
+
+when: {
+    [[toTheLeft.down !toTheRight.down] `body.angularVelocity = -angularVelocity`]
+    [[!toTheLeft.down toTheRight.down] `body.angularVelocity = angularVelocity`]
+}

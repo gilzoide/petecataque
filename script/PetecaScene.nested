@@ -15,9 +15,13 @@ init: {
     [Arena id: arena]
     [Player id: player1 !x: p1x !y: py
         color: [0 1 0]
+        leftKey: a
+        rightKey: d
     ]
     [Player id: player2 !x: p2x !y: py
         color: [1 1 0] flipX: true
+        leftKey: left
+        rightKey: right
     ]
     [Peteca id: peteca !x: petecaX !y: petecaY]
 
