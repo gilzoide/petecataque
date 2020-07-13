@@ -22,6 +22,15 @@ function Expression.is_expression_template(v)
     return type(v) == 'table' and v.__expression
 end
 
+local function bind_argument_names_to_callable(callable, argument_names)
+    return function(expr, ...)
+        for i = 1, math.min(#argument_names, select('#', ...)) do
+            expr[argument_names[i]] = select(i, ...)
+        end
+        return callable(expr, ...)
+    end
+end
+
 local function call_expression_literal(expr, ...)
     return nested_function_evaluate(expr[2], expr, ...)
 end
@@ -36,7 +45,7 @@ function Expression.empty_template()
     return setmetatable(template, template)
 end
 
-function Expression.template(literal, insert_return)
+function Expression.template(literal, insert_return, argument_names)
     if type(literal) == 'function' or Expression.is_expression_template(literal) then return literal end
 
     local callable
@@ -50,6 +59,10 @@ function Expression.template(literal, insert_return)
         end
     else
         callable = call_expression_literal
+    end
+
+    if argument_names then
+        callable = bind_argument_names_to_callable(callable, argument_names)
     end
 
     local template = { 'Expression', literal, __expression = literal, __call = callable, __pairs = Object.__pairs }
@@ -68,8 +81,8 @@ function Expression.instantiate(template, index_chain)
     return setmetatable(expr, expr)
 end
 
-function Expression.new(literal, index_chain, insert_return)
-    local template = Expression.template(literal, insert_return)
+function Expression.new(literal, index_chain, ...)
+    local template = Expression.template(literal, ...)
     return Expression.instantiate(template, index_chain)
 end
 

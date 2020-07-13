@@ -16,9 +16,6 @@ init: {
 
     [CollisionTracker !a: peteca.fixture !b: arena.ground
         count: 0
-        postSolve: `
-            local contact = select(4, ...)
-            a.impulse = { contact:getNormal() }
-        `
+        postSolve: `a.impulse = { contact:getNormal() }`
     ]
 ]

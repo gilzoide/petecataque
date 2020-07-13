@@ -4,6 +4,7 @@ Object.GET_METHOD_PREFIX = '$'
 Object.GET_ONCE_METHOD_PREFIX = '!'
 Object.SET_METHOD_PREFIX = '$set '
 Object.SET_METHOD_NO_RAWSET = 'NO_RAWSET'
+Object.SET_METHOD_ARGUMENT_NAMES = { 'self', 'value' }
 
 function Object.IS_SPECIAL_METHOD_PREFIX(v)
     if type(v) == 'string' then
@@ -240,23 +241,21 @@ function Object:child_count()
     return #self - 1
 end
 
-function Object:expressionify(field_name, ...)
+function Object:expressionify(field_name, argument_names)
     if self[field_name] then
-        local expression = self:create_expression(self[field_name], ...)
+        local expression = self:create_expression(self[field_name], argument_names)
         self[field_name] = expression
         return expression
     end
 end
 
-function Object:create_expression(v, ...)
+function Object:create_expression(v, argument_names)
     local index_chain = { _ENV, self, self.root }
-    table_extend(index_chain, ...)
-    return Expression.new(v, index_chain)
+    return Expression.new(v, index_chain, false, argument_names)
 end
 
-function Object:add_when(condition, func)
-    if not self.also_when then self.also_when = {} end
-    self.also_when[#self.also_when + 1] = { condition, self:create_expression(func) }
+function Object:add_to_index_chain(...)
+    table_extend(self.__index_chain, ...)
 end
 
 function Object:enable_method(method_name, enable)

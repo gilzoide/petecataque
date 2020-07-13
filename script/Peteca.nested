@@ -43,7 +43,6 @@ $featherShapePoints: `{
         $lineColor: lineColor
         [Fixture id: fixture restitution: 0.9
             "$set impulse": `
-                local self, value = ...
                 local nx, ny = unpack(value)
                 if ny > 0 then nx, ny = -nx, -ny end
                 body:applyLinearImpulse(nx * impulseIntensity, ny * impulseIntensity)

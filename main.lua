@@ -20,7 +20,6 @@ function love.update(dt)
     _ENV.TIME = _ENV.TIME + dt
     Setqueue:update(dt)
     Director.update(dt)
-    Collisions:reset()
 end
 
 function love.draw()

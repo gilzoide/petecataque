@@ -168,7 +168,6 @@ Input = require 'input'
 
 Scene = require 'scene'.new()
 Setqueue = require 'setqueue'.new()
-Collisions = require 'collisions'.new()
 Director = require 'director'
 Resources = require 'resources'.new()
 R = Resources
@@ -177,7 +176,6 @@ State = {
     resources = Resources,
     key = key,
     mouse = mouse,
-    collisions = Collisions,
     setqueue = Setqueue,
 }
 

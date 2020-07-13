@@ -26,8 +26,16 @@ function Recipe.preprocess(recipe)
     for kp, v, parent in nested.iterate(recipe, { include_kv = true }) do
         local key = kp[#kp]
         local special = Object.IS_SPECIAL_METHOD_PREFIX(key)
-        if special or key == 'init' or key == 'update' or key == 'draw' then
-            parent[key] = Expression.template(v, special == 'get' or special == 'once')
+        if key == 'init' or key == 'update' or key == 'draw' then
+            parent[key] = Expression.template(v)
+        elseif key == 'when' then
+            assertf(type(v) == 'table', "On recipe %q: Expected 'when' to be a table, found %q", recipe[1], type(value))
+            for i = 1, #v do
+                local t = v[i]
+                t[2] = Expression.template(t[2])
+            end
+        elseif special then
+            parent[key] = Expression.template(v, special == 'get' or special == 'once', special == 'set' and Object.SET_METHOD_ARGUMENT_NAMES)
         end
     end
 end

@@ -1,6 +1,7 @@
 local Graphics = {'Graphics'}
 
 function Graphics:init()
+    self:add_to_index_chain(love.graphics)
     self:enable_method('draw', self['do'])
 end
 
@@ -13,7 +14,7 @@ end
 Graphics["$set do"] = function(self, _do)
     self:enable_method('draw', _do)
     if _do then
-        return self:create_expression(_do, love.graphics)
+        return self:create_expression(_do)
     end
 end
 
