@@ -3,7 +3,7 @@ local Object = {}
 Object.GET_METHOD_PREFIX = '$'
 Object.GET_ONCE_METHOD_PREFIX = '!'
 Object.SET_METHOD_PREFIX = '$set '
-Object.SET_METHOD_NO_RAWSET = 'SET_METHOD_NO_RAWSET'
+Object.SET_METHOD_NO_RAWSET = 'NO_RAWSET'
 
 function Object.IS_SPECIAL_METHOD_PREFIX(v)
     if type(v) == 'string' then
@@ -27,6 +27,14 @@ function Object:typeOf(t)
     return self:type() == t
 end
 
+local function copy_when_into(dest, when, root, index_chain)
+    local dest_when = rawget(dest, 'when')
+    if not dest_when then dest_when = {}; rawset(dest, 'when', dest_when) end
+    for i = 1, #when do
+        local t = when[i]
+        table.insert(dest_when, { t[1], Expression.instantiate(t[2], index_chain) })
+    end
+end
 local function copy_into(dest, src, root, index_chain, defer_index_once)
     local special
     for k, v in nested.kpairs(src) do
@@ -37,8 +45,12 @@ local function copy_into(dest, src, root, index_chain, defer_index_once)
             dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
         elseif special == 'once' then
             defer_index_once[#defer_index_once + 1] = { k, v }
-        elseif k == 'update' then
+        elseif k == 'init' or k == 'preinit' then
+            -- call later
+        elseif k == 'update' or k == 'draw' then
             dest[k] = Expression.instantiate(v, index_chain)
+        elseif k == 'when' then
+            copy_when_into(dest, v, index_chain)
         else
             if k == 'id' then
                 root[v] = dest
@@ -57,6 +69,8 @@ local function copy_expression_only_into(dest, src, root, index_chain, defer_ind
             dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
         elseif special == 'once' then
             defer_index_once[#defer_index_once + 1] = { k, v }
+        elseif k == 'when' then
+            copy_when_into(dest, v, index_chain)
         end
     end
 end
@@ -113,13 +127,7 @@ function Object.new(recipe, overrides, parent, root_param)
         Expression.call(overrides.init, index_chain, newobj)
         DEBUG.POP_CALL(recipe[1], 'overrides.init', overrides.__line)
     end
-    
-    if newobj.when then
-        for i = 1, #newobj.when do
-            local t = newobj.when[i]
-            t[2] = newobj:create_expression(t[2])
-        end
-    end
+
     DEBUG.POP_CALL(recipe[1], "new")
     return newobj
 end
@@ -243,7 +251,7 @@ end
 function Object:create_expression(v, ...)
     local index_chain = { _ENV, self, self.root }
     table_extend(index_chain, ...)
-    return Expression.new(v, index_chain, true)
+    return Expression.new(v, index_chain)
 end
 
 function Object:add_when(condition, func)

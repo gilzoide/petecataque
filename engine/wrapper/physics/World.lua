@@ -10,10 +10,12 @@ local World = Recipe.wrapper.new('World', {
 })
 
 local function create_callback(handlers)
-    return function(a, b, coll, ...)
+    return function(a, b, ...)
         for k, v in pairs(handlers) do
-            if k:match(a, b) or k:match(b, a) then
-                v(k, a, b, coll, ...)
+            if k:match(a, b) then
+                v(k, a, b, ...)
+            elseif k:match(b, a) then
+                v(k, b, a, ...)
             end
         end
     end

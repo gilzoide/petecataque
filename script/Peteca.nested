@@ -1,7 +1,6 @@
 Peteca
 
-x: 0
-y: 0
+x: 0, y: 0
 base: 30
 baseHeight: 20
 mass: 1
@@ -42,6 +41,16 @@ $featherShapePoints: `{
     [PolygonShape !points: baseShapePoints $points: nil
         $fillColor: colorFeather
         $lineColor: lineColor
-        [Fixture id: fixture restitution: 0.9]
+        [Fixture id: fixture restitution: 0.9
+            "$set impulse": `
+                local self, value = ...
+                local nx, ny = unpack(value)
+                if ny > 0 then nx, ny = -nx, -ny end
+                body:applyLinearImpulse(nx * impulseIntensity, ny * impulseIntensity)
+                return 'NO_RAWSET'
+            `
+        ]
     ]
+
+
 ]

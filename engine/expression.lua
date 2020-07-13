@@ -36,22 +36,23 @@ function Expression.empty_template()
     return setmetatable(template, template)
 end
 
-function Expression.template(literal, no_return)
+function Expression.template(literal, insert_return)
     if type(literal) == 'function' or Expression.is_expression_template(literal) then return literal end
 
-    local template = { 'Expression', literal, __expression = literal, __pairs = Object.__pairs }
+    local callable
     if type(literal) == 'string' then
-        if not no_return then
+        if insert_return then
             literal = 'return ' .. literal
         end
         local chunk = assert(loadstring(literal))
-        template.__call = function(expr, ...)
-            return setfenv(chunk, expr)()
+        callable = function(expr, ...)
+            return setfenv(chunk, expr)(...)
         end
     else
-        template.__call = call_expression_literal
+        callable = call_expression_literal
     end
 
+    local template = { 'Expression', literal, __expression = literal, __call = callable, __pairs = Object.__pairs }
     return setmetatable(template, template)
 end
 
@@ -67,8 +68,8 @@ function Expression.instantiate(template, index_chain)
     return setmetatable(expr, expr)
 end
 
-function Expression.new(literal, index_chain, no_return)
-    local template = Expression.template(literal, no_return)
+function Expression.new(literal, index_chain, insert_return)
+    local template = Expression.template(literal, insert_return)
     return Expression.instantiate(template, index_chain)
 end
 

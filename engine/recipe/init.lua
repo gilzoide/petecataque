@@ -25,9 +25,9 @@ end
 function Recipe.preprocess(recipe)
     for kp, v, parent in nested.iterate(recipe, { include_kv = true }) do
         local key = kp[#kp]
-        local is_init_or_update = key == 'init' or key == 'update' or key == 'draw'
-        if is_init_or_update or Object.IS_SPECIAL_METHOD_PREFIX(key) then
-            parent[key] = Expression.template(v, is_init_or_update)
+        local special = Object.IS_SPECIAL_METHOD_PREFIX(key)
+        if special or key == 'init' or key == 'update' or key == 'draw' then
+            parent[key] = Expression.template(v, special == 'get' or special == 'once')
         end
     end
 end
