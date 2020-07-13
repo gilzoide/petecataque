@@ -17,6 +17,6 @@ Arena
     ]
 
     [EdgeShape !points: groundPoints
-        [Fixture id: ground friction: 1]
+        [Fixture tag: GROUND friction: 1]
     ]
 ]

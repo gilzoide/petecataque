@@ -10,7 +10,7 @@ damageColor: [1 0 0]
 racketColor: [0 1 1]
 angularVelocity: 10
 # flipX
-# toTheLeft toTheRight
+# takingDamage: true
 
 [Body id: body !x: x !y: y type: dynamic
     !mass: mass
@@ -18,13 +18,13 @@ angularVelocity: 10
 
     [CircleShape !radius: root.radius
         $fillColor: `takingDamage and damageColor or color`
-        [Fixture id: bodyFixture density: 5]
+        [Fixture tag: BODY id: bodyFixture density: 5]
     ]
     [RectangleShape !x: `(flipX and -1 or 1) * (racketHeight * 0.5 + radius * 0.5)` y: 0
         !width: racketWidth !height: racketHeight
         !angle: `math.pi * 0.5`
         $fillColor: racketColor
-        [Fixture friction: 1]
+        [Fixture tag: RACKET friction: 1]
     ]
 ]
 

@@ -25,7 +25,8 @@ end
 local function bind_argument_names_to_callable(callable, argument_names)
     return function(expr, ...)
         for i = 1, math.min(#argument_names, select('#', ...)) do
-            expr[argument_names[i]] = select(i, ...)
+            local name = argument_names[i]
+            expr[name] = select(i, ...)
         end
         return callable(expr, ...)
     end

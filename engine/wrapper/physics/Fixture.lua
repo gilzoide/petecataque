@@ -1,12 +1,12 @@
 local Fixture = Recipe.wrapper.new('Fixture', {
     'getBody', 'getCategory', 'getDensity', 'getFilterData',
     'getFriction', 'getGroupIndex', 'getMask', 'getMassData',
-    'getRestitution', 'getShape', 'getUserData',
+    'getRestitution', 'getShape', -- 'getUserData',
     'isDestroyed', 'isSensor',
 }, {
     'setCategory', 'setDensity', 'setFilterData', 'setFriction',
     'setGroupIndex', 'setMask', 'setRestitution', 'setSensor',
-    'setUserData',
+    -- 'setUserData',
 }, {
     'getBoundingBox', 'rayCast', 'testPoint',
 })
@@ -25,7 +25,9 @@ function Fixture:create_wrapped()
     end
 
     if body and shape then
-        return love.physics.newFixture(body, shape)
+        local fixture = love.physics.newFixture(body, shape)
+        fixture:setUserData(self)
+        return fixture
     else
         self.disabled = true
     end

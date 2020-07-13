@@ -1,3 +1,6 @@
 FPS
 
-[Print $text: `string.format("FPS: %d", love.timer.getFPS())` $limit: WINDOW_WIDTH align: right]
+!font: [R font 'Gontserrat-Medium.ttf 14']
+[Graphics do: [setColor 1 1 1; setFont font]
+    [Print $text: `string.format("FPS: %d", love.timer.getFPS())` $limit: WINDOW_WIDTH align: right]
+]

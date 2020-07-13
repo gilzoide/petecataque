@@ -2,7 +2,7 @@ local empty = require 'empty'
 
 local CollisionTracker = {'CollisionTracker'}
 
-local argument_names = { 'self', 'fixture1', 'fixture2', 'contact', 'normal_impulse', 'tangent_impulse' }
+local argument_names = { 'self', 'a', 'b', 'contact', 'normal_impulse', 'tangent_impulse' }
 
 function CollisionTracker:init()
     local world = self.world
@@ -30,7 +30,7 @@ function CollisionTracker:init()
 end
 
 function CollisionTracker:match(a, b)
-    return a == self.a.fixture and b == self.b.fixture
+    return nested_match(a, self.a) and nested_match(b, self.b)
 end
 
 return CollisionTracker

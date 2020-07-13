@@ -25,7 +25,16 @@ init: {
     ]
     [Peteca id: peteca !x: petecaX !y: petecaY]
 
-    [CollisionTracker !a: peteca.fixture !b: arena.ground
-        postSolve: `a.impulse = { contact:getNormal() }`
+    [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
+        postSolve: `peteca.impulse = { contact:getNormal() }`
+    ]
+    [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
+        postSolve: [a.root.lastToHit: b.root]
+    ]
+    [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
+        beginContact: [b.root.takingDamage: true]
+        endContact: [b.root.takingDamage: false]
     ]
 ]
+
+[FPS]
