@@ -1,0 +1,47 @@
+Peteca
+
+x: 0, y: 0
+base: 30
+baseHeight: 20
+mass: 1
+color: [1 1 1]
+colorBase: [0 0 0]
+colorFeather: [0 0 0 0.5]
+impulseIntensity: 100
+
+$baseShapePoints: `{
+    -base * 0.5, 0,
+    -base * 0.5, -baseHeight * 0.5,
+    -base * 0.25, -baseHeight * 0.5,
+    -base * 0.25, -baseHeight,
+    base * 0.25, -baseHeight,
+    base * 0.25, -baseHeight * 0.5,
+    base * 0.5, -baseHeight * 0.5,
+    base * 0.5, 0,
+}`
+
+$featherShapePoints: `{
+    0, -baseHeight,
+    -base * 0.25, -baseHeight * 4,
+    base * 0.25, -baseHeight * 4
+}`
+
+[Body !x: x !y: y type: dynamic
+    !mass: mass
+    angularDamping: 1
+    bullet: true
+    # gravityScale: 1.4
+
+    [Graphics do: [setColor colorFeather]
+        [PolygonShape !points: featherShapePoints
+            drawmode: fill
+            [Fixture]
+        ]
+    ]
+    [Graphics do: [setColor colorBase]
+        [PolygonShape !points: baseShapePoints
+            drawmode: fill
+            [Fixture id: fixture restitution: 0.9]
+        ]
+    ]
+]
