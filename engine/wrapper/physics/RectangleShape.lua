@@ -18,12 +18,15 @@ function RectangleShape:create_wrapped()
 end
 
 function RectangleShape:draw()
-    if self.drawmode == 'fill' or self.drawmode == 'line' then
-        if self.rx then
-            love.graphics.rectangle(self.drawmode, self.x, self.y, self.width, self.height, self.rx, self.ry, self.segments)
-        else
-            love.graphics.rectangle(self.drawmode, self.x, self.y, self.width, self.height)
-        end
+    local fillColor = self.fillColor
+    if fillColor then
+        love.graphics.setColor(fillColor)
+        love.graphics.polygon('fill', self.points)
+    end
+    local lineColor = self.lineColor
+    if lineColor then
+        love.graphics.setColor(lineColor)
+        love.graphics.polygon('line', self.points)
     end
 end
 

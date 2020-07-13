@@ -14,9 +14,16 @@ function CircleShape:create_wrapped()
 end
 
 function CircleShape:draw()
-    if self.drawmode == 'fill' or self.drawmode == 'line' then
-        local x, y = unpack(self.point)
-        love.graphics.circle(self.drawmode, x, y, self.radius, self.segments)
+    local x, y = unpack(self.point)
+    local fillColor = self.fillColor
+    if fillColor then
+        love.graphics.setColor(fillColor)
+        love.graphics.circle('fill', x, y, self.radius, self.segments)
+    end
+    local lineColor = self.lineColor
+    if lineColor then
+        love.graphics.setColor(lineColor)
+        love.graphics.circle('line', x, y, self.radius, self.segments)
     end
 end
 

@@ -1,0 +1,28 @@
+Player
+
+x: 0, y: 0
+mass: 1
+radius: 25
+racketWidth: 10
+!racketHeight: `radius * 4`
+color: [1 1 1]
+damageColor: [1 0 0]
+racketColor: [0 1 1]
+angularVelocity: 10
+# flipX
+
+[Body !x: x !y: y type: dynamic
+    !mass: mass
+    angularDamping: 1
+
+    [CircleShape !radius: root.radius
+        $fillColor: `takingDamage and damageColor or color`
+        [Fixture id: bodyFixture density: 5]
+    ]
+    [RectangleShape !x: `(flipX and -1 or 1) * (racketHeight * 0.5 + radius * 0.5)` y: 0
+        !width: racketWidth !height: racketHeight
+        !angle: `math.pi * 0.5`
+        $fillColor: racketColor
+        [Fixture friction: 1]
+    ]
+]

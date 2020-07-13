@@ -2,6 +2,7 @@ PetecaScene
 
 !p1x: `WINDOW_WIDTH * 0.25`
 !p2x: `WINDOW_WIDTH * 0.75`
+!py: `WINDOW_HEIGHT - R.recipe.Player.radius`
 !petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 
@@ -12,10 +13,15 @@ init: {
 
 [World !yg: `9.81 * METER_BY_PIXEL`
     [Arena id: arena]
+    [Player id: player1 !x: p1x !y: py
+        color: [0 1 0]
+    ]
+    [Player id: player2 !x: p2x !y: py
+        color: [1 1 0] flipX: true
+    ]
     [Peteca id: peteca !x: petecaX !y: petecaY]
 
     [CollisionTracker !a: peteca.fixture !b: arena.ground
-        count: 0
         postSolve: `a.impulse = { contact:getNormal() }`
     ]
 ]
