@@ -11,5 +11,11 @@ init: {
 }
 
 [World !yg: `9.81 * METER_BY_PIXEL`
-    [Peteca !x: petecaX !y: petecaY]
+    [Arena id: arena]
+    [Peteca id: peteca !x: petecaX !y: petecaY]
+
+    [CollisionTracker !a: peteca.fixture !b: arena.ground
+        count: 0
+        postSolve: `self.count = self.count + 1; print('POSTSOLVE', self.count)`
+    ]
 ]

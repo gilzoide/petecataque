@@ -14,18 +14,20 @@ local Fixture = Recipe.wrapper.new('Fixture', {
 function Fixture:create_wrapped()
     local body, shape = self.body, self.shape
     if not body then
-        body = self:first_parent_with('body')
+        body = select(2, self:first_parent_with('body'))
         self.body = body
         log.warnassert(body, "Unable to create fixture without a body")
     end
     if not shape then
-        shape = self:first_parent_with('shape')
+        shape = select(2, self:first_parent_with('shape'))
         self.shape = shape
         log.warnassert(shape, "Unable to create fixture without a shape")
     end
 
     if body and shape then
-        return love.physics.newFixture(body.body, shape.shape)
+        return love.physics.newFixture(body, shape)
+    else
+        self.disabled = true
     end
 end
 

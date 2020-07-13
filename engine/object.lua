@@ -21,6 +21,7 @@ end
 function Object:type()
     return self[1]
 end
+Object[Object.GET_METHOD_PREFIX .. "type"] = Object.type
 
 function Object:typeOf(t)
     return self:type() == t
@@ -205,8 +206,9 @@ function Object:iter_parents()
 end
 function Object:first_parent_with(field)
     for p in self:iter_parents() do
-        if p[field] then
-            return p
+        local value = p[field]
+        if value then
+            return p, value
         end
     end
 end

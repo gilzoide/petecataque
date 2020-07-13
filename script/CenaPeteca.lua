@@ -128,7 +128,7 @@ when = {
         world:update(dt)
     end},
 
-    {{ 'DEBUG' }, function()
+    {{ 'DEBUG.enabled' }, function()
         if get(key, 'r', 'pressed') then
             if love.keyboard.isDown('lshift', 'rshift') then
                 reset()

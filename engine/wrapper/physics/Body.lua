@@ -22,9 +22,15 @@ local Body = Recipe.wrapper.new('Body', {
 Body.draw_push = 'transform'
 
 function Body:create_wrapped()
-    local world = log.warnassert(self:first_parent_of('World'), "Couldn't find World in Body parent")
+    local world = self.world
+    if not world then
+        world = select(2, self:first_parent_with('world'))
+        log.warnassert(world, "Couldn't find World in Body parent")
+    end
     if world then
-        return love.physics.newBody(world.world)
+        return love.physics.newBody(world)
+    else
+        self.disabled = true
     end
 end
 

@@ -11,17 +11,15 @@ local function process_events(obj, index)
     end
 end
 
--- Set this in a recipe to skip iterating it's children
-Director.SKIP_CHILDREN = 'SKIP_CHILDREN'
-
 local function iterate_scene()
-    local iterator, skip = nested.iterate(Scene), false
+    local iterator = nested.iterate(Scene)
     return function()
-        local kp, obj, parent = iterator(skip)
-        if kp then
-            skip = obj.SKIP_CHILDREN
-            return kp, obj, parent
-        end
+        local kp, obj, parent, skip
+        repeat
+            kp, obj, parent = iterator(skip)
+            skip = obj and obj.disabled
+        until not skip
+        return kp, obj, parent
     end
 end
 

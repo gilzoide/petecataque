@@ -1,12 +1,14 @@
 Peteca
 
-x: 0, y: 0
+x: 0
+y: 0
 base: 30
 baseHeight: 20
 mass: 1
 color: [1 1 1]
 colorBase: [0 0 0]
 colorFeather: [0 0 0 0.5]
+$lineColor: `lastToHit and lastToHit.color or self.color`
 impulseIntensity: 100
 
 $baseShapePoints: `{
@@ -32,16 +34,14 @@ $featherShapePoints: `{
     bullet: true
     # gravityScale: 1.4
 
-    [Graphics do: [setColor colorFeather]
-        [PolygonShape !points: featherShapePoints
-            drawmode: fill
-            [Fixture]
-        ]
+    [PolygonShape !points: featherShapePoints
+        $fillColor: colorBase
+        $lineColor: lineColor
+        [Fixture]
     ]
-    [Graphics do: [setColor colorBase]
-        [PolygonShape !points: baseShapePoints
-            drawmode: fill
-            [Fixture id: fixture restitution: 0.9]
-        ]
+    [PolygonShape !points: baseShapePoints $points: nil
+        $fillColor: colorFeather
+        $lineColor: lineColor
+        [Fixture id: fixture restitution: 0.9]
     ]
 ]

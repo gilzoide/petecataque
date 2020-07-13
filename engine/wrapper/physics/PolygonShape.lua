@@ -15,8 +15,15 @@ function PolygonShape:create_wrapped()
 end
 
 function PolygonShape:draw()
-    if self.drawmode == 'fill' or self.drawmode == 'line' then
-        love.graphics.polygon(self.drawmode, self.points)
+    local fillColor = self.fillColor
+    if fillColor then
+        love.graphics.setColor(fillColor)
+        love.graphics.polygon('fill', self.points)
+    end
+    local lineColor = self.lineColor
+    if lineColor then
+        love.graphics.setColor(lineColor)
+        love.graphics.polygon('line', self.points)
     end
 end
 
