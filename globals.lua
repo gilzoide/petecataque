@@ -180,7 +180,9 @@ State = {
 }
 
 function dump_state()
-    print_nested(State)
+    local s = nested.encode(State)
+    print(s, '\n')
+    love.system.setClipboardText(s)
 end
 
 function set_next_frame(...)
