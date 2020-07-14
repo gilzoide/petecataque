@@ -94,16 +94,17 @@ function Object.new(recipe, obj, parent, root_param)
     rawset(obj, '__root', root_param)
     rawset(obj, '__in_middle_of_indexing', {})
 
-    local root_or_obj = root_param or obj
-    for i = 2, #recipe do
-        obj[#obj + 1] = recipe[i]({}, obj, root_or_obj)
-    end
-
     if recipe.preinit then
         DEBUG.PUSH_CALL(recipe, 'preinit')
         recipe.preinit(obj)
         DEBUG.POP_CALL(recipe, 'preinit')
     end
+
+    local root_or_obj = root_param or obj
+    for i = 2, #recipe do
+        obj[#obj + 1] = recipe[i]({}, obj, root_or_obj)
+    end
+
     if recipe.init then
         DEBUG.PUSH_CALL(recipe, 'init')
         recipe.init(obj)
@@ -136,7 +137,7 @@ function Object:__index(index)
             in_middle_of_indexing[index] = nil
             DEBUG.POP_CALL(self, Object.GET_METHOD_PREFIX .. index)
             if value ~= nil then
-                Object.__newindex(self, index, value)
+                rawset(self, '_' .. index, value)
                 return value
             end
         end

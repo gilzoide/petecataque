@@ -29,29 +29,31 @@ local function set_expression_env(expr, env)
     rawset(expr, '__env', env)
 end
 
-local function call_expression_literal(expr, self, ...)
+local function evaluate_nested_expression(expr, self, ...)
     set_expression_env(expr, self)
-    return nested_function_evaluate(expr[2], self, ...)
+    return nested_function_evaluate(expr[2], expr, ...)
 end
 
-local function call_expression_self(expr, self, ...)
-    set_expression_env(expr, self)
-    return nested_function_evaluate(expr, self, ...)
+local function call_expression_literal(expr, self, ...)
+    return expr[2](self, ...)
 end
 
 local function __index_expression(expr, index)
     return index_first_of(index, rawget(expr, '__env'), _ENV)
 end
 
-function Expression.new(file, line)
-    local expr = nested_ordered.new()
-    rawset(expr, '__index', __index_expression)
-    rawset(expr, '__newindex', nested_ordered.__newindex)
-    rawset(expr, '__pairs', nested_ordered.__pairs) 
-    rawset(expr, '__call', call_expression_self)
-    rawset(expr, '__expression', METHOD_EXPRESSION)
-    rawset(expr, '__file', file)
-    rawset(expr, '__line', line)
+function Expression.from_table(literal, file, line)
+    assertf(type(literal) == 'table', "FIXME %s", type(literal))
+    local __expression = type(literal[1]) == 'string' and GETTER_EXPRESSION or METHOD_EXPRESSION
+    local expr = {
+        'Expression', literal,
+        __expression = __expression,
+        __index = __index_expression,
+        __call = evaluate_nested_expression,
+        __pairs = Object.__pairs,
+        __file = file,
+        __line = line,
+    }
     return setmetatable(expr, expr)
 end
 
@@ -77,6 +79,21 @@ function Expression.from_string(literal, file, line)
         __line = line,
     }
     return setmetatable(expr, expr)
+end
+
+function Expression.from_function(f, expression_type)
+    local expr = {
+        'Expression', literal,
+        __expression = expression_type or METHOD_EXPRESSION,
+        __index = __index_expression,
+        __call = call_expression_literal,
+        __pairs = Object.__pairs,
+    }
+    return setmetatable(expr, expr)
+end
+
+function Expression.getter_from_function(f)
+    return Expression.from_function(f, GETTER_EXPRESSION)
 end
 
 return Expression

@@ -1,6 +1,10 @@
 FPS
 
 font: { R font 'Gontserrat-Medium.ttf 14' }
-[Graphics do: { setColor 1 1 1; setFont root.font }
+[Graphics 
+    draw: {
+        setColor 1 1 1;
+        setFont root.font;
+    }
     [Print text: `string.format("FPS: %d", love.timer.getFPS())` limit: `WINDOW_WIDTH` align: right]
 ]
