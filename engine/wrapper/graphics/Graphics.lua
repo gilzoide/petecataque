@@ -1,7 +1,8 @@
 local Graphics = {'Graphics'}
 
+setmetatable(Graphics, { __index = love.graphics })
+
 function Graphics:init()
-    self:add_to_index_chain(love.graphics)
     self:enable_method('draw', self['do'])
 end
 

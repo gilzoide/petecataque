@@ -2,24 +2,17 @@ local Object = require 'object'
 
 local Expression = {}
 
-local loadstring_with_env
-if setfenv and loadstring then
-    loadstring_with_env = function(body, env)
-        local chunk, err = loadstring(body)
-        if not chunk then return nil, err end
-        return setfenv(chunk, env)
-    end
-else
-    loadstring_with_env = function(body, env)
-        return load(body, nil, 't', env)
-    end
+local loadstring = loadstring or load
+local nested_function_evaluate = nested_function.evaluate_with_env
+local METHOD_EXPRESSION = 'method'
+local GETTER_EXPRESSION = 'getter'
+
+function Expression.is_expression(v)
+    return type(v) == 'table' and v.__expression
 end
 
-local loadstring = loadstring or load
-local nested_function_evaluate = nested_function.evaluate
-
-function Expression.is_expression_template(v)
-    return type(v) == 'table' and v.__expression
+function Expression.is_getter(v)
+    return type(v) == 'table' and v.__expression == GETTER_EXPRESSION
 end
 
 local function bind_argument_names_to_callable(callable, argument_names)
@@ -32,64 +25,58 @@ local function bind_argument_names_to_callable(callable, argument_names)
     end
 end
 
-local function call_expression_literal(expr, ...)
-    return nested_function_evaluate(expr[2], expr, ...)
+local function set_expression_env(expr, env)
+    rawset(expr, '__env', env)
 end
 
-local function call_expression_self(expr, ...)
-    return nested_function_evaluate(expr, expr, ...)
+local function call_expression_literal(expr, self, ...)
+    set_expression_env(expr, self)
+    return nested_function_evaluate(expr[2], self, ...)
 end
 
-function Expression.empty_template()
-    local template = { __call = call_expression_self, __pairs = Object.__pairs }
-    template.__expression = template
-    return setmetatable(template, template)
+local function call_expression_self(expr, self, ...)
+    set_expression_env(expr, self)
+    return nested_function_evaluate(expr, self, ...)
 end
 
-function Expression.template(literal, insert_return, argument_names)
-    if type(literal) == 'function' or Expression.is_expression_template(literal) then return literal end
-
-    local callable
-    if type(literal) == 'string' then
-        if insert_return then
-            literal = 'return ' .. literal
-        end
-        local chunk = assert(loadstring(literal))
-        callable = function(expr, ...)
-            return setfenv(chunk, expr)(...)
-        end
-    else
-        callable = call_expression_literal
-    end
-
-    if argument_names then
-        callable = bind_argument_names_to_callable(callable, argument_names)
-    end
-
-    local template = { 'Expression', literal, __expression = literal, __call = callable, __pairs = Object.__pairs }
-    return setmetatable(template, template)
+local function __index_expression(expr, index)
+    return index_first_of(index, rawget(expr, '__env'), _ENV)
 end
 
-function Expression.instantiate(template, index_chain)
-    if type(template) == 'function' then return template end
-    assertf(Expression.is_expression_template(template), "FIXME invalid expression template %q", nested.encode(template))
-
-    local expr = { 'Expression', template.__expression,
-        __index = create_index_first_of(index_chain),
-        __call = template.__call,
-        __pairs = template.__pairs,
-    }
+function Expression.new(file, line)
+    local expr = nested_ordered.new()
+    rawset(expr, '__index', __index_expression)
+    rawset(expr, '__newindex', nested_ordered.__newindex)
+    rawset(expr, '__pairs', nested_ordered.__pairs) 
+    rawset(expr, '__call', call_expression_self)
+    rawset(expr, '__expression', METHOD_EXPRESSION)
+    rawset(expr, '__file', file)
+    rawset(expr, '__line', line)
     return setmetatable(expr, expr)
 end
 
-function Expression.new(literal, index_chain, ...)
-    local template = Expression.template(literal, ...)
-    return Expression.instantiate(template, index_chain)
-end
-
-function Expression.call(template, index_chain, ...)
-    local expr = Expression.instantiate(template, index_chain)
-    return expr and expr(...)
+function Expression.from_string(literal, file, line)
+    assertf(type(literal) == 'string', "FIXME %s", type(literal))
+    local __expression = METHOD_EXPRESSION
+    if not literal:match("^%s*do") then
+        literal = 'return ' .. literal
+        __expression = GETTER_EXPRESSION
+    end
+    local chunk = assert(loadstring(literal, string.format("%s:%s", file, line)))
+    local callable = function(expr, self, ...)
+        set_expression_env(expr, self)
+        return setfenv(chunk, expr)(...)
+    end
+    local expr = {
+        'Expression', literal,
+        __expression = __expression,
+        __index = __index_expression,
+        __call = callable,
+        __pairs = Object.__pairs,
+        __file = file,
+        __line = line,
+    }
+    return setmetatable(expr, expr)
 end
 
 return Expression

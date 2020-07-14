@@ -84,53 +84,35 @@ local function instantiate_into(dest, src, root)
     end
 end
 
-function Object.new(recipe, overrides, parent, root_param)
-    DEBUG.PUSH_CALL(recipe[1], "new", recipe.__line or overrides.__line)
-    local newobj = setmetatable({
-        recipe[1],
-        __recipe = recipe,
-        __parent = parent,
-        __root = root_param,
-        __index_chain = { recipe, Object },
-        __index_expression = {},
-        __newindex_expression = {},
-        __in_middle_of_indexing = {},
-    }, Object)
-    local index_chain = { _ENV, newobj, root_param }
-    local defer_index_once = {}
-    local root_or_newobj = root_param or newobj
+function Object.new(recipe, obj, parent, root_param)
+    DEBUG.PUSH_CALL(recipe, "new")
+    assertf(obj == nil or #obj == 0, "FIXME")
+    obj = setmetatable(obj or {}, Object)
+    obj[1] = recipe[1]
+    rawset(obj, '__recipe', recipe)
+    rawset(obj, '__parent', parent)
+    rawset(obj, '__root', root_param)
+    rawset(obj, '__in_middle_of_indexing', {})
 
-    copy_expression_only_into(newobj, recipe, root_or_newobj, index_chain, defer_index_once)
-    if overrides then copy_into(newobj, overrides, root_or_newobj, index_chain, defer_index_once) end
-    for i = 1, #defer_index_once do
-        local k, v = unpack(defer_index_once[i])
-        DEBUG.PUSH_CALL(recipe[1], Object.GET_ONCE_METHOD_PREFIX .. k)
-        newobj[k] = Expression.call(v, index_chain, newobj)
-        DEBUG.POP_CALL(recipe[1], Object.GET_ONCE_METHOD_PREFIX .. k)
+    local root_or_obj = root_param or obj
+    for i = 2, #recipe do
+        obj[#obj + 1] = recipe[i]({}, obj, root_or_obj)
     end
 
     if recipe.preinit then
-        DEBUG.PUSH_CALL(recipe[1], 'preinit')
-        Expression.call(recipe.preinit, index_chain, newobj)
-        DEBUG.POP_CALL(recipe[1], 'preinit')
+        DEBUG.PUSH_CALL(recipe, 'preinit')
+        recipe.preinit(obj)
+        DEBUG.POP_CALL(recipe, 'preinit')
     end
-
-    instantiate_into(newobj, recipe, newobj)
-    if overrides then instantiate_into(newobj, overrides, root_or_newobj) end
-
     if recipe.init then
-        DEBUG.PUSH_CALL(recipe[1], 'init')
-        Expression.call(recipe.init, index_chain, newobj)
-        DEBUG.POP_CALL(recipe[1], 'init')
-    end
-    if overrides and overrides.init then
-        DEBUG.PUSH_CALL(recipe[1], 'overrides.init', overrides.__line)
-        Expression.call(overrides.init, index_chain, newobj)
-        DEBUG.POP_CALL(recipe[1], 'overrides.init', overrides.__line)
+        DEBUG.PUSH_CALL(recipe, 'init')
+        recipe.init(obj)
+        DEBUG.POP_CALL(recipe, 'init')
     end
 
-    DEBUG.POP_CALL(recipe[1], "new")
-    return newobj
+    DEBUG.POP_CALL(recipe, "new")
+    
+    return obj
 end
 
 local function rawget_self_or_recipe(self, index)
@@ -144,50 +126,48 @@ function Object:__index(index)
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
-    if type(index) == 'string' and index:match('^[^_$]') then
+    local value_in_recipe = rawget(self, '__recipe')[index]
+    if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
-        if not in_middle_of_indexing[index] then 
-            local expr = self.__index_expression[index]
-            if expr then
-                DEBUG.PUSH_CALL(self[1], Object.GET_METHOD_PREFIX .. index)
-                in_middle_of_indexing[index] = true
-                local value = expr(self)
-                in_middle_of_indexing[index] = nil
-                DEBUG.POP_CALL(self[1], Object.GET_METHOD_PREFIX .. index)
-                if value ~= nil then
-                    Object.__newindex(self, index, value)
-                    return value
-                end
+        if not in_middle_of_indexing[index] then
+            DEBUG.PUSH_CALL(self, Object.GET_METHOD_PREFIX .. index)
+            in_middle_of_indexing[index] = true
+            local value = value_in_recipe(self)
+            in_middle_of_indexing[index] = nil
+            DEBUG.POP_CALL(self, Object.GET_METHOD_PREFIX .. index)
+            if value ~= nil then
+                Object.__newindex(self, index, value)
+                return value
             end
         end
-        local value = rawget(self, '_' .. index)
-        if value ~= nil then return value end
+    elseif value_in_recipe ~= nil then
+        return value_in_recipe
     end
-    return index_first_of(index, rawget(self, '__index_chain'))
+    return Object[index]
 end
 
 function Object:__newindex(index, value)
-    if index == 'draw_push' then
-        local valid = value == 'all' or value == 'transform'
-        value = valid and value
-        index = '_' .. index
-    elseif type(index) == 'string' then
-        if index:match('^[^_$]') then
-            local set_method = self.__newindex_expression[index]
-            if set_method then
-                DEBUG.PUSH_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
-                local result = set_method(self, value)
-                DEBUG.POP_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
-                if result == Object.SET_METHOD_NO_RAWSET then return
-                elseif result ~= nil then value = result
-                end
-                index = '_' .. index
-            elseif self.__index_expression[index] then
-                -- avoid ignoring getter expressions
-                index = '_' .. index
-            end
-        end
-    end
+    -- if index == 'draw_push' then
+    --     local valid = value == 'all' or value == 'transform'
+    --     value = valid and value
+    --     index = '_' .. index
+    -- elseif type(index) == 'string' then
+    --     if index:match('^[^_$]') then
+    --         local set_method = self.__newindex_expression[index]
+    --         if set_method then
+    --             DEBUG.PUSH_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
+    --             local result = set_method(self, value)
+    --             DEBUG.POP_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
+    --             if result == Object.SET_METHOD_NO_RAWSET then return
+    --             elseif result ~= nil then value = result
+    --             end
+    --             index = '_' .. index
+    --         elseif self.__index_expression[index] then
+    --             -- avoid ignoring getter expressions
+    --             index = '_' .. index
+    --         end
+    --     end
+    -- end
     rawset(self, index, value)
 end
 
@@ -195,7 +175,7 @@ function Object:__pairs()
     return coroutine.wrap(function()
         for k, v in rawpairs(self) do
             if type(k) == 'string' then
-                if k:startswith('__') or k:startswith('$') then
+                if k:startswith('__') then
                     k = nil
                 elseif k:startswith('_') then
                     k = k:sub(2)
@@ -252,10 +232,6 @@ end
 function Object:create_expression(v, argument_names)
     local index_chain = { _ENV, self, self.root }
     return Expression.new(v, index_chain, false, argument_names)
-end
-
-function Object:add_to_index_chain(...)
-    table_extend(self.__index_chain, ...)
 end
 
 function Object:enable_method(method_name, enable)

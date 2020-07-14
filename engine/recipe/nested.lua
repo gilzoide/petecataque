@@ -2,64 +2,61 @@ local Object = require 'object'
 
 local recipe_nested = {}
 
-recipe_nested.INDEX_EXPRESSIONS = '__index_expressions'
-recipe_nested.NEWINDEX_EXPRESSIONS = '__newindex_expressions'
-recipe_nested.PREINIT_EXPRESSIONS = '__preinit_expressions'
-recipe_nested.OTHER_VALUES = '__other_values'
-
-local function construct_with_line(opening, line)
-    return setmetatable({
-        __line = line,
-        [recipe_nested.OTHER_VALUES] = {},
-    }, recipe_nested)
-end
-
-function recipe_nested.load(contents)
-    return nested.decode(contents, nested.bool_number_filter, construct_with_line)
-end
-
-function recipe_nested:__newindex(index, value)
-    local special = Object.IS_SPECIAL_METHOD_PREFIX(index)
-    if special == 'get' then
-        local index_expressions = rawget(self, recipe_nested.INDEX_EXPRESSIONS)
-        if not index_expressions then index_expressions = {}; rawset(self, recipe_nested.INDEX_EXPRESSIONS, index_expressions) end
-        value = Expression.template(value, true)
-        index_expressions[index] = value
-    elseif special == 'set' then
-        local newindex_expressions = rawget(self, recipe_nested.NEWINDEX_EXPRESSIONS)
-        if not newindex_expressions then newindex_expressions = {}; rawset(self, recipe_nested.NEWINDEX_EXPRESSIONS, newindex_expressions) end
-        value = Expression.template(value, false, Object.SET_METHOD_ARGUMENT_NAMES)
-        newindex_expressions[index] = value
-    elseif special == 'once' then
-        local preinit_expressions = rawget(self, recipe_nested.PREINIT_EXPRESSIONS)
-        if not preinit_expressions then preinit_expressions = {}; rawset(self, recipe_nested.PREINIT_EXPRESSIONS, preinit_expressions) end
-        value = Expression.template(value, true)
-        preinit_expressions[index] = value
+local function text_filter(s, quotes, file, line)
+    if quotes == '`' then
+        return Expression.from_string(s, file, line)
     else
-        local other_values = rawget(self, recipe_nested.OTHER_VALUES)
-        if index == 'init' or index == 'update' or index == 'draw' then
-            value = Expression.template(value)
-        elseif index == 'when' then
-            assertf(type(value) == 'table', "On recipe %q: Expected 'when' to be a table, found %q", self[1], type(value))
-            for i = 1, #value do
-                local t = value[i]
-                t[2] = Expression.template(t[2])
-            end
-        end
-        other_values[index] = value
+        return nested.bool_number_filter(s, quotes, line)
     end
-    rawset(self, index, value)
 end
 
-function recipe_nested:__pairs()
-    return iter_chain(
-        self[recipe_nested.NEWINDEX_EXPRESSIONS],
-        self[recipe_nested.INDEX_EXPRESSIONS],
-        self[recipe_nested.OTHER_VALUES],
-        self[recipe_nested.PREINIT_EXPRESSIONS]
-    )
+local function table_constructor(opening, file, line)
+    if opening == '{' then
+        return Expression.new(file, line)
+    else
+        local t = nested_ordered.new()
+        rawset(t, '__file', file)
+        rawset(t, '__line', line)
+        return t
+    end
 end
 
+local function bind_file_to_constructors(file)
+    return function(s, quotes, line)
+        return text_filter(s, quotes, file, line)
+    end, function(opening, line)
+        return table_constructor(opening, file, line)
+    end
+end
+
+function recipe_nested.load(name, filename, contents)
+    local recipe = assert(nested.decode(contents, bind_file_to_constructors(filename)))
+    recipe_nested.preprocess(name, recipe)
+    return recipe
+end
+
+function recipe_nested.preprocess(name, recipe)
+    assertf(recipe[1] ~= nil, "Recipe name expected as %q @ %s", name, recipe.__file)
+    assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
+
+    for kp, t, parent in nested.iterate(recipe, { table_only = true, skip_root = true }) do
+        local subrecipe_name = t[1]
+        assertf(subrecipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", subrecipe_name.__file, subrecipe_name.__line)
+        local subrecipe = assertf(R.recipe[subrecipe_name], "Recipe %q couldn't be loaded", subrecipe_name)
+        t.__recipe = subrecipe
+        t.__parent = parent
+        setmetatable(t, recipe_nested)
+    end
+    setmetatable(recipe, recipe_nested)
+end
+
+function recipe_nested.__index(t, index)
+    if index == 'recipe' then return rawget(t, '__recipe') end
+    if index == 'parent' then return rawget(t, '__parent') end
+    local super = rawget(t, '__recipe')
+    return super and super[index]
+end
+recipe_nested.__pairs = Object.__pairs
 recipe_nested.__call = Object.new
 
 return recipe_nested

@@ -13,6 +13,7 @@ do
 end
 nested = require 'nested'
 nested_function = require 'nested.function'
+nested_ordered = require 'nested.ordered'
 nested_match = require 'nested.match'
 log = require 'log'
 Expression = require 'expression'
@@ -31,9 +32,9 @@ function unset(obj, ...)
     set(obj, kp, nil)
 end
 
-function index_first_of(index, index_chain)
-    for i = 1, #index_chain do
-        local t = index_chain[i]
+function index_first_of(index, ...)
+    for i = 1, select('#', ...) do
+        local t = select(i, ...)
         if t then
             local value = t[index]
             if value ~= nil then return value end
@@ -43,7 +44,7 @@ function index_first_of(index, index_chain)
 end
 function create_index_first_of(index_chain)
     return index_chain and function(t, index)
-        return index_first_of(index, index_chain)
+        return index_first_of(index, unpack(index_chain))
     end
 end
 
