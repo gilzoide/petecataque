@@ -17,6 +17,8 @@ function RectangleShape:create_wrapped()
     return shape
 end
 
+RectangleShape.draw_push = 'all'
+
 function RectangleShape:draw()
     local fillColor = self.fillColor
     if fillColor then

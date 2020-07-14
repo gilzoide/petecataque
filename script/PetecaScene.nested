@@ -17,15 +17,21 @@ init: {
         color: [0 1 0]
         leftKey: a
         rightKey: d
+        
+        $otherPlayer: player2
     ]
     [Player id: player2 !x: p2x !y: py
         color: [1 1 0] flipX: true
         leftKey: left
         rightKey: right
+
+        $otherPlayer: player1
     ]
     [Peteca id: peteca !x: petecaX !y: petecaY]
 
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
+        beginContact: [set peteca [lastToHit otherPlayer takingDamage] true]
+        endContact: [set peteca [lastToHit otherPlayer takingDamage] false]
         postSolve: `peteca.impulse = { contact:getNormal() }`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
@@ -34,6 +40,18 @@ init: {
     [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
         beginContact: [b.root.takingDamage: true]
         endContact: [b.root.takingDamage: false]
+    ]
+]
+
+lifeBarMargin: 10
+[LifeBar id: player1Life !color: player1.color
+    !x: lifeBarMargin !y: lifeBarMargin
+    $takingDamage: player1.takingDamage
+]
+[Transform !x: WINDOW_WIDTH sx: -1 sy: 1
+    [LifeBar id: player2Life !color: player2.color
+        !x: lifeBarMargin !y: lifeBarMargin
+        $takingDamage: player2.takingDamage
     ]
 ]
 

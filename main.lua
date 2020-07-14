@@ -2,11 +2,8 @@ require 'globals'
 
 function love.load(arg)
     DEBUG.STARTTIMER('load')
-    -- Resources:loadall('script', 'Peteca', 'Buneco', 'Vida', 'Placar', 'CenaPeteca')
-    -- local scene = CenaPeteca()
-    -- addtoscene(scene)
     
-    local initial_scene = arg[1] or 'Cena2'
+    local initial_scene = arg[1] or 'PetecaScene'
     local scene = assert(R.recipe[initial_scene])()
     addtoscene(scene)
 

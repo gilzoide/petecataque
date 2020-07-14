@@ -13,6 +13,8 @@ function CircleShape:create_wrapped()
     return shape
 end
 
+CircleShape.draw_push = 'all'
+
 function CircleShape:draw()
     local x, y = unpack(self.point)
     local fillColor = self.fillColor

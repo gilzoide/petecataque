@@ -14,6 +14,8 @@ function PolygonShape:create_wrapped()
     return shape
 end
 
+PolygonShape.draw_push = 'all'
+
 function PolygonShape:draw()
     local fillColor = self.fillColor
     if fillColor then

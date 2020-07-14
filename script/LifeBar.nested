@@ -1,0 +1,36 @@
+LifeBar
+
+x: 0, y: 0
+color: [1 0 0]
+bgColor: [0 0 0]
+borderColor: [1 1 1]
+damageColor: [1 0 0]
+width: 320
+height: 15
+timeToFinish: 0.5
+finished: false
+anchorPoint: [0 0]
+
+!timeLeft: timeToFinish
+$timePercentage: `timeLeft / timeToFinish`
+"$set reset": `self.timeLeft, self.finished = nil, nil`
+
+[Rectangle !x: root.x !y: root.y !width: root.width !height: root.height
+    !anchorPoint: root.anchorPoint
+    !fillColor: bgColor
+
+    [Rectangle $width: `parent.width * timePercentage` !height: parent.height
+        !anchorPoint: root.anchorPoint
+        !fillColor: root.color
+    ]
+    [Rectangle !width: parent.width !height: parent.height
+        !lineColor: borderColor
+    ]
+]
+
+when: {
+    [[takingDamage] `
+        self.timeLeft = math.max(0, timeLeft - dt)
+        self.finished = timeLeft <= 0
+    `]
+}
