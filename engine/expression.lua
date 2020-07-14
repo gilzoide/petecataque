@@ -1,5 +1,3 @@
-local Object = require 'object'
-
 local Expression = {}
 
 local loadstring = loadstring or load
@@ -50,7 +48,7 @@ function Expression.from_table(literal, file, line)
         __expression = __expression,
         __index = __index_expression,
         __call = evaluate_nested_expression,
-        __pairs = Object.__pairs,
+        __pairs = default_object_pairs,
         __file = file,
         __line = line,
     }
@@ -74,20 +72,21 @@ function Expression.from_string(literal, file, line)
         __expression = __expression,
         __index = __index_expression,
         __call = callable,
-        __pairs = Object.__pairs,
+        __pairs = default_object_pairs,
         __file = file,
         __line = line,
     }
     return setmetatable(expr, expr)
 end
 
-function Expression.from_function(f, expression_type)
+function Expression.from_function(literal, expression_type)
+    assertf(type(literal) == 'function', "FIXME %s", type(literal))
     local expr = {
         'Expression', literal,
         __expression = expression_type or METHOD_EXPRESSION,
         __index = __index_expression,
         __call = call_expression_literal,
-        __pairs = Object.__pairs,
+        __pairs = default_object_pairs,
     }
     return setmetatable(expr, expr)
 end

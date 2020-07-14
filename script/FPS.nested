@@ -8,3 +8,7 @@ font: { R font 'Gontserrat-Medium.ttf 14' }
     }
     [Print text: `string.format("FPS: %d", love.timer.getFPS())` limit: `WINDOW_WIDTH` align: right]
 ]
+
+init: {
+    print 'self.type =' self.type;
+}

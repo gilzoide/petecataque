@@ -6,6 +6,20 @@ function pairs(t)
     local mt = getmetatable(t)
     return (mt and mt.__pairs or rawpairs)(t)
 end
+function default_object_pairs(self)
+    return coroutine.wrap(function()
+        for k, v in rawpairs(self) do
+            if type(k) == 'string' then
+                if k:startswith('__') then
+                    k = nil
+                elseif k:startswith('_') then
+                    k = k:sub(2)
+                end
+            end
+            if k then coroutine.yield(k, v) end
+        end
+    end)
+end
 do
     local success, m = pcall(require, 'DEBUG')  -- DEBUG is excluded on release
     DEBUG = success and m or setmetatable({ enabled = false }, require 'empty')
@@ -15,6 +29,15 @@ nested = require 'nested'
 nested_function = require 'nested.function'
 nested_ordered = require 'nested.ordered'
 nested_match = require 'nested.match'
+
+function assertf(cond, fmt, ...)
+    return assert(cond, string.format(fmt, ...))
+end
+
+function errorf(fmt, ...)
+    return error(string.format(fmt, ...))
+end
+
 log = require 'log'
 Expression = require 'expression'
 Recipe = require 'recipe'
@@ -92,14 +115,6 @@ function addchild(obj)
 end
 function addtoscene(obj)
     Scene:add(obj)
-end
-
-function assertf(cond, fmt, ...)
-    return assert(cond, string.format(fmt, ...))
-end
-
-function errorf(fmt, ...)
-    return error(string.format(fmt, ...))
 end
 
 function clamp(x, min, max)

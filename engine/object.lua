@@ -1,3 +1,5 @@
+local Expression = require 'expression'
+
 local Object = {}
 
 Object.GET_METHOD_PREFIX = '$'
@@ -18,70 +20,11 @@ function Object.IS_SPECIAL_METHOD_PREFIX(v)
     end
     return false, v
 end
-    
-function Object:type()
-    return self[1]
-end
-Object[Object.GET_METHOD_PREFIX .. "type"] = Object.type
+
+Object.type = Expression.getter_from_function(function(self) return self[1] end)
 
 function Object:typeOf(t)
-    return self:type() == t
-end
-
-local function copy_when_into(dest, when, index_chain)
-    local dest_when = rawget(dest, 'when')
-    if not dest_when then dest_when = {}; rawset(dest, 'when', dest_when) end
-    for i = 1, #when do
-        local t = when[i]
-        table.insert(dest_when, { t[1], Expression.instantiate(t[2], index_chain) })
-    end
-end
-local function copy_into(dest, src, root, index_chain, defer_index_once)
-    local special
-    for k, v in nested.kpairs(src) do
-        special, k = Object.IS_SPECIAL_METHOD_PREFIX(k)
-        if special == 'get' then
-            dest.__index_expression[k] = Expression.instantiate(v, index_chain)
-        elseif special == 'set' then
-            dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
-        elseif special == 'once' then
-            defer_index_once[#defer_index_once + 1] = { k, v }
-        elseif k == 'init' or k == 'preinit' then
-            -- call later
-        elseif k == 'update' or k == 'draw' then
-            dest[k] = Expression.instantiate(v, index_chain)
-        elseif k == 'when' then
-            copy_when_into(dest, v, index_chain)
-        else
-            if k == 'id' then
-                root[v] = dest
-            end
-            dest[k] = deepcopy(v)
-        end
-    end
-end
-local function copy_expression_only_into(dest, src, root, index_chain, defer_index_once)
-    local special
-    for k, v in nested.kpairs(src) do
-        special, k = Object.IS_SPECIAL_METHOD_PREFIX(k)
-        if special == 'get' then
-            dest.__index_expression[k] = Expression.instantiate(v, index_chain)
-        elseif special == 'set' then
-            dest.__newindex_expression[k] = Expression.instantiate(v, index_chain)
-        elseif special == 'once' then
-            defer_index_once[#defer_index_once + 1] = { k, v }
-        elseif k == 'when' then
-            copy_when_into(dest, v, index_chain)
-        end
-    end
-end
-local function instantiate_into(dest, src, root)
-    for i = 2, #src do
-        local t = src[i]
-        local recipe_name = assert(t[1], "Recipe must have a name")
-        local constructor = assertf(R.recipe[recipe_name], "Recipe %q couldn't be loaded", recipe_name)
-        dest[#dest + 1] = constructor(t, dest, root)
-    end
+    return self.type == t
 end
 
 function Object.new(recipe, obj, parent, root_param)
@@ -127,7 +70,7 @@ function Object:__index(index)
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
-    local value_in_recipe = rawget(self, '__recipe')[index]
+    local value_in_recipe = index_first_of(index, rawget(self, '__recipe'), Object)
     if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
         if not in_middle_of_indexing[index] then
@@ -141,10 +84,9 @@ function Object:__index(index)
                 return value
             end
         end
-    elseif value_in_recipe ~= nil then
+    else
         return value_in_recipe
     end
-    return Object[index]
 end
 
 function Object:__newindex(index, value)
@@ -172,20 +114,7 @@ function Object:__newindex(index, value)
     rawset(self, index, value)
 end
 
-function Object:__pairs()
-    return coroutine.wrap(function()
-        for k, v in rawpairs(self) do
-            if type(k) == 'string' then
-                if k:startswith('__') then
-                    k = nil
-                elseif k:startswith('_') then
-                    k = k:sub(2)
-                end
-            end
-            if k then coroutine.yield(k, v) end
-        end
-    end)
-end
+Object.__pairs = default_object_pairs
 
 function Object:iter_parents()
     local current = self
