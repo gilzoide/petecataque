@@ -19,8 +19,6 @@ local Body = Recipe.wrapper.new('Body', 'body', {
     'getWorldVector', 'isTouching', 'resetMassData',
 })
 
-Body.draw_push = 'transform'
-
 function Body:create_wrapped()
     local world = self.world
     if not world then
@@ -33,6 +31,8 @@ function Body:create_wrapped()
         self.disabled = true
     end
 end
+
+Body.draw_push = 'transform'
 
 function Body:draw()
     love.graphics.replaceTransform(love.math.newTransform(self.x, self.y, self.angle))

@@ -9,6 +9,10 @@ local EdgeShape = Recipe.wrapper.new('EdgeShape', 'shape', {
 
 EdgeShape.points = { 0,0, 0,1 }
 
+function EdgeShape:typeOf(t)
+    return t == 'Shape' or t == 'EdgeShape'
+end
+
 function EdgeShape:create_wrapped()
     local shape = love.physics.newEdgeShape(unpack(self.points))
     return shape

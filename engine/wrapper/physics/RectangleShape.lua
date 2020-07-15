@@ -12,6 +12,10 @@ RectangleShape.y = 0
 RectangleShape.width = 1
 RectangleShape.height = 1
 
+function RectangleShape:typeOf(t)
+    return t == 'Shape' or t == 'RectangleShape'
+end
+
 function RectangleShape:create_wrapped()
     local shape = love.physics.newRectangleShape(self.x, self.y, self.width, self.height, self.angle)
     return shape

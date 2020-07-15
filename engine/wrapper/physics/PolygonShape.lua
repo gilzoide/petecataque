@@ -9,6 +9,10 @@ local PolygonShape = Recipe.wrapper.new('PolygonShape', 'shape', {
 
 PolygonShape.points = { 0,0, 0,1, 1,1, 1,0 }
 
+function PolygonShape:typeOf(t)
+    return t == 'Shape' or t == 'PolygonShape'
+end
+
 function PolygonShape:create_wrapped()
     local shape = love.physics.newPolygonShape(self.points)
     return shape

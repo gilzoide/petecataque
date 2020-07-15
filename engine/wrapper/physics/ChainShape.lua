@@ -10,6 +10,10 @@ local ChainShape = Recipe.wrapper.new('ChainShape', 'shape', {
 ChainShape.points = { 0,0, 0,1 }
 ChainShape.loop = true
 
+function ChainShape:typeOf(t)
+    return t == 'Shape' or t == 'ChainShape'
+end
+
 function ChainShape:create_wrapped()
     local shape = love.physics.newChainShape(self.loop, self.points)
     return shape

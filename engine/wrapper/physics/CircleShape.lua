@@ -8,6 +8,10 @@ local CircleShape = Recipe.wrapper.new('CircleShape', 'shape', {
 
 CircleShape.radius = 10
 
+function CircleShape:typeOf(t)
+    return t == 'Shape' or t == 'CircleShape'
+end
+
 function CircleShape:create_wrapped()
     local shape = love.physics.newCircleShape(self.radius)
     return shape
