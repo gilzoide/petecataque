@@ -110,7 +110,7 @@ local function read_block(state, s, opening_token)
         token, advance, newlines, newcolumn, quotation_mark = read_next_token(s)
         if type(token) == 'string' then
             if key or peek_token_type_name(s:sub(advance)) ~= 'KEYVALUE' then
-                value = state.text_filter and state.text_filter(token, quotation_mark)
+                value = state.text_filter and state.text_filter(token, quotation_mark, state.line)
                 if value == nil then value = token end
                 block[key or #block + 1], key = value, nil
             else
