@@ -10,10 +10,22 @@ function DEBUG.REPORTTIMER(name)
     print('DEBUG.REPORTTIMER', name, love.timer.getTime() - DEBUG[name])
 end
 
+function DEBUG.FILE_LINE(obj)
+    local s = {}
+    s[1] = obj.__file
+    s[2] = obj.__line
+    if #s > 0 then
+        s[#s + 1] = ""
+        return table.concat(s, ':')
+    else
+        return ""
+    end
+end
+
 local function stringify_call(c)
     local recipe, name = unpack(c)
-    local where = table.concat({ recipe.__file, recipe.__line}, ':')
-    return string.format("\t%s: '%s.%s'", where, recipe[1], name)
+    local where = DEBUG.FILE_LINE(recipe)
+    return string.format("\t%s '%s.%s'", where, recipe[1], name)
 end
 
 function DEBUG.PUSH_CALL(recipe, name)

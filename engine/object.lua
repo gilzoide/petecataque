@@ -29,7 +29,7 @@ end
 
 function Object.new(recipe, obj, parent, root_param)
     DEBUG.PUSH_CALL(recipe, "new")
-    assertf(obj == nil or #obj == 0, "FIXME")
+    assertf(obj == nil or #obj == 0, "FIXME %q", nested.encode(obj))
     obj = setmetatable(obj or {}, Object)
     obj[1] = recipe[1]
     rawset(obj, '__recipe', recipe)

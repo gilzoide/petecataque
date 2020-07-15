@@ -1,18 +1,5 @@
 local Director = {}
 
-local function process_events(obj, index)
-    if obj[index] then
-        DEBUG.PUSH_CALL(obj, index)
-        for i = 1, #obj[index] do
-            local check = obj[index][i]
-            if nested_match(obj, check[1]) then
-                check[2](obj)
-            end
-        end
-        DEBUG.POP_CALL(obj, index)
-    end
-end
-
 local function iterate_scene()
     local iterator = nested.iterate(Scene)
     return function()
@@ -32,8 +19,6 @@ function Director.update(dt)
             obj:update(dt)
             DEBUG.POP_CALL(obj, 'update')
         end
-        process_events(obj, 'when')
-        process_events(obj, 'also_when')
     end
 end
 

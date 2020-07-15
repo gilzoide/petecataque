@@ -1,22 +1,22 @@
 Arena
 
-!wallPoints: [
-    0 WINDOW_HEIGHT
-    0 0
-    WINDOW_WIDTH 0
-    WINDOW_WIDTH WINDOW_HEIGHT
-]
-!groundPoints: [
-    0 WINDOW_HEIGHT
-    WINDOW_WIDTH WINDOW_HEIGHT
-]
+wallPoints: `{
+    0, WINDOW_HEIGHT,
+    0, 0,
+    WINDOW_WIDTH, 0,
+    WINDOW_WIDTH, WINDOW_HEIGHT,
+}`
+groundPoints: `{
+    0, WINDOW_HEIGHT,
+    WINDOW_WIDTH, WINDOW_HEIGHT,
+}`
 
 [Body
-    [ChainShape loop: false !points: wallPoints
+    [ChainShape loop: false points: `wallPoints`
         [Fixture restitution: 0.5 friction: 1]
     ]
 
-    [EdgeShape !points: groundPoints
+    [EdgeShape points: `groundPoints`
         [Fixture tag: GROUND friction: 1]
     ]
 ]

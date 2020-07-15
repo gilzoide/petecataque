@@ -28,7 +28,7 @@ featherShapePoints: `{
     base * 0.25, -baseHeight * 4
 }`
 
-[Body id: body x: `x` y: `y` type: dynamic
+[Body id: body x: `root.x` y: `root.y` type: dynamic
     mass: `mass`
     angularDamping: 1
     bullet: true

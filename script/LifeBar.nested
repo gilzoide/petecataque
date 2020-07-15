@@ -9,18 +9,21 @@ width: 320
 height: 15
 timeToFinish: 0.5
 finished: false
-anchorPoint: [0 0]
 
-timeLeft: `timeToFinish`
+timeLeft: 0
 timePercentage: `timeLeft / timeToFinish`
-"$set reset": `do self.timeLeft, self.finished = nil, nil end`
+
+init: `do self:reset() end`
+
+reset: {
+    self.timeLeft: timeToFinish
+    self.finished: false
+}
 
 [Rectangle x: `root.x` y: `root.y` width: `root.width` height: `root.height`
-    anchorPoint: `root.anchorPoint`
     fillColor: `bgColor`
 
     [Rectangle width: `parent.width * timePercentage` height: `parent.height`
-        anchorPoint: `root.anchorPoint`
         fillColor: `root.color`
     ]
     [Rectangle width: `parent.width` height: `parent.height`
@@ -28,9 +31,7 @@ timePercentage: `timeLeft / timeToFinish`
     ]
 ]
 
-when: [
-    [takingDamage; `do
-        self.timeLeft = math.max(0, timeLeft - dt)
-        self.finished = timeLeft <= 0
-    end`]
-]
+[When takingDamage: `do
+    self.timeLeft = math.max(0, timeLeft - dt)
+    self.finished = timeLeft <= 0
+end`]

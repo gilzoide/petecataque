@@ -44,19 +44,14 @@ function recipe_nested.preprocess(name, recipe)
             t.__super = super_recipe
             t.__parent = parent
             if super_recipe.__init_recipe then
+                DEBUG.PUSH_CALL(t, '__init_recipe')
                 super_recipe:__init_recipe(t)
+                DEBUG.POP_CALL(t, '__init_recipe')
             end
         end
         for k, v in nested.kpairs(t) do
             if type(v) == 'table' and v.__opening_token == '{' then
                 t[k] = Expression.from_table(v, v.__file, v.__line)
-            end
-            if k == 'when' then
-                assertf(type(v) == 'table', "When must be a table, found %s", type(v))
-                for i = 1, #v do
-                    local check = v[i]
-                    check[2] = Expression.from_table(check[2])
-                end
             end
         end
         setmetatable(t, recipe_nested)

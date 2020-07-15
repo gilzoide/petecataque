@@ -12,8 +12,8 @@ angularVelocity: 10
 # flipX
 # takingDamage: true
 
-[Body id: body x: `x` y: `y` type: dynamic
-    mass: `mass`
+[Body id: body x: `root.x` y: `root.y` type: dynamic
+    mass: `root.mass`
     angularDamping: 1
 
     [CircleShape radius: `root.radius`
@@ -31,7 +31,7 @@ angularVelocity: 10
 [KeyDetector id: toTheLeft key: `leftKey`]
 [KeyDetector id: toTheRight key: `rightKey`]
 
-when: [
-    [toTheLeft.down !toTheRight.down; `do body.angularVelocity = -angularVelocity end`]
-    [!toTheLeft.down toTheRight.down; `do body.angularVelocity = angularVelocity end`]
+[When
+    "toTheLeft.down !toTheRight.down": `do body.angularVelocity = -angularVelocity end`
+    "!toTheLeft.down toTheRight.down": `do body.angularVelocity = angularVelocity end`
 ]
