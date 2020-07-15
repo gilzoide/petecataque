@@ -32,7 +32,7 @@ init: {
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
         beginContact: { set peteca [lastToHit otherPlayer takingDamage] true }
         endContact: { set peteca [lastToHit otherPlayer takingDamage] false }
-        postSolve: `-- do peteca.impulse = { contact:getNormal() } end`
+        postSolve: `do peteca.impulse = { contact:getNormal() } end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
         postSolve: { a.root.lastToHit: b.root }

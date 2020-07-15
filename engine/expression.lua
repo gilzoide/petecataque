@@ -4,6 +4,7 @@ local loadstring = loadstring or load
 local nested_function_evaluate = nested_function.evaluate_with_env
 local METHOD_EXPRESSION = 'method'
 local GETTER_EXPRESSION = 'getter'
+local ARGUMENT_NAMES_KEY = 'argument_names'
 
 function Expression.is_expression(v)
     return type(v) == 'table' and v.__expression
@@ -13,23 +14,26 @@ function Expression.is_getter(v)
     return type(v) == 'table' and v.__expression == GETTER_EXPRESSION
 end
 
-local function bind_argument_names_to_callable(callable, argument_names)
-    return function(expr, ...)
+function Expression.bind_argument_names(expr, argument_names)
+    if not Expression.is_expression(expr) then return end
+    assertf(type(argument_names) == 'table', "Expected argument_names as table, found %q", type(argument_names))
+    expr[ARGUMENT_NAMES_KEY] = argument_names
+end
+
+local function setup_expression_call(expr, self, ...)
+    rawset(expr, '__env', self)
+    local argument_names = expr[ARGUMENT_NAMES_KEY]
+    if argument_names then
         for i = 1, math.min(#argument_names, select('#', ...)) do
             local name = argument_names[i]
-            expr[name] = select(i, ...)
+            rawset(expr, name, (select(i, ...)))
         end
-        return callable(expr, ...)
     end
 end
 
-local function set_expression_env(expr, env)
-    rawset(expr, '__env', env)
-end
-
 local function evaluate_nested_expression(expr, self, ...)
-    set_expression_env(expr, self)
-    return nested_function_evaluate(expr[2], expr, ...)
+    setup_expression_call(expr, self, ...)
+    return nested_function_evaluate(expr[2], expr, self, ...)
 end
 
 local function call_expression_literal(expr, self, ...)
@@ -42,10 +46,9 @@ end
 
 function Expression.from_table(literal, file, line)
     assertf(type(literal) == 'table', "FIXME %s", type(literal))
-    local __expression = type(literal[1]) == 'string' and GETTER_EXPRESSION or METHOD_EXPRESSION
     local expr = {
         'Expression', literal,
-        __expression = __expression,
+        __expression = METHOD_EXPRESSION,
         __index = __index_expression,
         __call = evaluate_nested_expression,
         __pairs = default_object_pairs,
@@ -64,8 +67,8 @@ function Expression.from_string(literal, file, line)
     end
     local chunk = assert(loadstring(literal, string.format("%s:%s", file, line)))
     local callable = function(expr, self, ...)
-        set_expression_env(expr, self)
-        return setfenv(chunk, expr)(...)
+        setup_expression_call(expr, self, ...)
+        return setfenv(chunk, expr)(self, ...)
     end
     local expr = {
         'Expression', literal,

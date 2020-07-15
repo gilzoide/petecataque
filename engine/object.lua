@@ -6,7 +6,6 @@ Object.SET_METHOD_PREFIX = '$set '
 function Object.setter_method_name(field)
     return Object.SET_METHOD_PREFIX .. field
 end
-Object.SET_METHOD_ARGUMENT_NAMES = { 'self', 'value' }
 
 function Object.add_getter(self_or_recipe, field_name, getter_or_func)
     if not Expression.is_getter(getter_or_func) then
@@ -15,8 +14,10 @@ function Object.add_getter(self_or_recipe, field_name, getter_or_func)
     self_or_recipe[field_name] = getter_or_func
 end
 
-function Object.add_setter(self_or_recipe, field_name, func)
-    self_or_recipe[Object.setter_method_name(field_name)] = func
+Object.SET_METHOD_ARGUMENT_NAMES = { 'value' }
+function Object.add_setter(self_or_recipe, field_name, function_or_expression)
+    Expression.bind_argument_names(function_or_expression, Object.SET_METHOD_ARGUMENT_NAMES)
+    self_or_recipe[Object.setter_method_name(field_name)] = function_or_expression
 end
 
 function Object:type()

@@ -53,6 +53,9 @@ function recipe_nested.preprocess(name, recipe)
             if type(v) == 'table' and v.__opening_token == '{' then
                 t[k] = Expression.from_table(v, v.__file, v.__line)
             end
+            if type(k) == 'string' and k:startswith(Object.SET_METHOD_PREFIX) then
+                Expression.bind_argument_names(v, Object.SET_METHOD_ARGUMENT_NAMES)
+            end
         end
         setmetatable(t, recipe_nested)
     end
