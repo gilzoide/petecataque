@@ -8,10 +8,10 @@ color: [1 1 1]
 colorBase: [0 0 0]
 colorFeather: [0 0 0 0.5]
 # lastToHit
-$lineColor: `lastToHit and lastToHit.color or self.color`
+lineColor: `lastToHit and lastToHit.color or self.color`
 impulseIntensity: 100
 
-$baseShapePoints: `{
+baseShapePoints: `{
     -base * 0.5, 0,
     -base * 0.5, -baseHeight * 0.5,
     -base * 0.25, -baseHeight * 0.5,
@@ -22,33 +22,33 @@ $baseShapePoints: `{
     base * 0.5, 0,
 }`
 
-$featherShapePoints: `{
+featherShapePoints: `{
     0, -baseHeight,
     -base * 0.25, -baseHeight * 4,
     base * 0.25, -baseHeight * 4
 }`
 
-[Body id: body !x: x !y: y type: dynamic
-    !mass: mass
+[Body id: body x: `x` y: `y` type: dynamic
+    mass: `mass`
     angularDamping: 1
     bullet: true
     # gravityScale: 1.4
 
-    [PolygonShape !points: featherShapePoints
-        $fillColor: colorBase
-        $lineColor: root.lineColor
+    [PolygonShape points: `featherShapePoints`
+        fillColor: `colorBase`
+        lineColor: `root.lineColor`
         [Fixture]
     ]
-    [PolygonShape !points: baseShapePoints $points: nil
-        $fillColor: colorFeather
-        $lineColor: root.lineColor
+    [PolygonShape points: `baseShapePoints`
+        fillColor: `colorFeather`
+        lineColor: `root.lineColor`
         [Fixture tag: PETECA restitution: 0.9]
     ]
 ]
 
-"$set impulse": `
+"$set impulse": `do
     local nx, ny = unpack(value)
     if ny > 0 then nx, ny = -nx, -ny end
     body:applyLinearImpulse(nx * impulseIntensity, ny * impulseIntensity)
     return 'NO_RAWSET'
-`
+end`

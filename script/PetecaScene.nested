@@ -1,9 +1,9 @@
 PetecaScene
 
-!p1x: `WINDOW_WIDTH * 0.25`
-!p2x: `WINDOW_WIDTH * 0.75`
-!py: `WINDOW_HEIGHT - R.recipe.Player.radius`
-!petecaX: `WINDOW_WIDTH * 0.5`
+p1x: `WINDOW_WIDTH * 0.25`
+p2x: `WINDOW_WIDTH * 0.75`
+py: `WINDOW_HEIGHT - R.recipe.Player.radius`
+petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 
 init: {
@@ -11,47 +11,47 @@ init: {
     love.graphics.setFont [R font 'Gontserrat-Medium.ttf 26'];
 }
 
-[World !yg: `9.81 * METER_BY_PIXEL`
+[World yg: `9.81 * METER_BY_PIXEL`
     [Arena id: arena]
-    [Player id: player1 !x: p1x !y: py
+    [Player id: player1 x: `p1x` y: `py`
         color: [0 1 0]
         leftKey: a
         rightKey: d
         
-        $otherPlayer: player2
+        otherPlayer: `player2`
     ]
-    [Player id: player2 !x: p2x !y: py
+    [Player id: player2 x: `p2x` y: `py`
         color: [1 1 0] flipX: true
         leftKey: left
         rightKey: right
 
-        $otherPlayer: player1
+        otherPlayer: `player1`
     ]
-    [Peteca id: peteca !x: petecaX !y: petecaY]
+    [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
-        beginContact: [set peteca [lastToHit otherPlayer takingDamage] true]
-        endContact: [set peteca [lastToHit otherPlayer takingDamage] false]
-        postSolve: `peteca.impulse = { contact:getNormal() }`
+        beginContact: { set peteca [lastToHit otherPlayer takingDamage] true }
+        endContact: { set peteca [lastToHit otherPlayer takingDamage] false }
+        postSolve: `do peteca.impulse = { contact:getNormal() } end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
-        postSolve: [a.root.lastToHit: b.root]
+        postSolve: { a.root.lastToHit: b.root }
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
-        beginContact: [b.root.takingDamage: true]
-        endContact: [b.root.takingDamage: false]
+        beginContact: { b.root.takingDamage: true }
+        endContact: { b.root.takingDamage: false }
     ]
 ]
 
 lifeBarMargin: 10
-[LifeBar id: player1Life !color: player1.color
-    !x: lifeBarMargin !y: lifeBarMargin
-    $takingDamage: player1.takingDamage
+[LifeBar id: player1Life color: `player1.color`
+    x: `lifeBarMargin` y: `lifeBarMargin`
+    takingDamage: `player1.takingDamage`
 ]
-[Transform !x: WINDOW_WIDTH sx: -1 sy: 1
-    [LifeBar id: player2Life !color: player2.color
-        !x: lifeBarMargin !y: lifeBarMargin
-        $takingDamage: player2.takingDamage
+[Transform x: `WINDOW_WIDTH` sx: -1 sy: 1
+    [LifeBar id: player2Life color: `player2.color`
+        x: `lifeBarMargin` y: `lifeBarMargin`
+        takingDamage: `player2.takingDamage`
     ]
 ]
 

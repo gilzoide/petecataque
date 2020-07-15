@@ -11,26 +11,26 @@ timeToFinish: 0.5
 finished: false
 anchorPoint: [0 0]
 
-!timeLeft: timeToFinish
-$timePercentage: `timeLeft / timeToFinish`
-"$set reset": `self.timeLeft, self.finished = nil, nil`
+timeLeft: `timeToFinish`
+timePercentage: `timeLeft / timeToFinish`
+"$set reset": `do self.timeLeft, self.finished = nil, nil end`
 
-[Rectangle !x: root.x !y: root.y !width: root.width !height: root.height
-    !anchorPoint: root.anchorPoint
-    !fillColor: bgColor
+[Rectangle x: `root.x` y: `root.y` width: `root.width` height: `root.height`
+    anchorPoint: `root.anchorPoint`
+    fillColor: `bgColor`
 
-    [Rectangle $width: `parent.width * timePercentage` !height: parent.height
-        !anchorPoint: root.anchorPoint
-        !fillColor: root.color
+    [Rectangle width: `parent.width * timePercentage` height: `parent.height`
+        anchorPoint: `root.anchorPoint`
+        fillColor: `root.color`
     ]
-    [Rectangle !width: parent.width !height: parent.height
-        !lineColor: borderColor
+    [Rectangle width: `parent.width` height: `parent.height`
+        lineColor: `borderColor`
     ]
 ]
 
-when: {
-    [[takingDamage] `
+when: [
+    [takingDamage; `do
         self.timeLeft = math.max(0, timeLeft - dt)
         self.finished = timeLeft <= 0
-    `]
-}
+    end`]
+]

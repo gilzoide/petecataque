@@ -4,7 +4,7 @@ x: 0, y: 0
 mass: 1
 radius: 25
 racketWidth: 10
-!racketHeight: `radius * 4`
+racketHeight: `radius * 4`
 color: [1 1 1]
 damageColor: [1 0 0]
 racketColor: [0 1 1]
@@ -12,26 +12,26 @@ angularVelocity: 10
 # flipX
 # takingDamage: true
 
-[Body id: body !x: x !y: y type: dynamic
-    !mass: mass
+[Body id: body x: `x` y: `y` type: dynamic
+    mass: `mass`
     angularDamping: 1
 
-    [CircleShape !radius: root.radius
-        $fillColor: `takingDamage and damageColor or color`
+    [CircleShape radius: `root.radius`
+        fillColor: `takingDamage and damageColor or color`
         [Fixture tag: BODY id: bodyFixture density: 5]
     ]
-    [RectangleShape !x: `(flipX and -1 or 1) * (racketHeight * 0.5 + radius * 0.5)` y: 0
-        !width: racketWidth !height: racketHeight
-        !angle: `math.pi * 0.5`
-        $fillColor: racketColor
+    [RectangleShape x: `(flipX and -1 or 1) * (racketHeight * 0.5 + root.radius * 0.5)` y: 0
+        width: `racketWidth` height: `racketHeight`
+        angle: `math.pi * 0.5`
+        fillColor: `racketColor`
         [Fixture tag: RACKET friction: 1]
     ]
 ]
 
-[KeyDetector id: toTheLeft !key: leftKey]
-[KeyDetector id: toTheRight !key: rightKey]
+[KeyDetector id: toTheLeft key: `leftKey`]
+[KeyDetector id: toTheRight key: `rightKey`]
 
-when: {
-    [[toTheLeft.down !toTheRight.down] `body.angularVelocity = -angularVelocity`]
-    [[!toTheLeft.down toTheRight.down] `body.angularVelocity = angularVelocity`]
-}
+when: [
+    [toTheLeft.down !toTheRight.down; `do body.angularVelocity = -angularVelocity end`]
+    [!toTheLeft.down toTheRight.down; `do body.angularVelocity = angularVelocity end`]
+]

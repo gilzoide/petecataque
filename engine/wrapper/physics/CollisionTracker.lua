@@ -15,14 +15,12 @@ function CollisionTracker:init()
         log.warnassert(world, "Unable to create a CollisionTracker without a World")
     end
     if world and log.warnassert(self.a, self.b, "Unable to create a CollisionTracker without targets") then
-        self:expressionify('beginContact', argument_names)
         world:add_beginContact_handler(self, CollisionTracker.callBeginContact)
-        self:expressionify('endContact', argument_names)
         world:add_endContact_handler(self, CollisionTracker.callEndContact)
-        if self:expressionify('preSolve', argument_names) then
+        if self.preSolve then
             world:add_preSolve_handler(self, CollisionTracker.callPreSolve)
         end
-        if self:expressionify('postSolve', argument_names) then
+        if self.postSolve then
             world:add_postSolve_handler(self, CollisionTracker.callPostSolve)
         end
     else
@@ -31,31 +29,31 @@ function CollisionTracker:init()
 end
 
 function CollisionTracker:callBeginContact(...)
-    DEBUG.PUSH_CALL(self[1], 'beginContact', self.__line)
+    DEBUG.PUSH_CALL(self, 'beginContact')
     self.touching = true
     local callback = self.beginContact
     if callback then callback(self, ...) end
-    DEBUG.POP_CALL(self[1], 'beginContact')
+    DEBUG.POP_CALL(self, 'beginContact')
 end
 
 function CollisionTracker:callEndContact(...)
-    DEBUG.PUSH_CALL(self[1], 'endContact', self.__line)
+    DEBUG.PUSH_CALL(self, 'endContact')
     self.touching = false
     local callback = self.endContact
     if callback then callback(self, ...) end
-    DEBUG.POP_CALL(self[1], 'endContact')
+    DEBUG.POP_CALL(self, 'endContact')
 end
 
 function CollisionTracker:callPreSolve(...)
-    DEBUG.PUSH_CALL(self[1], 'preSolve', self.__line)
+    DEBUG.PUSH_CALL(self, 'preSolve')
     self:preSolve(...)
-    DEBUG.POP_CALL(self[1], 'preSolve')
+    DEBUG.POP_CALL(self, 'preSolve')
 end
 
 function CollisionTracker:callPostSolve(...)
-    DEBUG.PUSH_CALL(self[1], 'postSolve', self.__line)
+    DEBUG.PUSH_CALL(self, 'postSolve')
     self:postSolve(...)
-    DEBUG.POP_CALL(self[1], 'postSolve')
+    DEBUG.POP_CALL(self, 'postSolve')
 end
 
 function CollisionTracker:match(a, b)
