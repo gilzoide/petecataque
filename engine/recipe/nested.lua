@@ -43,6 +43,9 @@ function recipe_nested.preprocess(name, recipe)
             local super_recipe = assertf(R.recipe[super_recipe_name], "Recipe %q couldn't be loaded", super_recipe_name)
             t.__super = super_recipe
             t.__parent = parent
+            if super_recipe.__init_recipe then
+                super_recipe:__init_recipe(t)
+            end
         end
         for k, v in nested.kpairs(t) do
             if type(v) == 'table' and v.__opening_token == '{' then
@@ -61,8 +64,6 @@ function recipe_nested.preprocess(name, recipe)
 end
 
 function recipe_nested.__index(t, index)
-    if index == 'super' then return rawget(t, '__super') end
-    if index == 'parent' then return rawget(t, '__parent') end
     local super = rawget(t, '__super')
     return super and super[index]
 end

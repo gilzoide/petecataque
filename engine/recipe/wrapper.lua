@@ -26,9 +26,6 @@ local function create_setter(wrapped_setter_name, field_name)
         local wrapped = self.__wrapped
         if wrapped then
             wrapped[wrapped_setter_name](wrapped, safeunpack(value))
-        else
-            if not self._wrapped_defer then self._wrapped_defer = {} end
-            self._wrapped_defer[#self._wrapped_defer + 1] = { field_name, value }
         end
         DEBUG.POP_CALL(self, wrapped_setter_name)
     end
@@ -65,22 +62,33 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
 
     recipe.preinit = function(self)
         self.__wrapped = self:create_wrapped()
-        if self._wrapped_defer then
-            for i = 1, #self._wrapped_defer do
-                local t = self._wrapped_defer[i]
-                self[t[1]] = t[2]
-            end
-            self._wrapped_defer = nil
+        for k, v in pairs(self.__recipe.wrapper_initial_getters) do
+            if Expression.is_getter(v) then v = v(self) end
+            self[k] = v
         end
     end
 
     Object.add_getter(recipe, wrapped_object_index, wrapper.get_wrapped)
+
+    recipe.__init_recipe = wrapper.init_recipe
 
     return recipe
 end
 
 function wrapper.get_wrapped(self)
     return self.__wrapped
+end
+
+function wrapper.init_recipe(self, recipe)
+    local wrapper_initial_getters = nested_ordered.new()
+    for k, v in nested.kpairs(recipe) do
+        local value_in_self = self[k]
+        if Expression.is_getter(value_in_self) then
+            wrapper_initial_getters[k] = v
+            recipe[k] = nil
+        end
+    end
+    recipe.wrapper_initial_getters = wrapper_initial_getters
 end
 
 return wrapper

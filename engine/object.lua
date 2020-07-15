@@ -83,7 +83,7 @@ function Object:__index(index)
     if index == 'parent' then return rawget(self, '__parent') end
     local value_in_recipe = index_first_of(index, rawget(self, '__recipe'), rawget(self, '__root'), Object)
     if Expression.is_getter(value_in_recipe) then
-        local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
+        local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid possible infinite recursion
         if not in_middle_of_indexing[index] then
             DEBUG.PUSH_CALL(self, index)
             in_middle_of_indexing[index] = true
@@ -91,7 +91,7 @@ function Object:__index(index)
             in_middle_of_indexing[index] = nil
             DEBUG.POP_CALL(self, index)
             if value ~= nil then
-                rawset(self, '_' .. index, value)
+                Object.__newindex(self, index, value)  -- invoke setter if necessary
                 return value
             end
         end
