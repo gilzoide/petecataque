@@ -75,11 +75,11 @@ Object.add_getter(World, "yg", function(self)
     return self.gravity[2]
 end)
 
-Object.add_setter(World, "xg", function(self)
+Object.add_setter(World, "xg", function(self, xg)
     local gravity = self.gravity
     self.gravity = { xg, gravity[2] }
 end)
-Object.add_setter(World, "yg", function(self)
+Object.add_setter(World, "yg", function(self, yg)
     local gravity = self.gravity
     self.gravity = { gravity[1], yg }
 end)
