@@ -1,47 +1,45 @@
 Cena2
 
-!font: [R font 'Gontserrat-Medium.ttf 14']
+font: { R font 'Gontserrat-Medium.ttf 14' }
 init: {
     love.graphics.setFont font;
     love.graphics.setBackgroundColor 0.4 0.3 0.2;
 }
 
-[Transform x: 300 y: 200 update: `self:rotate(dt)`
-    [Rectangle width: 200 $height: `width * 1.1` anchorPoint: [-50 0.5]
+[Transform x: 300 y: 200 update: `do self:rotate(dt) end`
+    [Rectangle width: 200 height: `width * 1.1` anchorPoint: [-1 0.5]
         [MouseArea 
-            when: {
+            when: [
                 [hover; set parent \width 300]
                 [!hover; set parent \width 200]
                 [pressed; print PRESSED]
-                [released: inside; print \released released]
-            }
+                [released: inside; print RELEASED released]
+            ]
         ]
 
-        [Graphics do: `setColor(1, 0, 0)`
-            [Rectangle x: 10 y: 10 rx: 8 drawmode: line]
+        [Graphics draw: { setColor 1 0 0 }
+            [Rectangle x: 10 y: 10 rx: 8 lineColor: [1 0 0]]
             [Text x: 12 y: 12 text: OLARS]
         ]
     ]
 ]
 
-[Sprite texture: icon.png x: 500 y: 400
+[Sprite texture: { R image icon.png } x: 500 y: 400
     [MouseArea 
-        when: {
+        when: [
             [hover; set parent sx 2]
             [!hover; unset parent sx]
-        }
+        ]
     ]
 ]
 
 [World yg: 100
     [Body x: 100 y: 100 type: dynamic
-        [CircleShape radius: 50 drawmode: fill]
-        [EdgeShape points: [50 0 60 0] drawmode: line]
-        [Graphics push: all do: [setColor 0 0 0]
-            [PolygonShape points: [0 0, -70 0, 0 -70] drawmode: fill]
-        ]
-        [ChainShape points: [0 0, -80 0, 0 -80] loop: false drawmode: line]
-        [RectangleShape x: 70 y: 70 width: 100 height: 200 drawmode: fill]
+        [CircleShape radius: 50 fillColor: [1 1 1]]
+        [EdgeShape points: [50 0 60 0] lineColor: [1 1 1]]
+        [PolygonShape points: [0 0, -70 0, 0 -70] fillColor: [0 0 0]]
+        [ChainShape points: [0 0, -80 0, 0 -80] loop: false lineColor: [1 1 1]]
+        [RectangleShape x: 70 y: 70 width: 100 height: 200 fillColor: [1 1 1]]
     ]
 ]
 

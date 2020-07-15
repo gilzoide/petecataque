@@ -1,4 +1,4 @@
-local CircleShape = Recipe.wrapper.new('CircleShape', {
+local CircleShape = Recipe.wrapper.new('CircleShape', 'shape', {
     'getPoint', 'getRadius', 'getChildCount', 'getType',
 }, {
     'setPoint', 'setRadius',
@@ -28,7 +28,5 @@ function CircleShape:draw()
         love.graphics.circle('line', x, y, self.radius, self.segments)
     end
 end
-
-CircleShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return CircleShape

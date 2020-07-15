@@ -1,68 +1,61 @@
+local Expression = require 'expression'
 local Object = require 'object'
 
 local wrapper = {}
 
-local function get_getter_name(s)
-    if s:startswith("get") then
+local function field_name_less_getset(s)
+    if s:startswith("get") or s:startswith("set") then
         s = string.format("%s%s", s:sub(4, 4):lower(), s:sub(5))
     end
-    return Object.GET_METHOD_PREFIX .. s
-end
-
-local function get_setter_name(s)
-    if s:startswith("set") then
-        s = string.format("%s%s", s:sub(4, 4):lower(), s:sub(5))
-    end
-    return Object.SET_METHOD_PREFIX .. s
+    return s
 end
 
 local function create_getter(wrapped_getter_name)
-    return function(self)
-        DEBUG.PUSH_CALL(self[1], wrapped_getter_name)
+    return Expression.getter_from_function(function(self)
+        DEBUG.PUSH_CALL(self, wrapped_getter_name)
         local wrapped = self.__wrapped
         local value = wrapped and safepack(wrapped[wrapped_getter_name](wrapped)) or nil
-        DEBUG.POP_CALL(self[1], wrapped_getter_name)
+        DEBUG.POP_CALL(self, wrapped_getter_name)
         return value
-    end
+    end)
 end
 
-local function create_setter(wrapped_setter_name, setter_name)
+local function create_setter(wrapped_setter_name, field_name)
     return function(self, value)
-        DEBUG.PUSH_CALL(self[1], wrapped_setter_name)
+        DEBUG.PUSH_CALL(self, wrapped_setter_name)
         local wrapped = self.__wrapped
         if wrapped then
             wrapped[wrapped_setter_name](wrapped, safeunpack(value))
         else
             if not self._wrapped_defer then self._wrapped_defer = {} end
-            self._wrapped_defer[#self._wrapped_defer + 1] = { setter_name, value }
+            self._wrapped_defer[#self._wrapped_defer + 1] = { field_name, value }
         end
-        DEBUG.POP_CALL(self[1], wrapped_setter_name)
-        return Object.SET_METHOD_NO_RAWSET
+        DEBUG.POP_CALL(self, wrapped_setter_name)
     end
 end
 
 local function create_method(method_name)
     return function(self, ...)
-        DEBUG.PUSH_CALL(self[1], method_name)
+        DEBUG.PUSH_CALL(self, method_name)
         local wrapped = self.__wrapped
         local value = wrapped and safepack(wrapped[method_name](wrapped, ...))
-        DEBUG.POP_CALL(self[1], method_name)
+        DEBUG.POP_CALL(self, method_name)
         return value
     end
 end
 
-function wrapper.new(name, getters, setters, othermethods)
+function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
     local recipe = { name }
     for i = 1, #getters do
         local getter = getters[i]
-        local getter_name = get_getter_name(getter)
-        recipe[getter_name] = create_getter(getter)
+        local field_name = field_name_less_getset(getter)
+        Object.add_getter(recipe, field_name, create_getter(getter))
     end
 
     for i = 1, #setters do
         local setter = setters[i]
-        local setter_name = get_setter_name(setter)
-        recipe[setter_name] = create_setter(setter, setter_name)
+        local field_name = field_name_less_getset(setter)
+        Object.add_setter(recipe, field_name, create_setter(setter, field_name))
     end
 
     for i = 1, #othermethods do
@@ -75,11 +68,13 @@ function wrapper.new(name, getters, setters, othermethods)
         if self._wrapped_defer then
             for i = 1, #self._wrapped_defer do
                 local t = self._wrapped_defer[i]
-                self[t[1]](self, t[2])
+                self[t[1]] = t[2]
             end
             self._wrapped_defer = nil
         end
     end
+
+    Object.add_getter(recipe, wrapped_object_index, wrapper.get_wrapped)
 
     return recipe
 end

@@ -48,6 +48,13 @@ function recipe_nested.preprocess(name, recipe)
             if type(v) == 'table' and v.__opening_token == '{' then
                 t[k] = Expression.from_table(v, v.__file, v.__line)
             end
+            if k == 'when' then
+                assertf(type(v) == 'table', "When must be a table, found %s", type(v))
+                for i = 1, #v do
+                    local check = v[i]
+                    check[2] = Expression.from_table(check[2])
+                end
+            end
         end
         setmetatable(t, recipe_nested)
     end

@@ -1,4 +1,4 @@
-local Body = Recipe.wrapper.new('Body', {
+local Body = Recipe.wrapper.new('Body', 'body', {
     'getAngle', 'getAngularDamping', 'getAngularVelocity',
     'getContacts', 'getFixtures', 'getGravityScale',
     'getInertia', 'getJoints', 'getLinearDamping', 'getLinearVelocity',
@@ -37,7 +37,5 @@ end
 function Body:draw()
     love.graphics.replaceTransform(love.math.newTransform(self.x, self.y, self.angle))
 end
-
-Body["$body"] = Recipe.wrapper.get_wrapped
 
 return Body

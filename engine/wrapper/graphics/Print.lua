@@ -22,6 +22,6 @@ function Print:draw()
     end
 end
 
-Print["$set text"] = disable_draw_if_empty_text
+Object.add_setter(Print, "text", disable_draw_if_empty_text)
 
 return Print

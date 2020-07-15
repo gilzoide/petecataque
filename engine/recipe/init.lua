@@ -23,18 +23,11 @@ function Recipe.load(name)
     end
 end
 
-function Recipe.preprocess(recipe)
-    for kp, v, parent in nested.iterate(recipe, { include_kv = true }) do
-        
-    end
-end
-
 function Recipe.tryloadlua(name)
     for i, fmt in ipairs(Recipe.path) do
         local filename = string.format(fmt, name)
         if love.filesystem.getInfo(filename) then
             local lua_recipe = assert(love.filesystem.load(filename))()
-            Recipe.preprocess(lua_recipe)
             return lua_recipe
         end
     end

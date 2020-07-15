@@ -2,26 +2,24 @@ local Expression = require 'expression'
 
 local Object = {}
 
-Object.GET_METHOD_PREFIX = '$'
-Object.GET_ONCE_METHOD_PREFIX = '!'
 Object.SET_METHOD_PREFIX = '$set '
-Object.SET_METHOD_NO_RAWSET = 'NO_RAWSET'
+function Object.setter_method_name(field)
+    return Object.SET_METHOD_PREFIX .. field
+end
 Object.SET_METHOD_ARGUMENT_NAMES = { 'self', 'value' }
 
-function Object.IS_SPECIAL_METHOD_PREFIX(v)
-    if type(v) == 'string' then
-        if v:startswith(Object.SET_METHOD_PREFIX) then
-            return 'set', v:sub(#Object.SET_METHOD_PREFIX + 1)
-        elseif v:startswith(Object.GET_METHOD_PREFIX) then
-            return 'get', v:sub(#Object.GET_METHOD_PREFIX + 1)
-        elseif v:startswith(Object.GET_ONCE_METHOD_PREFIX) then
-            return 'once', v:sub(#Object.GET_ONCE_METHOD_PREFIX + 1)
-        end
+function Object.add_getter(self_or_recipe, field_name, getter_or_func)
+    if not Expression.is_getter(getter_or_func) then
+        getter_or_func = Expression.getter_from_function(getter_or_func)
     end
-    return false, v
+    self_or_recipe[field_name] = getter_or_func
 end
 
-Object.type = Expression.getter_from_function(function(self) return self[1] end)
+function Object.add_setter(self_or_recipe, field_name, func)
+    self_or_recipe[Object.setter_method_name(field_name)] = func
+end
+
+Object:add_getter('type', function(self) return self[1] end)
 
 function Object:typeOf(t)
     return self.type == t
@@ -74,11 +72,11 @@ function Object:__index(index)
     if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
         if not in_middle_of_indexing[index] then
-            DEBUG.PUSH_CALL(self, Object.GET_METHOD_PREFIX .. index)
+            DEBUG.PUSH_CALL(self, index)
             in_middle_of_indexing[index] = true
             local value = value_in_recipe(self)
             in_middle_of_indexing[index] = nil
-            DEBUG.POP_CALL(self, Object.GET_METHOD_PREFIX .. index)
+            DEBUG.POP_CALL(self, index)
             if value ~= nil then
                 rawset(self, '_' .. index, value)
                 return value
@@ -90,27 +88,19 @@ function Object:__index(index)
 end
 
 function Object:__newindex(index, value)
-    -- if index == 'draw_push' then
-    --     local valid = value == 'all' or value == 'transform'
-    --     value = valid and value
-    --     index = '_' .. index
-    -- elseif type(index) == 'string' then
-    --     if index:match('^[^_$]') then
-    --         local set_method = self.__newindex_expression[index]
-    --         if set_method then
-    --             DEBUG.PUSH_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
-    --             local result = set_method(self, value)
-    --             DEBUG.POP_CALL(self[1], Object.SET_METHOD_PREFIX .. index)
-    --             if result == Object.SET_METHOD_NO_RAWSET then return
-    --             elseif result ~= nil then value = result
-    --             end
-    --             index = '_' .. index
-    --         elseif self.__index_expression[index] then
-    --             -- avoid ignoring getter expressions
-    --             index = '_' .. index
-    --         end
-    --     end
-    -- end
+    if type(index) == 'string' then
+        local set_method_index = Object.setter_method_name(index)
+        local set_method = index_first_of(set_method_index, rawget(self, '__recipe'), Object)
+        if iscallable(set_method) then
+            DEBUG.PUSH_CALL(self, set_method_index)
+            set_method(self, value)
+            DEBUG.POP_CALL(self, set_method_index)
+            index = '_' .. index
+        elseif Expression.is_getter(index_first_of(index, rawget(self, '__recipe'), Object)) then
+            -- avoid ignoring getter expressions
+            index = '_' .. index
+        end
+    end
     rawset(self, index, value)
 end
 

@@ -40,6 +40,7 @@ end
 
 log = require 'log'
 Expression = require 'expression'
+Object = require 'Object'
 Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
@@ -174,6 +175,15 @@ function print_nested(...)
     end
     print(unpack(t))
     print()
+end
+
+function iscallable(v)
+    if type(v) == 'function' then
+        return true
+    else
+        local mt = getmetatable(v)
+        return mt and mt.__call
+    end
 end
 
 key = {}

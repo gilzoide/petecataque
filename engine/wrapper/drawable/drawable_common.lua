@@ -1,7 +1,7 @@
 local drawable_common = {}
 
 function drawable_common.disable_draw_if_nil(self, drawable)
-    if not log.warnassert(drawable, "Missing drawable on %s, disabling draw", self:type()) then
+    if not log.warnassert(drawable, "Missing drawable on %s, disabling draw", self.type) then
         self:enable_method('draw', false)
     end
 end
@@ -37,6 +37,7 @@ function drawable_common.setAnchorPoint(self, anchorPoint)
 end
 
 function drawable_common.setDrawable(self, drawable)
+    rawset(self, 'drawable', drawable)
     if drawable then
         drawable_common.refresh_anchor(self, drawable, self.anchorPoint)
     end

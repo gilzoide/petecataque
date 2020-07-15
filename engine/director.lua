@@ -2,12 +2,14 @@ local Director = {}
 
 local function process_events(obj, index)
     if obj[index] then
+        DEBUG.PUSH_CALL(obj, index)
         for i = 1, #obj[index] do
             local check = obj[index][i]
             if nested_match(obj, check[1]) then
                 check[2](obj)
             end
         end
+        DEBUG.POP_CALL(obj, index)
     end
 end
 
@@ -25,7 +27,11 @@ end
 
 function Director.update(dt)
     for kp, obj in iterate_scene() do
-        if obj.update then obj:update(dt) end
+        if obj.update then
+            DEBUG.PUSH_CALL(obj, 'update')
+            obj:update(dt)
+            DEBUG.POP_CALL(obj, 'update')
+        end
         process_events(obj, 'when')
         process_events(obj, 'also_when')
     end
@@ -44,7 +50,9 @@ function Director.draw()
                     love.graphics.push(obj.draw_push)
                     pop_list[#pop_list + 1] = { #kp, obj }
                 end
+                DEBUG.PUSH_CALL(obj, 'draw')
                 obj:draw()
+                DEBUG.POP_CALL(obj, 'draw')
             end
         end
     end

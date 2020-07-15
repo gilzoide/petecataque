@@ -1,4 +1,4 @@
-local Fixture = Recipe.wrapper.new('Fixture', {
+local Fixture = Recipe.wrapper.new('Fixture', 'fixture', {
     'getBody', 'getCategory', 'getDensity', 'getFilterData',
     'getFriction', 'getGroupIndex', 'getMask', 'getMassData',
     'getRestitution', 'getShape', -- 'getUserData',
@@ -32,7 +32,5 @@ function Fixture:create_wrapped()
         self.disabled = true
     end
 end
-
-Fixture['$fixture'] = Recipe.wrapper.get_wrapped
 
 return Fixture

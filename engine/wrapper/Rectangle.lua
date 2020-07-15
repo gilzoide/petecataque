@@ -47,10 +47,4 @@ function Rectangle:hitTestFromOrigin(x, y)
         and y >= 0 and y <= self.height
 end
 
-Rectangle["$set anchorPoint"] = function(self, anchorPoint)
-    anchorPoint[1] = clamp(anchorPoint[1], 0, 1)
-    anchorPoint[2] = clamp(anchorPoint[2], 0, 1)
-    return anchorPoint
-end
-
 return Rectangle

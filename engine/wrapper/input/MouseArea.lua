@@ -6,7 +6,7 @@ local MouseArea = {
 function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')
     if not log.warnassert(self.target, "Couldn't find hitTestFromOrigin in MouseArea parent") then
-        rawset(self, 'draw', false)
+        self.disabled = true
     end
 end
 

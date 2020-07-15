@@ -1,4 +1,4 @@
-local EdgeShape = Recipe.wrapper.new('EdgeShape', {
+local EdgeShape = Recipe.wrapper.new('EdgeShape', 'shape', {
     'getNextVertex', 'getPoints', 'getPreviousVertex',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -14,12 +14,14 @@ function EdgeShape:create_wrapped()
     return shape
 end
 
+EdgeShape.draw_push = 'all'
+
 function EdgeShape:draw()
-    if self.drawmode == 'line' then
+    local lineColor = self.lineColor
+    if lineColor then
+        love.graphics.setColor(lineColor)
         love.graphics.line(self.points)
     end
 end
-
-EdgeShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return EdgeShape

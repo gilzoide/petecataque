@@ -11,17 +11,18 @@ end
 Sprite.draw_push = 'transform'
 Sprite.draw = drawable_common.draw
 Sprite.hitTestFromOrigin = drawable_common.hitTestFromOrigin
-Sprite["$set anchorPoint"] = drawable_common.setAnchorPoint
 
-Sprite["$drawable"] = function(self)
+Object.add_setter(Sprite, "anchorPoint", drawable_common.setAnchorPoint)
+
+Object.add_getter(Sprite, "drawable", function(self)
     return self.texture
-end
+end)
 
-Sprite["$set texture"] = function(self, texture)
+Object.add_setter(Sprite, "texture", function(self, texture)
     if type(texture) == 'string' then
         texture = R.image[texture]
     end
     return drawable_common.setDrawable(self, texture)
-end
+end)
 
 return Sprite

@@ -1,4 +1,4 @@
-local ChainShape = Recipe.wrapper.new('ChainShape', {
+local ChainShape = Recipe.wrapper.new('ChainShape', 'shape', {
     'getChildEdge', 'getNextVertex', 'getPoints', 'getPreviousVertex', 'getVertexCount',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -15,12 +15,14 @@ function ChainShape:create_wrapped()
     return shape
 end
 
+ChainShape.draw_push = 'all'
+
 function ChainShape:draw()
-    if self.drawmode == 'line' then
+    local lineColor = self.lineColor
+    if lineColor then
+        love.graphics.setColor(lineColor)
         love.graphics.line(self.points)
     end
 end
-
-ChainShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return ChainShape

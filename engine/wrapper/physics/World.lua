@@ -1,4 +1,4 @@
-local World = Recipe.wrapper.new('World', {
+local World = Recipe.wrapper.new('World', 'world', {
     'getBodies', 'getBodyCount',
     'getContactCount', 'getContactFilter', 'getContacts',
     'getGravity', 'getJointCount', 'getJoints',
@@ -68,20 +68,20 @@ function World:remove_postSolve_handler(handler)
     self.postSolveHandlers[handler] = nil
 end
 
-World["$xg"] = function(self)
+Object.add_getter(World, "xg", function(self)
     return self.gravity[1]
-end
-World["$yg"] = function(self)
+end)
+Object.add_getter(World, "yg", function(self)
     return self.gravity[2]
-end
-World["$set xg"] = function(self, xg)
+end)
+
+Object.add_setter(World, "xg", function(self)
     local gravity = self.gravity
     self.gravity = { xg, gravity[2] }
-end
-World["$set yg"] = function(self, yg)
+end)
+Object.add_setter(World, "yg", function(self)
     local gravity = self.gravity
     self.gravity = { gravity[1], yg }
-end
-World["$world"] = Recipe.wrapper.get_wrapped
+end)
 
 return World

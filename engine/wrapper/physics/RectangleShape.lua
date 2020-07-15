@@ -1,4 +1,4 @@
-local RectangleShape = Recipe.wrapper.new('RectangleShape', {
+local RectangleShape = Recipe.wrapper.new('RectangleShape', 'shape', {
     'getPoints',
     'getChildCount', 'getRadius', 'getType',
 }, {
@@ -31,7 +31,5 @@ function RectangleShape:draw()
         love.graphics.polygon('line', self.points)
     end
 end
-
-RectangleShape["$shape"] = Recipe.wrapper.get_wrapped
 
 return RectangleShape
