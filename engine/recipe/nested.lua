@@ -38,10 +38,10 @@ function recipe_nested.preprocess(name, recipe)
 
     for kp, t, parent in nested.iterate(recipe, { table_only = true }) do
         if #kp > 0 then
-            local subrecipe_name = t[1]
-            assertf(subrecipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", subrecipe_name.__file, subrecipe_name.__line)
-            local subrecipe = assertf(R.recipe[subrecipe_name], "Recipe %q couldn't be loaded", subrecipe_name)
-            t.__recipe = subrecipe
+            local super_recipe_name = t[1]
+            assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
+            local super_recipe = assertf(R.recipe[super_recipe_name], "Recipe %q couldn't be loaded", super_recipe_name)
+            t.__super = super_recipe
             t.__parent = parent
         end
         for k, v in nested.kpairs(t) do
@@ -61,9 +61,9 @@ function recipe_nested.preprocess(name, recipe)
 end
 
 function recipe_nested.__index(t, index)
-    if index == 'recipe' then return rawget(t, '__recipe') end
+    if index == 'super' then return rawget(t, '__super') end
     if index == 'parent' then return rawget(t, '__parent') end
-    local super = rawget(t, '__recipe')
+    local super = rawget(t, '__super')
     return super and super[index]
 end
 recipe_nested.__pairs = Object.__pairs

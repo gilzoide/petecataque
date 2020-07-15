@@ -10,20 +10,10 @@ function DEBUG.REPORTTIMER(name)
     print('DEBUG.REPORTTIMER', name, love.timer.getTime() - DEBUG[name])
 end
 
-local function stringify_file(o)
-    local file, line = o.__file, o.__line
-    if file then
-        return table.concat({ file, line }, ':')
-    else
-        return ""
-    end
-end
-
 local function stringify_call(c)
     local recipe, name = unpack(c)
-    local where = stringify_file(recipe)
-    where = where and " @ " .. where or ""
-    return string.format('\t%s.%s%s', recipe[1], name, where)
+    local where = table.concat({ recipe.__file, recipe.__line}, ':')
+    return string.format("\t%s: '%s.%s'", where, recipe[1], name)
 end
 
 function DEBUG.PUSH_CALL(recipe, name)

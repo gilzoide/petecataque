@@ -19,10 +19,12 @@ function Object.add_setter(self_or_recipe, field_name, func)
     self_or_recipe[Object.setter_method_name(field_name)] = func
 end
 
-Object:add_getter('type', function(self) return self[1] end)
+function Object:type()
+    return self[1]
+end
 
 function Object:typeOf(t)
-    return self.type == t
+    return self[1] == t
 end
 
 function Object.new(recipe, obj, parent, root_param)
@@ -35,10 +37,21 @@ function Object.new(recipe, obj, parent, root_param)
     rawset(obj, '__root', root_param)
     rawset(obj, '__in_middle_of_indexing', {})
 
+    if root_param and recipe.id then
+        root_param[recipe.id] = obj
+    end
+
     if recipe.preinit then
         DEBUG.PUSH_CALL(recipe, 'preinit')
         recipe.preinit(obj)
         DEBUG.POP_CALL(recipe, 'preinit')
+    end
+
+    local super = recipe.__super
+    if super then
+        for i = 2, #super do
+            obj[#obj + 1] = super[i]({}, obj, obj)
+        end
     end
 
     local root_or_obj = root_param or obj
@@ -68,7 +81,7 @@ function Object:__index(index)
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
-    local value_in_recipe = index_first_of(index, rawget(self, '__recipe'), Object)
+    local value_in_recipe = index_first_of(index, rawget(self, '__recipe'), rawget(self, '__root'), Object)
     if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid infinite recursion
         if not in_middle_of_indexing[index] then
@@ -123,7 +136,7 @@ function Object:first_parent_with(field)
 end
 function Object:first_parent_of(typename)
     for p in self:iter_parents() do
-        if p[1] == typename then
+        if p:typeOf(typename) then
             return p
         end
     end
