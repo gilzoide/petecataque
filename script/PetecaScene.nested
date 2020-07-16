@@ -5,11 +5,12 @@ p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R.recipe.Player.radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
-paused: false
+paused: true
 
 init: {
     love.graphics.setBackgroundColor 0.12 0.12 0.12;
     love.graphics.setFont [R font 'Gontserrat-Medium.ttf 26'];
+    disable_method world update paused;
 }
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
@@ -63,6 +64,6 @@ lifeBarMargin: 10
 [KeyDetector key: return
     [When pressed: `do
         root.paused = not paused
-        world:enable_method('update', not paused)
+        world:disable_method('update', paused)
     end`]
 ]

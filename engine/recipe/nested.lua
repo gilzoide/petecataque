@@ -37,6 +37,14 @@ function recipe_nested.preprocess(name, recipe)
     assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
 
     for kp, t, parent in nested.iterate(recipe, { table_only = true }) do
+        for k, v in nested.kpairs(t) do
+            if type(v) == 'table' and v.__opening_token == '{' then
+                t[k] = Expression.from_table(v, v.__file, v.__line)
+            end
+            if type(k) == 'string' and k:startswith(Object.SET_METHOD_PREFIX) then
+                Expression.bind_argument_names(v, Object.SET_METHOD_ARGUMENT_NAMES)
+            end
+        end
         if #kp > 0 then
             local super_recipe_name = t[1]
             assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
@@ -47,14 +55,6 @@ function recipe_nested.preprocess(name, recipe)
                 DEBUG.PUSH_CALL(t, '__init_recipe')
                 super_recipe:__init_recipe(t)
                 DEBUG.POP_CALL(t, '__init_recipe')
-            end
-        end
-        for k, v in nested.kpairs(t) do
-            if type(v) == 'table' and v.__opening_token == '{' then
-                t[k] = Expression.from_table(v, v.__file, v.__line)
-            end
-            if type(k) == 'string' and k:startswith(Object.SET_METHOD_PREFIX) then
-                Expression.bind_argument_names(v, Object.SET_METHOD_ARGUMENT_NAMES)
             end
         end
         setmetatable(t, recipe_nested)
