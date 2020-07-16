@@ -7,18 +7,33 @@ racketWidth: 10
 racketHeight: `radius * 4`
 color: [1 1 1]
 damageColor: [1 0 0]
+bodyColor: `self.takingDamage and damageColor or color`
 racketColor: [0 1 1]
 angularVelocity: 10
 # flipX
 # takingDamage: true
+
+maxLife: 10
+currentLife: 10
+
+reset: {
+    self.currentLife: maxLife
+}
+
+"$set takingDamage": `do
+    if value then
+        self.currentLife = math.max(0, currentLife - 1)
+        self.gameover = currentLife <= 0
+    end
+end`
 
 [Body id: body x: `root.x` y: `root.y` type: dynamic
     mass: `root.mass`
     angularDamping: 1
 
     [CircleShape radius: `root.radius`
-        fillColor: `takingDamage and damageColor or color`
-        [Fixture tag: BODY id: bodyFixture density: 5]
+        fillColor: `bodyColor`
+        [Fixture tag: BODY density: 5]
     ]
     [RectangleShape x: `(flipX and -1 or 1) * (racketHeight * 0.5 + root.radius * 0.5)` y: 0
         width: `racketWidth` height: `racketHeight`

@@ -10,6 +10,12 @@ paused: true
 init: {
     love.graphics.setBackgroundColor 0.12 0.12 0.12;
     disable_method world update paused;
+    reset self;
+}
+
+reset: {
+    player1.reset player1;
+    player2.reset player2;
 }
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
@@ -31,28 +37,32 @@ init: {
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
-        beginContact: { set peteca [lastToHit otherPlayer takingDamage] true }
-        endContact: { set peteca [lastToHit otherPlayer takingDamage] false }
+        beginContact: { peteca.lastToHit.otherPlayer.takingDamage: true  }
+        endContact:   { peteca.lastToHit.otherPlayer.takingDamage: false }
         postSolve: `do peteca:impulse(contact:getNormal()) end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
         postSolve: { a.root.lastToHit: b.root }
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
-        beginContact: { b.root.takingDamage: true }
-        endContact: { b.root.takingDamage: false }
+        beginContact: { b.root.takingDamage: true  }
+        endContact:   { b.root.takingDamage: false }
     ]
 ]
 
 lifeBarMargin: 10
 [LifeBar id: player1Life color: `player1.color`
     x: `lifeBarMargin` y: `lifeBarMargin`
-    takingDamage: `not paused and player1.takingDamage`
+    maxLife: `player1.maxLife`
+    currentLife: `player1.currentLife`
+    takingDamage: `player1.takingDamage`
 ]
 [Transform x: `WINDOW_WIDTH` sx: -1 sy: 1
     [LifeBar id: player2Life color: `player2.color`
         x: `lifeBarMargin` y: `lifeBarMargin`
-        takingDamage: `not paused and player2.takingDamage`
+        maxLife: `player2.maxLife`
+        currentLife: `player2.currentLife`
+        takingDamage: `player2.takingDamage`
     ]
 ]
 

@@ -5,35 +5,20 @@ color: [1 0 0]
 bgColor: [0 0 0]
 borderColor: [1 1 1]
 damageColor: [1 0 0]
+damageBgColor: [1 0 0 0.3]
 width: 320
 height: 15
-timeToFinish: 0.5
-finished: false
 
-timeLeft: 0
-timePercentage: `timeLeft / timeToFinish`
-
-init: {
-    reset self
-}
-
-reset: {
-    self.timeLeft: timeToFinish
-    self.finished: false
-}
+currentLife: 1
+maxLife: 1
 
 [Rectangle x: `root.x` y: `root.y` width: `root.width` height: `root.height`
-    fillColor: `bgColor`
+    fillColor: `takingDamage and damageBgColor or bgColor`
 
-    [Rectangle width: `parent.width * timePercentage` height: `parent.height`
-        fillColor: `root.color`
+    [Rectangle width: `parent.width * (currentLife / maxLife)` height: `parent.height`
+        fillColor: `takingDamage and damageColor or root.color`
     ]
     [Rectangle width: `parent.width` height: `parent.height`
         lineColor: `borderColor`
     ]
 ]
-
-[When takingDamage: `do
-    self.timeLeft = math.max(0, timeLeft - dt)
-    self.finished = timeLeft <= 0
-end`]

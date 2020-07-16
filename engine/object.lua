@@ -89,6 +89,7 @@ function Object:__index(index)
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
+    if index == nil then return nil end
     local value_in_recipe = rawget(self, '__recipe')[index]
     if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid possible infinite recursion
@@ -99,14 +100,19 @@ function Object:__index(index)
             in_middle_of_indexing[index] = nil
             DEBUG.POP_CALL(self, index)
             if value ~= nil then
-                Object.__newindex(self, index, value)  -- invoke setter if necessary
+                rawset(self, '_' .. index, value)
                 return value
             end
         end
-    elseif value_in_recipe ~= nil then
-        return value_in_recipe
-    elseif index ~= 'update' and index ~= 'draw' and index ~= 'draw_push' and index ~= 'hidden' then
-        return index_first_of(index, rawget(self, '__root'), Object)
+    else
+        local _value = rawget(self, '_' .. index)
+        if _value ~= nil then
+            return _value
+        elseif value_in_recipe ~= nil then
+            return value_in_recipe
+        elseif index ~= 'update' and index ~= 'draw' and index ~= 'draw_push' and index ~= 'hidden' then
+            return index_first_of(index, rawget(self, '__root'), Object)
+        end
     end
 end
 
@@ -120,9 +126,9 @@ function Object:__newindex(index, value)
             set_method(self, value)
             DEBUG.POP_CALL(self, set_method_index)
             index = '_' .. index
-        elseif Expression.is_getter(recipe[index]) then
-            -- avoid ignoring getter expressions
-            index = '_' .. index
+        -- elseif Expression.is_getter(recipe[index]) then
+        --     -- avoid ignoring getter expressions
+        --     index = '_' .. index
         end
     end
     rawset(self, index, value)
