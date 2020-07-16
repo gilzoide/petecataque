@@ -5,13 +5,14 @@ p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R.recipe.Player.radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
+paused: false
 
 init: {
     love.graphics.setBackgroundColor 0.12 0.12 0.12;
     love.graphics.setFont [R font 'Gontserrat-Medium.ttf 26'];
 }
 
-[World yg: `9.81 * METER_BY_PIXEL`
+[World id: world yg: `9.81 * METER_BY_PIXEL`
     [Arena id: arena]
     [Player id: player1 x: `p1x` y: `py`
         color: [0 1 0]
@@ -46,15 +47,22 @@ init: {
 lifeBarMargin: 10
 [LifeBar id: player1Life color: `player1.color`
     x: `lifeBarMargin` y: `lifeBarMargin`
-    takingDamage: `player1.takingDamage`
+    takingDamage: `not paused and player1.takingDamage`
 ]
 [Transform x: `WINDOW_WIDTH` sx: -1 sy: 1
     [LifeBar id: player2Life color: `player2.color`
         x: `lifeBarMargin` y: `lifeBarMargin`
-        takingDamage: `player2.takingDamage`
+        takingDamage: `not paused and player2.takingDamage`
     ]
 ]
 
 [Transform y: `WINDOW_HEIGHT - 20`
     [FPS]
+]
+
+[KeyDetector key: return
+    [When pressed: `do
+        root.paused = not paused
+        world:enable_method('update', not paused)
+    end`]
 ]

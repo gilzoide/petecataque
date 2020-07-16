@@ -16,12 +16,13 @@ end
 function When:update(dt)
     DEBUG.PUSH_CALL(self, 'update')
     local condition_actions = self.__when
+    local obj = self.parent
     for i = 1, #condition_actions do
         local t = condition_actions[i]
         local condition, action = t[1], t[2]
-        if nested_match(self, condition) then
+        if nested_match(obj, condition) then
             DEBUG.PUSH_CALL(action, nested.encode(action))
-            action(self)
+            action(obj)
             DEBUG.POP_CALL(action, nested.encode(action))
         end
     end

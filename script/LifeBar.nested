@@ -33,7 +33,7 @@ reset: {
     ]
 ]
 
-[When root.takingDamage: `do
-    root.timeLeft = math.max(0, timeLeft - dt)
-    root.finished = timeLeft <= 0
+[When takingDamage: `do
+    self.timeLeft = math.max(0, timeLeft - dt)
+    self.finished = timeLeft <= 0
 end`]

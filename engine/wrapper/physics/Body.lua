@@ -22,11 +22,11 @@ local Body = Recipe.wrapper.new('Body', 'body', {
 function Body:create_wrapped()
     local world = self.world
     if not world then
-        world = select(2, self:first_parent_with('world'))
+        world = self:first_parent_of('World')
         log.warnassert(world, "Couldn't find World in Body parent")
     end
     if world then
-        return love.physics.newBody(world)
+        return love.physics.newBody(world.world)
     else
         self.disabled = true
     end
