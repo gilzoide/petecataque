@@ -32,9 +32,4 @@ Object.add_setter(Text, 'text', function(self, text)
     end
 end)
 
-Object.add_setter(Text, 'width', function(self, width)
-    self.limit = width
-    return Object.SET_METHOD_NO_RAWSET
-end)
-
 return Text

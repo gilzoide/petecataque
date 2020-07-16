@@ -9,7 +9,6 @@ paused: true
 
 init: {
     love.graphics.setBackgroundColor 0.12 0.12 0.12;
-    love.graphics.setFont [R font 'Gontserrat-Medium.ttf 26'];
     disable_method world update paused;
 }
 
@@ -57,6 +56,8 @@ lifeBarMargin: 10
     ]
 ]
 
+[Score id: score]
+
 [Transform y: `WINDOW_HEIGHT - 20`
     [FPS]
 ]
@@ -65,5 +66,10 @@ lifeBarMargin: 10
     [When pressed: `do
         root.paused = not paused
         world:disable_method('update', paused)
+        if paused then
+            score:showPaused()
+        else
+            score:hide()
+        end
     end`]
 ]

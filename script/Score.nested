@@ -1,0 +1,36 @@
+Score
+
+width: `WINDOW_WIDTH * 0.8`
+x: `(WINDOW_WIDTH - width) * 0.5`
+y: `WINDOW_HEIGHT * 0.4`
+font: { R font 'Gontserrat-Medium.ttf 26' }
+
+initialText: "PETECATAQUE
+Jogue a peteca no chão ou no amiguinho
+Use A/D e ←/→ para girar
+
+Aperte Enter para começar
+"
+pauseText: "Aperte Enter para continuar"
+wonTextFmt: "Vitória do jogador %d! =D\nAperte Enter para recomeçar"
+# winner, paused
+
+[Text id: text text: `initialText`
+    x: `root.x` y: `root.y`
+    limit: `root.width`
+    font: `root.font`
+    align: center
+]
+
+showPaused: `do
+    self.hidden = false
+    text.text = pauseText
+end`
+showWinner: `do
+    local self, winnerIndex = ...
+    self.hidden = false
+    text.text = string.format(wonTextFmt, winnerIndex)
+end`
+hide: `do
+    self.hidden = true
+end`

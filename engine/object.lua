@@ -48,6 +48,13 @@ function Object.new(recipe, obj, parent, root_param)
         DEBUG.POP_CALL(recipe, 'preinit')
     end
 
+    for k, v in nested.kpairs(recipe) do
+        if type(k) == 'string' and recipe[Object.setter_method_name(k)] then
+            if Expression.is_getter(v) then v = v(obj) end
+            obj[k] = v
+        end
+    end
+
     local super = recipe.__super
     if super then
         for i = 2, #super do
