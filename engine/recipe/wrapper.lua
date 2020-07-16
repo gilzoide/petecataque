@@ -6,6 +6,8 @@ local wrapper = {}
 local function field_name_less_getset(s)
     if s:startswith("get") or s:startswith("set") then
         s = string.format("%s%s", s:sub(4, 4):lower(), s:sub(5))
+    elseif s:startswith("is") then
+        s = string.format("%s%s", s:sub(3, 3):lower(), s:sub(4))
     end
     return s
 end

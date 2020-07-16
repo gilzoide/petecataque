@@ -46,9 +46,8 @@ featherShapePoints: `{
     ]
 ]
 
-"$set impulse": `do
-    local nx, ny = unpack(value)
+impulse: `do
+    local nx, ny = select(2, ...)
     if ny > 0 then nx, ny = -nx, -ny end
     body:applyLinearImpulse(nx * impulseIntensity, ny * impulseIntensity)
-    return 'NO_RAWSET'
 end`

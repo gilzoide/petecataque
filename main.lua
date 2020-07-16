@@ -9,9 +9,9 @@ function love.load(arg)
 
     -- print(nested.encode(scene))
     DEBUG.REPORTTIMER('load')
+    _ENV.TIME = 0
 end
 
-_ENV.TIME = 0
 function love.update(dt)
     _ENV.dt = dt
     _ENV.TIME = _ENV.TIME + dt
