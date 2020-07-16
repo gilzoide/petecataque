@@ -13,7 +13,7 @@ angularVelocity: 10
 # flipX
 # takingDamage: true
 
-maxLife: 1
+maxLife: 10
 currentLife: 0
 
 reset: {
