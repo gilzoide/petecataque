@@ -7,11 +7,11 @@ petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 paused: true
 
-init: {
-    love.graphics.setBackgroundColor 0.12 0.12 0.12;
-    disable_method world update paused;
-    reset self;
-}
+init: `do
+    love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
+    world:disable_method('update', paused)
+    self:reset()
+end`
 
 reset: `do
     peteca.body.position = { petecaX, petecaY }
@@ -38,13 +38,11 @@ end`
     [Player id: player1 color: [0 1 0]
         leftKey: a
         rightKey: d
-        
         otherPlayer: `player2`
     ]
     [Player id: player2 color: [1 1 0] flipX: true
         leftKey: left
         rightKey: right
-
         otherPlayer: `player1`
     ]
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
