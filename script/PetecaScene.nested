@@ -13,22 +13,35 @@ init: {
     reset self;
 }
 
-reset: {
-    player1.reset player1;
-    player2.reset player2;
-}
+reset: `do
+    peteca.body.position = { petecaX, petecaY }
+    peteca.body.angle = 0
+    peteca.body.angularVelocity = 0
+    peteca.body.linearVelocity = { 0, 0.1 }
+    peteca.lastToHit = nil
+
+    player1.body.position = { p1x, py }
+    player1.body.linearVelocity = { 0, 0.1 }
+    player1.body.angle = 0
+    player1.body.angularVelocity = 0
+    player1:reset()
+
+    player2.body.position = { p2x, py }
+    player2.body.linearVelocity = { 0, 0.1 }
+    player2.body.angle = 0
+    player2.body.angularVelocity = 0
+    player2:reset()
+end`
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
     [Arena id: arena]
-    [Player id: player1 x: `p1x` y: `py`
-        color: [0 1 0]
+    [Player id: player1 color: [0 1 0]
         leftKey: a
         rightKey: d
         
         otherPlayer: `player2`
     ]
-    [Player id: player2 x: `p2x` y: `py`
-        color: [1 1 0] flipX: true
+    [Player id: player2 color: [1 1 0] flipX: true
         leftKey: left
         rightKey: right
 
@@ -72,8 +85,24 @@ lifeBarMargin: 10
     [FPS]
 ]
 
+[When
+    player1.gameover: `do
+        self.gameover = true
+        score:showWinner(2)
+    end`
+
+    player2.gameover: `do
+        self.gameover = true
+        score:showWinner(1)
+    end`
+]
+
+"$set gameover": `do
+    world:disable_method('update', value)
+end`
+
 [KeyDetector key: return
-    [When pressed: `do
+    [When '!gameover pressed': `do
         root.paused = not paused
         world:disable_method('update', paused)
         if paused then
@@ -81,5 +110,11 @@ lifeBarMargin: 10
         else
             score:hide()
         end
+    end`]
+
+    [When 'gameover pressed': `do
+        self:reset()
+        score:hide()
+        root.gameover = false
     end`]
 ]

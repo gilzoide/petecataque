@@ -13,11 +13,13 @@ angularVelocity: 10
 # flipX
 # takingDamage: true
 
-maxLife: 10
-currentLife: 10
+maxLife: 1
+currentLife: 0
 
 reset: {
     self.currentLife: maxLife
+    self.gameover: false
+    self.takingDamage: false
 }
 
 "$set takingDamage": `do
