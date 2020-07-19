@@ -11,6 +11,11 @@ groundPoints: `{
     WINDOW_WIDTH, WINDOW_HEIGHT,
 }`
 
+[Sprite texture: { R icon.png }
+    x: `WINDOW_WIDTH * 0.5` y: `WINDOW_HEIGHT * 0.5`
+    color: [1 1 1 0.5]
+]
+
 [Body
     [ChainShape loop: false points: `wallPoints`
         [Fixture restitution: 0.5 friction: 1]

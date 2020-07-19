@@ -5,29 +5,30 @@ Resources.__index = Resources
 
 Resources.path = { 'engine/recipe/builtin', 'assets' }
 
-function Resources:index_for_parameters(name, ...)
+function Resources:get_keypath(name, ...)
     name = self.asset_map:full_path(name)
-    return name, (select('#', ...) == 0 and name or nested.encode({ name, ... }))
+    return { name, ... }
 end
 
 function Resources:get(...)
-    local name, index = self:index_for_parameters(...)
-    return self.loaded[index]
+    local keypath = self:get_keypath(...)
+    return get(self.loaded, keypath), keypath
 end
 
-function Resources:set(index, loaded_resource)
-    self.loaded[index] = loaded_resource
+function Resources:unload(...)
+    local keypath = self:get_keypath(...)
+    set(self.loaded, keypath, nil)
 end
 
 function Resources:get_or_load(...)
-    local name, index = self:index_for_parameters(...)
-    local loaded_resource = self.loaded[index]
+    local loaded_resource, keypath = self:get(...)
     if loaded_resource then
         return loaded_resource
     else
+        local name = keypath[1]
         local basename, ext = AssetMap.split_extension(name)
         local loader = assertf(self.loader_by_ext[ext], "Couldn't find loader for file %q", name)
-        return loader(name, select(2, ...))
+        return loader(unpack(keypath))
     end
 end
 
@@ -35,7 +36,7 @@ function Resources.new()
     local resources = setmetatable({
         asset_map = AssetMap.new(Resources.path),
         loader_by_ext = {},
-        loaded = setmetatable({}, { __mode = 'v' }),
+        loaded = {},
     }, Resources)
 
     resources:register_loader('lua_recipe', require 'recipe'.tryloadlua, { '.lua' })
@@ -48,13 +49,12 @@ end
 
 local function wrap_loader(self, loader)
     return function(...)
-        local name, index = self:index_for_parameters(...)
-        local loaded_resource = self.loaded[index]
+        local loaded_resource, keypath = self:get(...)
         if loaded_resource then
             return loaded_resource
         else
-            loaded_resource = log.warnassert(loader(name, select(2, ...)))
-            self:set(index, loaded_resource)
+            loaded_resource = log.warnassert(loader(unpack(keypath)))
+            set_or_create(self.loaded, keypath, loaded_resource)
             return loaded_resource
         end
     end

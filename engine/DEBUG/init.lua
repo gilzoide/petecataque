@@ -42,12 +42,14 @@ function DEBUG.POP_CALL(recipe, name)
 end
 
 function DEBUG.LOAD(arg)
+    DEBUG.hotreload.load()
     if arg[2] == '--debug' then
         require 'debugger'()
     end
 end
 
 function DEBUG.UPDATE(dt)
+    DEBUG.hotreload.update(dt)
 end
 
 function DEBUG.DRAW()

@@ -43,7 +43,6 @@ function drawable_common.setAnchorPoint(self, anchorPoint)
 end
 
 function drawable_common.setDrawable(self, drawable)
-    rawset(self, 'drawable', drawable)
     if drawable then
         drawable_common.refresh_anchor(self, drawable, self.anchorPoint)
     end

@@ -18,11 +18,6 @@ Object.add_getter(Sprite, "drawable", function(self)
     return self.texture
 end)
 
-Object.add_setter(Sprite, "texture", function(self, texture)
-    if type(texture) == 'string' then
-        texture = R.image[texture]
-    end
-    return drawable_common.setDrawable(self, texture)
-end)
+Object.add_setter(Sprite, "texture", drawable_common.setDrawable)
 
 return Sprite
