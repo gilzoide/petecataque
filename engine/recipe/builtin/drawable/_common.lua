@@ -9,6 +9,12 @@ end
 function drawable_common.draw(self)
     local transform = love.math.newTransform(self.x, self.y, self.r, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
     love.graphics.applyTransform(transform)
+    
+    local color = self.color
+    if color then
+        love.graphics.setColor(color)
+    end
+
     if self.quad then
         love.graphics.draw(self.drawable, self.quad)
     else
