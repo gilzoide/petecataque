@@ -3,7 +3,7 @@ local AssetMap = require 'resources.asset_map'
 local Resources = {}
 Resources.__index = Resources
 
-Resources.path = { 'engine/recipe/builtin', 'assets', 'script' }
+Resources.path = { 'engine/recipe/builtin', 'assets' }
 
 function Resources:index_for_parameters(name, ...)
     name = self.asset_map:full_path(name)
