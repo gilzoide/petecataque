@@ -6,29 +6,26 @@ function AssetMap.split_extension(path)
     return basename, ext
 end
 
-local function scan_dir(self, dir)
+local function scan_dir(self, dir, info)
     for i, item in ipairs(love.filesystem.getDirectoryItems(dir)) do
         local path = dir .. '/' .. item
-        local info = love.filesystem.getInfo(path)
+        love.filesystem.getInfo(path, info)
         if info.type == 'directory' then
-            scan_dir(self, path)
+            scan_dir(self, path, info)
         elseif info.type == 'file' then
-            local basename, ext = AssetMap.split_extension(item)
-            info.path = path
-            info.ext = ext
-            info.type = nil
-            self[path] = info
+            self[path] = path
             if self[item] == nil then
-                self[item] = info
+                self[item] = path
             elseif self[item] ~= false then
-                log.warnassert(false, "Resource filename at path %q matches %q. Disabling loading filename %q", path, self[item].path, item)
+                log.warnassert(false, "Resource filename at path %q matches %q. Disabling loading filename %q", path, self[item], item)
                 self[item] = false
             end
 
+            local basename, ext = AssetMap.split_extension(item)
             if self[basename] == nil then
-                self[basename] = info
+                self[basename] = path
             elseif self[basename] ~= false then
-                log.warnassert(false, "Resource basename at path %q matches %q. Disabling loading basename %q", path, self[basename].path, basename)
+                log.warnassert(false, "Resource basename at path %q matches %q. Disabling loading basename %q", path, self[basename], basename)
                 self[basename] = false
             end
         end
@@ -36,15 +33,15 @@ local function scan_dir(self, dir)
 end
 
 function AssetMap.new(search_paths)
-    local asset_map = {}
+    local asset_map, info = {}, {}
     for i, dir in ipairs(search_paths) do
-        scan_dir(asset_map, dir)
+        scan_dir(asset_map, dir, info)
     end
     return setmetatable(asset_map, AssetMap)
 end
 
 function AssetMap:full_path(file)
-    return assertf(get(self, file, 'path'), "Couldn't find file %q", file)
+    return assertf(self[file], "Couldn't find file %q", file)
 end
 
 return AssetMap
