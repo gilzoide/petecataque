@@ -46,7 +46,12 @@ end
 
 function Expression.from_table(literal, file, line)
     assertf(type(literal) == 'table', "FIXME %s", type(literal))
-    local __expression = literal[1] == 'R' and GETTER_EXPRESSION or METHOD_EXPRESSION
+    local __expression
+    if type(literal[1]) == 'string' and (literal[1] == 'R' or literal[1]:startswith('R.')) then
+        __expression = GETTER_EXPRESSION
+    else
+        __expression = METHOD_EXPRESSION
+    end
     local expr = {
         'Expression', literal,
         __expression = __expression,

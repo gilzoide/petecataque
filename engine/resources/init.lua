@@ -15,6 +15,10 @@ function Resources:get(...)
     return self.loaded[index]
 end
 
+function Resources:set(index, loaded_resource)
+    self.loaded[index] = loaded_resource
+end
+
 function Resources:get_or_load(...)
     local name, index = self:index_for_parameters(...)
     local loaded_resource = self.loaded[index]
@@ -23,9 +27,7 @@ function Resources:get_or_load(...)
     else
         local basename, ext = AssetMap.split_extension(name)
         local loader = assertf(self.loader_by_ext[ext], "Couldn't find loader for file %q", name)
-        loaded_resource = loader(name, select(2, ...))
-        self.loaded[index] = loaded_resource
-        return loaded_resource
+        return loader(name, select(2, ...))
     end
 end
 
@@ -33,7 +35,7 @@ function Resources.new()
     local resources = setmetatable({
         asset_map = AssetMap.new(Resources.path),
         loader_by_ext = {},
-        loaded = {},
+        loaded = setmetatable({}, { __mode = 'v' }),
     }, Resources)
 
     resources:register_loader('lua_recipe', require 'recipe'.tryloadlua, { '.lua' })
@@ -44,29 +46,24 @@ function Resources.new()
     return resources
 end
 
-
+local function wrap_loader(self, loader)
+    return function(...)
+        local name, index = self:index_for_parameters(...)
+        local loaded_resource = self.loaded[index]
+        if loaded_resource then
+            return loaded_resource
+        else
+            loaded_resource = log.warnassert(loader(name, select(2, ...)))
+            self:set(index, loaded_resource)
+            return loaded_resource
+        end
+    end
+end
 
 function Resources:register_loader(kind, loader, extension_associations)
     assertf(not self[kind], 'Resource loader %q is already registered', kind)
-    -- local loader = setmetatable({}, {
-    --     __index = function(t, index)
-    --         return t(index)
-    --     end,
-    --     __call = function(t, name, ...)
-    --         name = rawget(self, 'asset_map'):full_path(name)
-    --         local loaded_resource = rawget(t, name)
-    --         if loaded_resource then
-    --             return loaded_resource
-    --         else
-    --             loaded_resource = log.warnassert(loader_function(name, ...))
-    --             if name == 'engine/recipe/builtin/physics/Body.lua' then error('AHA') end
-    --             rawset(t, name, loaded_resource)
-    --             return loaded_resource
-    --         end
-    --     end,
-    --     __mode = "v",
-    -- })
-    -- self[kind] = loader
+    loader = wrap_loader(self, loader)
+    self[kind] = loader
     for i, ext in ipairs(extension_associations) do
         log.warnassert(self.loader_by_ext[ext] == nil, "Overriding loader for file extension %q: %q", ext, kind)
         self.loader_by_ext[ext] = loader
