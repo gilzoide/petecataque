@@ -3,7 +3,7 @@ Score
 width: `WINDOW_WIDTH * 0.8`
 x: `(WINDOW_WIDTH - width) * 0.5`
 y: `WINDOW_HEIGHT * 0.4`
-font: { R font 'Gontserrat-Medium.ttf 26' }
+font: { R Gontserrat-Medium.ttf 26 }
 
 initialText: "PETECATAQUE
 Jogue a peteca no chão ou no amiguinho

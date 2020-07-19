@@ -1,4 +1,8 @@
+local empty = require 'empty'
+
 local DEBUG = {}
+
+DEBUG.hotreload = require 'DEBUG.hotreload'
 
 DEBUG.enabled = true
 
@@ -35,6 +39,18 @@ end
 function DEBUG.POP_CALL(recipe, name)
     local t = table.remove(DEBUG)
     assertf(t and t[1] == recipe and t[2] == name, "FIXME @ %s", stringify_call(t))
+end
+
+function DEBUG.LOAD(arg)
+    if arg[2] == '--debug' then
+        require 'debugger'()
+    end
+end
+
+function DEBUG.UPDATE(dt)
+end
+
+function DEBUG.DRAW()
 end
 
 function love.errorhandler(msg)

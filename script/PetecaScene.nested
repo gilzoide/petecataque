@@ -2,7 +2,7 @@ PetecaScene
 
 p1x: `WINDOW_WIDTH * 0.25`
 p2x: `WINDOW_WIDTH * 0.75`
-py: `WINDOW_HEIGHT - R.recipe.Player.radius`
+py: `WINDOW_HEIGHT - R('Player').radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 paused: true
@@ -100,19 +100,21 @@ lifeBarMargin: 10
 end`
 
 [KeyDetector key: return
-    [When '!gameover pressed': `do
-        root.paused = not paused
-        world:disable_method('update', paused)
-        if paused then
-            score:showPaused()
-        else
-            score:hide()
-        end
-    end`]
+    [When
+        '!gameover, pressed': `do
+            root.paused = not paused
+            world:disable_method('update', paused)
+            if paused then
+                score:showPaused()
+            else
+                score:hide()
+            end
+        end`
 
-    [When 'gameover pressed': `do
-        self:reset()
-        score:hide()
-        root.gameover = false
-    end`]
+        'gameover, pressed': `do
+            self:reset()
+            score:hide()
+            root.gameover = false
+        end`
+    ]
 ]

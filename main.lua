@@ -1,10 +1,11 @@
 require 'globals'
 
 function love.load(arg)
+    DEBUG.LOAD(arg)
     DEBUG.STARTTIMER('load')
     
     local initial_scene = arg[1] or 'PetecaScene'
-    local scene = assert(R.recipe[initial_scene])()
+    local scene = assert(R(initial_scene))()
     addtoscene(scene)
 
     -- print(nested.encode(scene))
@@ -17,12 +18,14 @@ function love.update(dt)
     _ENV.TIME = _ENV.TIME + dt
     Setqueue:update(dt)
     Director.update(dt)
+    DEBUG.UPDATE(dt)
 end
 
 function love.draw()
     Setqueue:flip()
     Director.draw()
     Setqueue:frame_ended()
+    DEBUG.DRAW()
 end
 
 love.mousemoved = Input.mousemoved

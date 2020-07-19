@@ -9,7 +9,7 @@ function love.conf(t)
     t.window.width = WINDOW_WIDTH
     t.window.height = WINDOW_HEIGHT
     t.window.title = 'PETECATAQUE'
-    t.window.icon = 'icon.png'
+    t.window.icon = 'assets/icon.png'
     t.window.highdpi = true
     t.window.msaa = 16
     
@@ -23,7 +23,7 @@ function love.conf(t)
         description = nil,        -- The project description (string)
         homepage = 'https://github.com/gilzoide/love-nested-test-game',           -- The project homepage (string)
         identifier = 'com.gilzoide.petecataque',         -- The project Uniform Type Identifier (string)
-        excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'DEBUG.lua', 'engine/*.md'},     -- File patterns to exclude. (string list)
+        excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'engine/DEBUG/', 'engine/*.md'},     -- File patterns to exclude. (string list)
         releaseDirectory = 'release',   -- Where to store the project releases (string)
     }
 end

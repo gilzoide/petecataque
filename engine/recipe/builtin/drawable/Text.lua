@@ -1,4 +1,4 @@
-local drawable_common = require 'wrapper.drawable.drawable_common'
+local drawable_common = require 'recipe.builtin.drawable._common'
 
 local Text = Recipe.wrapper.new('Text', 'drawable', {
     'getDimensions', 'getFont', 'getHeight', 'getWidth',

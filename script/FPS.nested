@@ -1,6 +1,6 @@
 FPS
 
-font: { R font 'Gontserrat-Medium.ttf 14' }
+font: { R Gontserrat-Medium.ttf 14 }
 [Graphics 
     draw: {
         setColor 1 1 1;
@@ -8,7 +8,3 @@ font: { R font 'Gontserrat-Medium.ttf 14' }
     }
     [Print text: `string.format("FPS: %d", love.timer.getFPS())` limit: `WINDOW_WIDTH` align: right]
 ]
-
-init: {
-    print 'FPS self.type =' [self.type self];
-}

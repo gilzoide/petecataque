@@ -1,5 +1,3 @@
-local drawable_common = require 'wrapper.drawable.drawable_common'
-
 local Print = {
     'Print',
     x = 0, y = 0,

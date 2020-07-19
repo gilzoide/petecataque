@@ -26,15 +26,15 @@ local function bind_file_to_constructors(file)
     end
 end
 
-function recipe_nested.load(name, filename, contents)
+function recipe_nested.load(filename, contents)
     local recipe = assert(nested.decode(contents, bind_file_to_constructors(filename)))
     recipe_nested.preprocess(name, recipe)
     return recipe
 end
 
 function recipe_nested.preprocess(name, recipe)
-    assertf(recipe[1] ~= nil, "Recipe name expected as %q @ %s", name, recipe.__file)
-    assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
+    -- assertf(recipe[1] ~= nil, "Recipe name expected as %q @ %s", name, recipe.__file)
+    -- assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
 
     for kp, t, parent in nested.iterate(recipe, { table_only = true }) do
         for k, v in nested.kpairs(t) do
@@ -48,7 +48,7 @@ function recipe_nested.preprocess(name, recipe)
         if #kp > 0 then
             local super_recipe_name = t[1]
             assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
-            local super_recipe = assertf(R.recipe[super_recipe_name], "Recipe %q couldn't be loaded", super_recipe_name)
+            local super_recipe = assertf(R(super_recipe_name), "Recipe %q couldn't be loaded", super_recipe_name)
             t.__super = super_recipe
             t.__parent = parent
             if super_recipe.__init_recipe then
