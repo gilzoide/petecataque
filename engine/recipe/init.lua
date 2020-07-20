@@ -10,9 +10,13 @@ function Recipe.new(name, super)
     return setmetatable(recipe, Recipe)
 end
 
+function Recipe.is_recipe(v)
+    return getmetatable(v) == Recipe
+end
+
 function Recipe.load_lua(filename)
     local lua_recipe = assert(love.filesystem.load(filename))()
-    assert(getmetatable(lua_recipe) == Recipe, "Expected Lua recipe ")
+    assertf(Recipe.is_recipe(lua_recipe), "Expected Lua recipe return from %q", filename)
     return lua_recipe
 end
 
