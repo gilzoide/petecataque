@@ -1,6 +1,6 @@
 local drawable_common = require 'recipe.builtin.drawable._common'
 
-local Sprite = {'Sprite'}
+local Sprite = Recipe.new('Sprite')
 
 Sprite.anchorPoint = {0.5, 0.5}
 

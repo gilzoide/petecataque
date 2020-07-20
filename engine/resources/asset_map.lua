@@ -6,6 +6,11 @@ function AssetMap.split_extension(path)
     return basename, ext
 end
 
+function AssetMap.get_basename(path)
+    local basename = path:match("([^/.]*)[^/]-$")
+    return basename
+end
+
 local function scan_dir(self, dir, info)
     for i, item in ipairs(love.filesystem.getDirectoryItems(dir)) do
         local path = dir .. '/' .. item

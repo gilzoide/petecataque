@@ -5,41 +5,27 @@ local Recipe = {}
 Recipe.wrapper = require 'recipe.wrapper'
 Recipe.nested = require 'recipe.nested'
 
-function Recipe.load(name)
-    local recipe = Recipe.tryloadnested(name) or Recipe.tryloadlua(name)
-    if recipe ~= nil then
-        assertf(type(recipe) == 'table', "Recipe must be a table, found %q", type(recipe))
-        assertf(recipe[1] ~= nil, "Recipe name expected as %q", name)
-        assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
-        if not getmetatable(recipe) then setmetatable(recipe, Recipe) end
-        return recipe
-    end
+function Recipe.new(name, super)
+    local recipe = { name, __super = super }
+    return setmetatable(recipe, Recipe)
 end
 
-function Recipe.tryloadlua(filename)
+function Recipe.load_lua(filename)
     local lua_recipe = assert(love.filesystem.load(filename))()
+    assert(getmetatable(lua_recipe) == Recipe, "Expected Lua recipe ")
     return lua_recipe
-    -- for i, fmt in ipairs(Recipe.path) do
-    --     local filename = string.format(fmt, name)
-    --     if love.filesystem.getInfo(filename) then
-    --     end
-    -- end
-    -- return nil
 end
 
-function Recipe.tryloadnested(filename)
-    local contents = assert(love.filesystem.read(filename))
+function Recipe.load_nested(filename)
+    local contents, size = assert(love.filesystem.read(filename))
     return assert(Recipe.nested.load(filename, contents))
-    -- for i, fmt in ipairs(Recipe.nestedpath) do
-    --     local filename = string.format(fmt, name)
-    --     if love.filesystem.getInfo(filename) then
-    --         local contents = assert(love.filesystem.read(filename))
-    --         return assert(Recipe.nested.load(name, filename, contents))
-    --     end
-    -- end
-    -- return nil
 end
 
+function Recipe.__index(t, index)
+    local super = rawget(t, '__super')
+    return super and super[index]
+end
+Recipe.__pairs = default_object_pairs
 Recipe.__call = Object.new
 
 return Recipe

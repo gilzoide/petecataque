@@ -1,7 +1,6 @@
-local MouseArea = {
-    'MouseArea',
-    button = 1,
-}
+local MouseArea = Recipe.new('MouseArea')
+    
+MouseArea.button = 1
 
 function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')

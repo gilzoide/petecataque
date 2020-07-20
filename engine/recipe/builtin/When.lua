@@ -1,4 +1,4 @@
-local When = {'When'}
+local When = Recipe.new('When')
 
 function When:__init_recipe(recipe)
     local condition_actions = {}

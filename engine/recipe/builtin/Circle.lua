@@ -1,8 +1,8 @@
-local Circle = {
-    'Circle',
-    x = 0, y = 0,
-    radius = 10,
-}
+local Circle = Recipe.new('Circle')
+
+Circle.x = 0
+Circle.y = 0
+Circle.radius = 10
 
 function Circle:init()
     self.shape = love.physics.newCircleShape(self.x, self.y, self.radius)

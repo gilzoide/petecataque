@@ -1,12 +1,11 @@
-local Rectangle = {
-    'Rectangle',
-    x = 0, y = 0,
-    width = 100, height = 100,
-    rx = nil, ry = nil, segments = nil,
-    color = {1, 1, 1},
-    anchorPoint = {0, 0},
-    drawmode = 'fill',
-}
+local Rectangle = Recipe.new('Rectangle')
+
+Rectangle.x = 0
+Rectangle.y = 0
+Rectangle.width = 100
+Rectangle.height = 100
+Rectangle.anchorPoint = {0, 0}
+-- rx = nil, ry = nil, segments = nil,
 
 local function anchor_position(self)
     local x = self.width * self.anchorPoint[1]
@@ -14,7 +13,7 @@ local function anchor_position(self)
     return x, y
 end
 
-Rectangle.draw_push = 'transform'
+Rectangle.draw_push = 'all'
 
 local function draw_rectangle(self, drawmode, x, y)
     if self.rx then

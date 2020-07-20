@@ -1,9 +1,6 @@
-local empty = require 'empty'
+local CollisionTracker = Recipe.new('CollisionTracker')
 
-local CollisionTracker = {
-    'CollisionTracker',
-    touching = false,
-}
+CollisionTracker.touching = false
 
 function CollisionTracker:init()
     local world = self.world

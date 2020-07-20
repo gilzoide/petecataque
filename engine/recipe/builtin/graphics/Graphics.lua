@@ -1,6 +1,4 @@
-local Graphics = {'Graphics'}
-
-setmetatable(Graphics, { __index = love.graphics })
+local Graphics = Recipe.new('Graphics', love.graphics)
 
 Graphics.draw_push = 'all'
 

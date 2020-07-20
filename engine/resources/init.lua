@@ -1,4 +1,5 @@
 local AssetMap = require 'resources.asset_map'
+local Recipe = require 'recipe'
 
 local Resources = {}
 Resources.__index = Resources
@@ -39,8 +40,8 @@ function Resources.new()
         loaded = {},
     }, Resources)
 
-    resources:register_loader('lua_recipe', require 'recipe'.tryloadlua, { '.lua' })
-    resources:register_loader('recipe', require 'recipe'.tryloadnested, { '.nested' })
+    resources:register_loader('lua_recipe', Recipe.load_lua, { '.lua' })
+    resources:register_loader('recipe', Recipe.load_nested, { '.nested' })
     resources:register_loader('image', love.graphics.newImage, { '.png', '.jpg', '.jpeg', '.bmp', '.tga', '.hdr', '.pic', '.exr' })
     resources:register_loader('font', love.graphics.newFont, { '.ttf' })
 

@@ -1,4 +1,4 @@
-local KeyDetector = {'KeyDetector'}
+local KeyDetector = Recipe.new('KeyDetector')
 
 function KeyDetector:init()
     if not log.warnassert(self.key, "Need a key to detect") then

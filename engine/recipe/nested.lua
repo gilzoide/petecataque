@@ -1,3 +1,4 @@
+local AssetMap = require 'resources.asset_map'
 local Object = require 'object'
 
 local recipe_nested = {}
@@ -28,13 +29,19 @@ end
 
 function recipe_nested.load(filename, contents)
     local recipe = assert(nested.decode(contents, bind_file_to_constructors(filename)))
+    local name = AssetMap.get_basename(filename)
     recipe_nested.preprocess(name, recipe)
     return recipe
 end
 
 function recipe_nested.preprocess(name, recipe)
-    -- assertf(recipe[1] ~= nil, "Recipe name expected as %q @ %s", name, recipe.__file)
-    -- assertf(recipe[1] == name, "Expected name in recipe %q to match file %q", recipe[1], name)
+    local recipe_name = recipe[1]
+    if type(recipe_name) ~= 'string' then
+        table.insert(recipe, 1, name)
+    else
+        assertf(recipe_name == name, "Expected name in recipe %q to match file %q", recipe_name, name)
+        -- TODO: permit specifying __super here, replacing name
+    end
 
     for kp, t, parent in nested.iterate(recipe, { table_only = true }) do
         for k, v in nested.kpairs(t) do
@@ -57,15 +64,8 @@ function recipe_nested.preprocess(name, recipe)
                 DEBUG.POP_CALL(t, '__init_recipe')
             end
         end
-        setmetatable(t, recipe_nested)
+        setmetatable(t, Recipe)
     end
 end
-
-function recipe_nested.__index(t, index)
-    local super = rawget(t, '__super')
-    return super and super[index]
-end
-recipe_nested.__pairs = Object.__pairs
-recipe_nested.__call = Object.new
 
 return recipe_nested

@@ -44,7 +44,7 @@ local function create_method(method_name)
 end
 
 function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
-    local recipe = { name }
+    local recipe = Recipe.new(name)
     for i = 1, #getters do
         local getter = getters[i]
         local field_name = field_name_less_getset(getter)

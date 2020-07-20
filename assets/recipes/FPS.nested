@@ -1,6 +1,5 @@
-FPS
-
 font: { R.font Gontserrat-Medium.ttf 14 }
+
 [Graphics 
     draw: {
         setColor 1 1 1;

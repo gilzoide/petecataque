@@ -1,5 +1,3 @@
-Arena
-
 wallPoints: `{
     0, WINDOW_HEIGHT,
     0, 0,

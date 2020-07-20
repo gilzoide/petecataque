@@ -171,19 +171,6 @@ function Object:child_count()
     return #self - 1
 end
 
-function Object:expressionify(field_name, argument_names)
-    if self[field_name] then
-        local expression = self:create_expression(self[field_name], argument_names)
-        self[field_name] = expression
-        return expression
-    end
-end
-
-function Object:create_expression(v, argument_names)
-    local index_chain = { _ENV, self, self.root }
-    return Expression.new(v, index_chain, false, argument_names)
-end
-
 function Object:enable_method(method_name, enable)
     rawset(self, method_name, (enable or false) and nil)
     return enable
