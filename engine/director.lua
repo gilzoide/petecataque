@@ -1,7 +1,7 @@
 local Director = {}
 
 local function iterate_scene(skip_if_field)
-    local iterator = nested.iterate(Scene)
+    local iterator = Scene:iterate()
     return function()
         local kp, obj, parent, skip
         repeat

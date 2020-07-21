@@ -78,6 +78,20 @@ function Object.new(recipe, obj, parent, root_param)
     return obj
 end
 
+local release_iterator_flags = { order = nested.POSTORDER, table_only = true }
+function Object:release()
+    self.disabled = true
+    for kp, obj, parent in nested.iterate(self, release_iterator_flags) do
+        local destroy = obj.destroy
+        if destroy then
+            DEBUG.PUSH_CALL(obj, 'destroy')
+            destroy(obj)
+            DEBUG.POP_CALL(obj, 'destroy')
+        end
+        if parent then parent[kp[#kp]] = nil end
+    end
+end
+
 local function rawget_self_or_recipe(self, index)
     local value = rawget(self, index)
     if value ~= nil then return value end

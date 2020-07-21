@@ -34,6 +34,7 @@ function recipe_nested.load(filename, contents)
     return recipe
 end
 
+local preprocess_iterate_flags = { table_only = true }
 function recipe_nested.preprocess(name, recipe)
     local recipe_name = recipe[1]
     if type(recipe_name) ~= 'string' then
@@ -43,7 +44,7 @@ function recipe_nested.preprocess(name, recipe)
         -- TODO: permit specifying __super here, replacing name
     end
 
-    for kp, t, parent in nested.iterate(recipe, { table_only = true }) do
+    for kp, t, parent in nested.iterate(recipe, preprocess_iterate_flags) do
         for k, v in nested.kpairs(t) do
             if type(v) == 'table' and v.__opening_token == '{' then
                 t[k] = Expression.from_table(v, v.__file, v.__line)

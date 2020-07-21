@@ -63,7 +63,9 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
     end
 
     recipe.preinit = function(self)
-        self.__wrapped = self:create_wrapped()
+        DEBUG.PUSH_CALL(self, 'create_wrapped')
+        self.__wrapped = recipe.create_wrapped(self)
+        DEBUG.POP_CALL(self, 'create_wrapped')
         for k, v in pairs(self.__recipe.wrapper_initial_getters) do
             if Expression.is_getter(v) then v = v(self) end
             self[k] = v

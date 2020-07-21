@@ -39,4 +39,9 @@ function Scene:untrack(obj)
     end
 end
 
+local iterator_flags = { skip_root = true, table_only = true }
+function Scene:iterate()
+    return nested.iterate(self, iterator_flags)
+end
+
 return Scene
