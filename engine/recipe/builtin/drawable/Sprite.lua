@@ -8,7 +8,7 @@ function Sprite:init()
     drawable_common.disable_draw_if_nil(self, self.texture)
 end
 
-Sprite.draw_push = 'transform'
+Sprite.draw_push = 'all'
 Sprite.draw = drawable_common.draw
 Sprite.hitTestFromOrigin = drawable_common.hitTestFromOrigin
 
