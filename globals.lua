@@ -40,7 +40,7 @@ end
 
 log = require 'log'
 Expression = require 'expression'
-Object = require 'Object'
+Object = require 'object'
 Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
