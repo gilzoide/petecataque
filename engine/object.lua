@@ -38,8 +38,8 @@ function Object.new(recipe, obj, parent, root_param)
     rawset(obj, '__root', root_param)
     rawset(obj, '__in_middle_of_indexing', {})
 
-    if root_param and recipe.id then
-        root_param[recipe.id] = obj
+    if root_param and type(recipe.id) == 'string' then
+        root_param['_' .. recipe.id] = obj
     end
 
     if recipe.preinit then
