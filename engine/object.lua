@@ -134,7 +134,7 @@ function Object:__newindex(index, value)
     if type(index) == 'string' then
         local recipe = rawget(self, '__recipe')
         local set_method_index = Object.setter_method_name(index)
-        local set_method = index_first_of(set_method_index, recipe, Object)
+        local set_method = recipe[set_method_index]
         if iscallable(set_method) then
             DEBUG.PUSH_CALL(self, set_method_index)
             set_method(self, value)
