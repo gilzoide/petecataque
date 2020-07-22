@@ -38,4 +38,8 @@ function Body:draw()
     love.graphics.replaceTransform(love.math.newTransform(self.x, self.y, self.angle))
 end
 
+Body.__copy_state = {
+    'active', 'position', 'angle', 'angularVelocity', 'linearVelocity'
+}
+
 return Body

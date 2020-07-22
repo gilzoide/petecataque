@@ -82,6 +82,15 @@ function hotreload.copy_state(from_obj, to_obj)
             end
         end
 
+        local recipe_copy_state = from_obj.__recipe.__copy_state
+        if iscallable(recipe_copy_state) then
+            recipe_copy_state(from_obj, to_obj)
+        elseif type(recipe_copy_state) == 'table' then
+            for i, k in ipairs(recipe_copy_state) do
+                to_obj[k] = from_obj[k]
+            end
+        end
+
         for i = 2, #to_obj do
             if not hotreload.copy_state(from_obj[i], to_obj[i]) then break end
         end
