@@ -63,6 +63,9 @@ function hotreload.rebuild_object(obj, old_recipe, new_recipe, parent)
     end
 
     local root = obj.__root
+    if root and type(obj.id) == 'string' then
+        root['_' .. obj.id] = nil
+    end
     local new_obj = new_recipe(nil, parent, root)
     hotreload.copy_state(obj, new_obj)
     Object.release(obj)
@@ -73,11 +76,7 @@ function hotreload.copy_state(from_obj, to_obj)
     if from_obj and to_obj and from_obj[1] == to_obj[1] then
         for k, v in rawpairs(from_obj) do
             if type(k) == 'string' then
-                if k:startswith('__') then
-                    -- pass
-                elseif k:startswith('_') then
-                    -- TODO
-                else
+                if not k:startswith('_') then
                     to_obj[k] = v
                 end
             end
