@@ -44,6 +44,7 @@ function Resources.new()
     resources:register_loader('recipe', Recipe.load_nested, { '.nested' })
     resources:register_loader('image', love.graphics.newImage, { '.png', '.jpg', '.jpeg', '.bmp', '.tga', '.hdr', '.pic', '.exr' })
     resources:register_loader('font', love.graphics.newFont, { '.ttf' })
+    resources:register_loader('image_data', love.image.newImageData)
 
     return resources
 end

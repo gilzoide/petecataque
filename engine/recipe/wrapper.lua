@@ -45,21 +45,28 @@ end
 
 function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
     local recipe = Recipe.new(name)
-    for i = 1, #getters do
-        local getter = getters[i]
-        local field_name = field_name_less_getset(getter)
-        Object.add_getter(recipe, field_name, create_getter(getter))
+
+    if getters then
+        for i = 1, #getters do
+            local getter = getters[i]
+            local field_name = field_name_less_getset(getter)
+            Object.add_getter(recipe, field_name, create_getter(getter))
+        end
     end
 
-    for i = 1, #setters do
-        local setter = setters[i]
-        local field_name = field_name_less_getset(setter)
-        Object.add_setter(recipe, field_name, create_setter(setter, field_name))
+    if setters then
+        for i = 1, #setters do
+            local setter = setters[i]
+            local field_name = field_name_less_getset(setter)
+            Object.add_setter(recipe, field_name, create_setter(setter, field_name))
+        end
     end
 
-    for i = 1, #othermethods do
-        local method = othermethods[i]
-        recipe[method] = create_method(method)
+    if othermethods then
+        for i = 1, #othermethods do
+            local method = othermethods[i]
+            recipe[method] = create_method(method)
+        end
     end
 
     recipe.preinit = function(self)
@@ -87,7 +94,7 @@ function wrapper.init_recipe(self, recipe)
     local wrapper_initial_getters = nested_ordered.new()
     for k, v in nested.kpairs(recipe) do
         local value_in_self = self[k]
-        if Expression.is_getter(value_in_self) then
+        if Expression.is_getter(value_in_self) and value_in_self[2] ~= wrapper.get_wrapped then
             wrapper_initial_getters[k] = v
             recipe[k] = nil
         end

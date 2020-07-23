@@ -6,8 +6,17 @@ Recipe.wrapper = require 'recipe.wrapper'
 Recipe.nested = require 'recipe.nested'
 
 function Recipe.new(name, super)
-    local recipe = { name, __super = super }
+    local recipe = { name }
+    if super then Recipe.extends(recipe, super) end
     return setmetatable(recipe, Recipe)
+end
+
+function Recipe.extends(recipe, super)
+    if type(super) == 'string' then
+        super = R(super)
+    end
+    assertf(type(super) == 'table', "Invalid super definition %s", type(super))
+    recipe.__super = super
 end
 
 function Recipe.is_recipe(v)
