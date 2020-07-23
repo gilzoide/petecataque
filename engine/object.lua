@@ -25,7 +25,12 @@ function Object:type()
 end
 
 function Object:typeOf(t)
-    return self[1] == t
+    for recipe in self:iter_recipes() do
+        if recipe[1] == t then
+            return true
+        end
+    end
+    return false
 end
 
 function Object.new(recipe, obj, parent, root_param)
@@ -149,6 +154,16 @@ function Object:__newindex(index, value)
 end
 
 Object.__pairs = default_object_pairs
+
+function Object:iter_recipes()
+    return coroutine.wrap(function()
+        local current = self.__recipe
+        while current do
+            coroutine.yield(current)
+            current = current.__super
+        end
+    end)
+end
 
 function Object:iter_parents()
     local current = self
