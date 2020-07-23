@@ -79,7 +79,9 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
         end
     end
 
-    Object.add_getter(recipe, wrapped_object_index, wrapper.get_wrapped)
+    if wrapped_object_index then
+        Object.add_getter(recipe, wrapped_object_index, wrapper.get_wrapped)
+    end
 
     recipe.__init_recipe = wrapper.init_recipe
 

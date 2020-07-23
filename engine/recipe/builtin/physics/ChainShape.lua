@@ -1,22 +1,18 @@
-local ChainShape = Recipe.wrapper.new('ChainShape', 'shape', {
+local ChainShape = Recipe.wrapper.new('ChainShape', nil, {
     'getChildEdge', 'getNextVertex', 'getPoints', 'getPreviousVertex', 'getVertexCount',
-    'getChildCount', 'getRadius', 'getType',
 }, {
     'setNextVertex', 'setPreviousVertex',
 }, {
-    'getPoint', 'computeAABB', 'computeMass', 'rayCast', 'testPoint',
+    'getPoint'
 })
+
+Recipe.extends(ChainShape, 'Shape.lua')
 
 ChainShape.points = { 0,0, 0,1 }
 ChainShape.loop = true
 
-function ChainShape:typeOf(t)
-    return t == 'Shape' or t == 'ChainShape'
-end
-
 function ChainShape:create_wrapped()
-    local shape = love.physics.newChainShape(self.loop, self.points)
-    return shape
+    return love.physics.newChainShape(self.loop, self.points)
 end
 
 ChainShape.draw_push = 'all'

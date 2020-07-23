@@ -1,20 +1,15 @@
-local CircleShape = Recipe.wrapper.new('CircleShape', 'shape', {
-    'getPoint', 'getRadius', 'getChildCount', 'getType',
+local CircleShape = Recipe.wrapper.new('CircleShape', nil, {
+    'getPoint',
 }, {
     'setPoint', 'setRadius',
-}, {
-    'computeAABB', 'computeMass', 'rayCast', 'testPoint',
-})
+}, nil)
+
+Recipe.extends(CircleShape, 'Shape.lua')
 
 CircleShape.radius = 10
 
-function CircleShape:typeOf(t)
-    return t == 'Shape' or t == 'CircleShape'
-end
-
 function CircleShape:create_wrapped()
-    local shape = love.physics.newCircleShape(self.radius)
-    return shape
+    return love.physics.newCircleShape(self.radius)
 end
 
 CircleShape.draw_push = 'all'

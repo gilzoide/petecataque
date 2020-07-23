@@ -1,21 +1,15 @@
-local EdgeShape = Recipe.wrapper.new('EdgeShape', 'shape', {
+local EdgeShape = Recipe.wrapper.new('EdgeShape', nil, {
     'getNextVertex', 'getPoints', 'getPreviousVertex',
-    'getChildCount', 'getRadius', 'getType',
 }, {
     'setNextVertex', 'setPreviousVertex',
-}, {
-    'computeAABB', 'computeMass', 'rayCast', 'testPoint',
-})
+}, nil)
+
+Recipe.extends(EdgeShape, 'Shape.lua')
 
 EdgeShape.points = { 0,0, 0,1 }
 
-function EdgeShape:typeOf(t)
-    return t == 'Shape' or t == 'EdgeShape'
-end
-
 function EdgeShape:create_wrapped()
-    local shape = love.physics.newEdgeShape(unpack(self.points))
-    return shape
+    return love.physics.newEdgeShape(unpack(self.points))
 end
 
 EdgeShape.draw_push = 'all'

@@ -1,21 +1,15 @@
-local PolygonShape = Recipe.wrapper.new('PolygonShape', 'shape', {
+local PolygonShape = Recipe.wrapper.new('PolygonShape', nil, {
     'getPoints',
-    'getChildCount', 'getRadius', 'getType',
-}, {
-
-}, {
-    'validate', 'computeAABB', 'computeMass', 'rayCast', 'testPoint',
+},
+nil
+, {
+    'validate',
 })
 
-PolygonShape.points = { 0,0, 0,1, 1,1, 1,0 }
-
-function PolygonShape:typeOf(t)
-    return t == 'Shape' or t == 'PolygonShape'
-end
+Recipe.extends(PolygonShape, 'Shape.lua')
 
 function PolygonShape:create_wrapped()
-    local shape = love.physics.newPolygonShape(self.points)
-    return shape
+    return love.physics.newPolygonShape(self.points or { 0,0, 0,1, 1,1, 1,0 })
 end
 
 PolygonShape.draw_push = 'all'
