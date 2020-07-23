@@ -40,11 +40,15 @@ function Resources.new()
         loaded = {},
     }, Resources)
 
+    -- Recipes
     resources:register_loader('lua_recipe', Recipe.load_lua, { '.lua' })
     resources:register_loader('recipe', Recipe.load_nested, { '.nested' })
+    -- LÖVE resources
     resources:register_loader('image', love.graphics.newImage, { '.png', '.jpg', '.jpeg', '.bmp', '.tga', '.hdr', '.pic', '.exr' })
     resources:register_loader('font', love.graphics.newFont, { '.ttf' })
     resources:register_loader('image_data', love.image.newImageData)
+    -- Other nested serialized data
+    resources:register_loader('points', require 'resources.points', { '.points' })
 
     return resources
 end
