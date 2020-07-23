@@ -41,6 +41,14 @@ function DEBUG.POP_CALL(recipe, name)
     assertf(t and t[1] == recipe and t[2] == name, "FIXME @ %s", stringify_call(t))
 end
 
+function DEBUG.DUMP_TRACE(msg)
+    print(msg)
+    print('recipe traceback:')
+    for i = #DEBUG, 1, -1 do
+        print(stringify_call(DEBUG[i]))
+    end
+end
+
 function DEBUG.LOAD(arg)
     DEBUG.hotreload.load()
     if arg[2] == '--debug' then
@@ -56,11 +64,7 @@ function DEBUG.DRAW()
 end
 
 function love.errorhandler(msg)
-    print(msg)
-    print('recipe traceback:')
-    for i = #DEBUG, 1, -1 do
-        print(stringify_call(DEBUG[i]))
-    end
+    DEBUG.DUMP_TRACE(msg)
     print(debug.traceback())
 end
 

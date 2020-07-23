@@ -3,7 +3,7 @@ local log = {}
 if DEBUG.enabled then 
     function log.warnassert(cond, fmt, ...)
         if not cond and fmt then
-            print('WARNING: ' .. string.format(fmt, ...))
+            DEBUG.DUMP_TRACE('WARNING: ' .. string.format(fmt, ...))
         end
         return cond, fmt, ...
     end
