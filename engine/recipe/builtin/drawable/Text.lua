@@ -1,11 +1,16 @@
 local drawable_common = require 'recipe.builtin.drawable._common'
 
-local Text = Recipe.wrapper.new('Text', 'drawable', {
-    'getDimensions', 'getFont', 'getHeight', 'getWidth',
-}, {
-    'setFont'
-}, {
-    'add', 'addf', 'clear'
+local Text = Recipe.wrapper.new('Text', {
+    wrapped_index = 'drawable',
+    getters = {
+        'getDimensions', 'getFont', 'getHeight', 'getWidth',
+    },
+    setters = {
+        'setFont'
+    },
+    method = {
+        'add', 'addf', 'clear'
+    },
 })
 
 Text.font = love.graphics.getFont()

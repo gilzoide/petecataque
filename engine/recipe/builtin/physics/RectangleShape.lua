@@ -1,6 +1,6 @@
-local RectangleShape = Recipe.wrapper.new('RectangleShape')
-
-Recipe.extends(RectangleShape, 'PolygonShape.lua')
+local RectangleShape = Recipe.wrapper.new('RectangleShape', {
+    extends = 'PolygonShape.lua',
+})
 
 RectangleShape.x = 0
 RectangleShape.y = 0

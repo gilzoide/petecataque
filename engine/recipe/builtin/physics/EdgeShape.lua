@@ -1,10 +1,12 @@
-local EdgeShape = Recipe.wrapper.new('EdgeShape', nil, {
-    'getNextVertex', 'getPoints', 'getPreviousVertex',
-}, {
-    'setNextVertex', 'setPreviousVertex',
-}, nil)
-
-Recipe.extends(EdgeShape, 'Shape.lua')
+local EdgeShape = Recipe.wrapper.new('EdgeShape', {
+    extends = 'Shape.lua',
+    getters = {
+        'getNextVertex', 'getPoints', 'getPreviousVertex',
+    },
+    setters = {
+        'setNextVertex', 'setPreviousVertex',
+    },
+})
 
 EdgeShape.points = { 0,0, 0,1 }
 

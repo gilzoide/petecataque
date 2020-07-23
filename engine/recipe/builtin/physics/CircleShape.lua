@@ -1,10 +1,12 @@
-local CircleShape = Recipe.wrapper.new('CircleShape', nil, {
-    'getPoint',
-}, {
-    'setPoint', 'setRadius',
-}, nil)
-
-Recipe.extends(CircleShape, 'Shape.lua')
+local CircleShape = Recipe.wrapper.new('CircleShape', {
+    extends = 'Shape.lua',
+    getters = {
+        'getPoint',
+    },
+    setters = {
+        'setPoint', 'setRadius',
+    },
+})
 
 CircleShape.radius = 10
 

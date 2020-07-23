@@ -1,12 +1,13 @@
-local Image = Recipe.wrapper.new('Image', 'image', {
-    'getFlags', 'isCompressed',
-}, 
-nil
-, {
-    'replacePixels',
+local Image = Recipe.wrapper.new('Image', {
+    extends = 'Texture',
+    wrapped_index = 'image',
+    getters = {
+        'getFlags', 'isCompressed',
+    },
+    methods = {
+        'replacePixels',
+    },
 })
-
-Recipe.extends(Image, 'Texture')
 
 function Image:create_wrapped()
     local image = self.image

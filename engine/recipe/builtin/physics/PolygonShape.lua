@@ -1,12 +1,12 @@
-local PolygonShape = Recipe.wrapper.new('PolygonShape', nil, {
-    'getPoints',
-},
-nil
-, {
-    'validate',
+local PolygonShape = Recipe.wrapper.new('PolygonShape', {
+    extends = 'Shape.lua',
+    getters = {
+        'getPoints',
+    },
+    methods = {
+        'validate',
+    },
 })
-
-Recipe.extends(PolygonShape, 'Shape.lua')
 
 function PolygonShape:create_wrapped()
     return love.physics.newPolygonShape(self.points or { 0,0, 0,1, 1,1, 1,0 })

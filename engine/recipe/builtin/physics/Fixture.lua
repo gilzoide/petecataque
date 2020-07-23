@@ -1,14 +1,19 @@
-local Fixture = Recipe.wrapper.new('Fixture', 'fixture', {
-    'getBody', 'getCategory', 'getDensity', 'getFilterData',
-    'getFriction', 'getGroupIndex', 'getMask', 'getMassData',
-    'getRestitution', 'getShape', -- 'getUserData',
-    'isDestroyed', 'isSensor',
-}, {
-    'setCategory', 'setDensity', 'setFilterData', 'setFriction',
-    'setGroupIndex', 'setMask', 'setRestitution', 'setSensor',
-    -- 'setUserData',
-}, {
-    'getBoundingBox', 'rayCast', 'testPoint',
+local Fixture = Recipe.wrapper.new('Fixture', {
+    wrapped_index = 'fixture',
+    getters = {
+        'getBody', 'getCategory', 'getDensity', 'getFilterData',
+        'getFriction', 'getGroupIndex', 'getMask', 'getMassData',
+        'getRestitution', 'getShape', -- 'getUserData',
+        'isDestroyed', 'isSensor',
+    },
+    setters = {
+        'setCategory', 'setDensity', 'setFilterData', 'setFriction',
+        'setGroupIndex', 'setMask', 'setRestitution', 'setSensor',
+        -- 'setUserData',
+    },
+    methods = {
+        'getBoundingBox', 'rayCast', 'testPoint',
+    },
 })
 
 function Fixture:create_wrapped()

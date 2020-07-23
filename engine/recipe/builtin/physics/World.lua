@@ -1,12 +1,17 @@
-local World = Recipe.wrapper.new('World', 'world', {
-    'getBodies', 'getBodyCount',
-    'getContactCount', 'getContactFilter', 'getContacts',
-    'getGravity', 'getJointCount', 'getJoints',
-    'isDestroyed', 'isLocked', 'isSleepingAllowed',
-}, {
-    'setContactFilter', 'setGravity', 'setSleepingAllowed',
-}, {
-    'destroy', 'queryBoundingBox', 'rayCast', 'translateOrigin', 'update',
+local World = Recipe.wrapper.new('World', {
+    wrapped_index = 'world',
+    getters = {
+        'getBodies', 'getBodyCount',
+        'getContactCount', 'getContactFilter', 'getContacts',
+        'getGravity', 'getJointCount', 'getJoints',
+        'isDestroyed', 'isLocked', 'isSleepingAllowed',
+    },
+    setters = {
+        'setContactFilter', 'setGravity', 'setSleepingAllowed',
+    },
+    methods = {
+        'destroy', 'queryBoundingBox', 'rayCast', 'translateOrigin', 'update',
+    }
 })
 
 local function create_callback(handlers)

@@ -1,12 +1,15 @@
-local ChainShape = Recipe.wrapper.new('ChainShape', nil, {
-    'getChildEdge', 'getNextVertex', 'getPoints', 'getPreviousVertex', 'getVertexCount',
-}, {
-    'setNextVertex', 'setPreviousVertex',
-}, {
-    'getPoint'
+local ChainShape = Recipe.wrapper.new('ChainShape', {
+    extends = 'Shape.lua',
+    getters = {
+        'getChildEdge', 'getNextVertex', 'getPoints', 'getPreviousVertex', 'getVertexCount',
+    },
+    setters = {
+        'setNextVertex', 'setPreviousVertex',
+    },
+    methods = {
+        'getPoint'
+    },
 })
-
-Recipe.extends(ChainShape, 'Shape.lua')
 
 ChainShape.points = { 0,0, 0,1 }
 ChainShape.loop = true

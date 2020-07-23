@@ -44,28 +44,25 @@ local function create_method(method_name)
     end
 end
 
-function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
-    local recipe = Recipe.new(name)
+function wrapper.new(name, options)
+    local recipe = Recipe.new(name, options.extends)
 
-    if getters then
-        for i = 1, #getters do
-            local getter = getters[i]
+    if options.getters then
+        for i, getter in ipairs(options.getters) do
             local field_name = field_name_less_getset(getter)
             Object.add_getter(recipe, field_name, create_getter(getter, field_name))
         end
     end
 
-    if setters then
-        for i = 1, #setters do
-            local setter = setters[i]
+    if options.setters then
+        for i, setter in ipairs(options.setters) do
             local field_name = field_name_less_getset(setter)
             Object.add_setter(recipe, field_name, create_setter(setter, field_name))
         end
     end
 
-    if othermethods then
-        for i = 1, #othermethods do
-            local method = othermethods[i]
+    if options.methods then
+        for i, method in ipairs(options.methods) do
             recipe[method] = create_method(method)
         end
     end
@@ -76,8 +73,8 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
         DEBUG.POP_CALL(self, 'create_wrapped')
     end
 
-    if wrapped_object_index then
-        Object.add_getter(recipe, wrapped_object_index, wrapper.get_wrapped)
+    if options.wrapped_index then
+        Object.add_getter(recipe, options.wrapped_index, wrapper.get_wrapped)
     end
 
     recipe.__init_recipe = wrapper.init_recipe
