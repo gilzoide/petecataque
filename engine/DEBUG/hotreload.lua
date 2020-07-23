@@ -6,7 +6,7 @@ local function fswatch_cmd(watch_paths)
 end
 
 function hotreload.load()
-    hotreload.channel = love.thread.getChannel('DEBUG.hotreload')
+    hotreload.channel = love.thread.newChannel()
     hotreload.source = love.filesystem.getSource()
     love.thread.newThread([[
     local channel, fswatch_cmd = ...
