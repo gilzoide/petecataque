@@ -30,7 +30,7 @@ featherShapePoints: `{
     mass: `mass`
     angularDamping: 1
     bullet: true
-    # gravityScale: 1.4
+    gravityScale: 1
 
     [PolygonShape points: `featherShapePoints`
         fillColor: `colorBase`

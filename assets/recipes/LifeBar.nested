@@ -9,11 +9,12 @@ height: 15
 
 currentLife: 1
 maxLife: 1
+lifePercent: `currentLife / maxLife`
 
 [Rectangle x: `root.x` y: `root.y` width: `root.width` height: `root.height`
     fillColor: `takingDamage and damageBgColor or bgColor`
 
-    [Rectangle width: `parent.width * (currentLife / maxLife)` height: `parent.height`
+    [Rectangle width: `parent.width * lifePercent` height: `parent.height`
         fillColor: `takingDamage and damageColor or root.color`
     ]
     [Rectangle width: `parent.width` height: `parent.height`
