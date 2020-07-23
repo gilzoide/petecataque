@@ -12,11 +12,12 @@ local function field_name_less_getset(s)
     return s
 end
 
-local function create_getter(wrapped_getter_name)
+local function create_getter(wrapped_getter_name, field_name)
+    local _field_name = '_' .. field_name
     return Expression.getter_from_function(function(self)
         DEBUG.PUSH_CALL(self, wrapped_getter_name)
         local wrapped = self.__wrapped
-        local value = wrapped and safepack(wrapped[wrapped_getter_name](wrapped)) or nil
+        local value = wrapped and safepack(wrapped[wrapped_getter_name](wrapped)) or self[_field_name]
         DEBUG.POP_CALL(self, wrapped_getter_name)
         return value
     end)
@@ -50,7 +51,7 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
         for i = 1, #getters do
             local getter = getters[i]
             local field_name = field_name_less_getset(getter)
-            Object.add_getter(recipe, field_name, create_getter(getter))
+            Object.add_getter(recipe, field_name, create_getter(getter, field_name))
         end
     end
 
@@ -73,10 +74,6 @@ function wrapper.new(name, wrapped_object_index, getters, setters, othermethods)
         DEBUG.PUSH_CALL(self, 'create_wrapped')
         self.__wrapped = recipe.create_wrapped(self)
         DEBUG.POP_CALL(self, 'create_wrapped')
-        for k, v in pairs(self.__recipe.wrapper_initial_getters) do
-            if Expression.is_getter(v) then v = v(self) end
-            self[k] = v
-        end
     end
 
     if wrapped_object_index then
@@ -92,16 +89,15 @@ function wrapper.get_wrapped(self)
     return self.__wrapped
 end
 
-function wrapper.init_recipe(self, recipe)
-    local wrapper_initial_getters = nested_ordered.new()
-    for k, v in nested.kpairs(recipe) do
-        local value_in_self = self[k]
-        if Expression.is_getter(value_in_self) and value_in_self[2] ~= wrapper.get_wrapped then
-            wrapper_initial_getters[k] = v
-            recipe[k] = nil
+function wrapper.init_recipe(super, child)
+    for k, v in nested.kpairs(super) do
+        if Expression.is_getter(v) and v[2] ~= wrapper.get_wrapped then
+            local value_in_child = child[k]
+            if value_in_child then
+                child['_' .. k], child[k] = value_in_child, nil
+            end
         end
     end
-    recipe.wrapper_initial_getters = wrapper_initial_getters
 end
 
 return wrapper
