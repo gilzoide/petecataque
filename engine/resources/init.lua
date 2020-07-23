@@ -66,9 +66,11 @@ function Resources:register_loader(kind, loader, extension_associations)
     assertf(not self[kind], 'Resource loader %q is already registered', kind)
     loader = wrap_loader(self, loader)
     self[kind] = loader
-    for i, ext in ipairs(extension_associations) do
-        log.warnassert(self.loader_by_ext[ext] == nil, "Overriding loader for file extension %q: %q", ext, kind)
-        self.loader_by_ext[ext] = loader
+    if extension_associations then
+        for i, ext in ipairs(extension_associations) do
+            log.warnassert(self.loader_by_ext[ext] == nil, "Overriding loader for file extension %q: %q", ext, kind)
+            self.loader_by_ext[ext] = loader
+        end
     end
 end
 
