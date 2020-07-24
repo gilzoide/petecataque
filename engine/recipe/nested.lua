@@ -40,8 +40,10 @@ function recipe_nested.preprocess(name, recipe)
     if type(recipe_name) ~= 'string' then
         table.insert(recipe, 1, name)
     else
-        assertf(recipe_name == name, "Expected name in recipe %q to match file %q", recipe_name, name)
-        -- TODO: permit specifying __super here, replacing name
+        if recipe_name ~= name then
+            Recipe.extends(recipe, recipe_name)
+            recipe[1] = name
+        end
     end
 
     for kp, t, parent in nested.iterate(recipe, preprocess_iterate_flags) do
@@ -56,14 +58,8 @@ function recipe_nested.preprocess(name, recipe)
         if #kp > 0 then
             local super_recipe_name = t[1]
             assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
-            local super_recipe = assertf(R(super_recipe_name), "Recipe %q couldn't be loaded", super_recipe_name)
-            t.__super = super_recipe
             t.__parent = parent
-            if super_recipe.__init_recipe then
-                DEBUG.PUSH_CALL(t, '__init_recipe')
-                super_recipe:__init_recipe(t)
-                DEBUG.POP_CALL(t, '__init_recipe')
-            end
+            Recipe.extends(t, super_recipe_name)
         end
         setmetatable(t, Recipe)
     end

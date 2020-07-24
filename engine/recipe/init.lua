@@ -17,6 +17,11 @@ function Recipe.extends(recipe, super)
     end
     assertf(type(super) == 'table', "Invalid super definition %s", type(super))
     recipe.__super = super
+    if super.__init_recipe then
+        DEBUG.PUSH_CALL(recipe, '__init_recipe')
+        super:__init_recipe(recipe)
+        DEBUG.POP_CALL(recipe, '__init_recipe')
+    end
 end
 
 function Recipe.is_recipe(v)
