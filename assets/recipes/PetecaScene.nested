@@ -31,6 +31,11 @@ reset: `do
     player2:reset()
 end`
 
+[AudioSource id: BGM
+    source: { R 'Stack - fase.ogg' }
+    playing: true looping: true
+]
+
 [World id: world yg: `9.81 * METER_BY_PIXEL`
     [Arena id: arena]
     [Player id: player1 color: [0 1 0]

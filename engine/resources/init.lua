@@ -47,6 +47,9 @@ function Resources.new()
     resources:register_loader('image', love.graphics.newImage, { '.png', '.jpg', '.jpeg', '.bmp', '.tga', '.hdr', '.pic', '.exr' })
     resources:register_loader('font', love.graphics.newFont, { '.ttf' })
     resources:register_loader('image_data', love.image.newImageData)
+    local audio = require 'resources.audio'
+    resources:register_loader('audio_stream', audio.load_stream, { '.ogg', '.oga', '.ogv', '.mp3' })
+    resources:register_loader('audio_static', audio.load_static, { '.wav' })
     -- Other nested serialized data
     resources:register_loader('points', require 'resources.points', { '.points' })
 
