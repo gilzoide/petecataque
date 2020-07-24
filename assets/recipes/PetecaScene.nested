@@ -34,6 +34,14 @@ end`
 [AudioSource id: BGM
     source: { R 'Stack - fase.ogg' }
     playing: true looping: true
+    
+    [KeyDetector key: m
+        mute: false
+        [When pressed: `do
+            self.mute = not self.mute
+            love.audio.setVolume(mute and 0 or 1)
+        end`]
+    ]
 ]
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
