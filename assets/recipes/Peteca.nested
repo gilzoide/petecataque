@@ -5,6 +5,7 @@ mass: 1
 color: [1 1 1]
 colorBase: [0 0 0]
 colorFeather: [0 0 0 0.5]
+lineWidth: 2
 # lastToHit
 outlineColor: `lastToHit and lastToHit.color or self.color`
 impulseIntensity: 100
@@ -26,6 +27,8 @@ featherShapePoints: { R Peteca_feather_poly.points base baseHeight }
     ]
 
     [Graphics draw: {
+        setLineJoin bevel;
+        setLineWidth lineWidth;
         setColor colorBase;
         polygon fill baseShapePoints;
         setColor colorFeather;
