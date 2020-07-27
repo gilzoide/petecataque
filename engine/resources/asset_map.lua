@@ -48,7 +48,7 @@ function AssetMap.new(search_paths)
 end
 
 function AssetMap:full_path(file)
-    return assertf(self[file], "Couldn't find file %q", file)
+    return log.warnassert(self[file], "Couldn't find file %q", file)
 end
 
 return AssetMap

@@ -8,7 +8,7 @@ Resources.path = { 'engine/recipe/builtin', 'assets' }
 
 function Resources:get_keypath(name, ...)
     name = self.asset_map:full_path(name)
-    return { name, ... }
+    return name and { name, ... }
 end
 
 function Resources:get(...)
@@ -18,7 +18,9 @@ end
 
 function Resources:unload(...)
     local keypath = self:get_keypath(...)
-    set(self.loaded, keypath, nil)
+    if keypath then
+        set(self.loaded, keypath, nil)
+    end
 end
 
 function Resources:get_or_load(...)
