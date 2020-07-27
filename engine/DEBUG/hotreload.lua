@@ -2,7 +2,7 @@ local hotreload = {}
 
 local function fswatch_cmd(watch_paths)
     -- https://github.com/emcrisostomo/fswatch
-    return 'fswatch --event Updated ' .. table.concat(watch_paths, ' ')
+    return 'fswatch --recursive --event Updated ' .. table.concat(watch_paths, ' ')
 end
 
 function hotreload.load()
@@ -10,6 +10,7 @@ function hotreload.load()
     hotreload.source = love.filesystem.getSource()
     love.thread.newThread([[
     local channel, fswatch_cmd = ...
+    print("DEBUG.HOTRELOAD starting command: '" .. fswatch_cmd .. "'")
     local fswatch = io.popen(fswatch_cmd)
     if fswatch:read(0) then
         for line in fswatch:lines() do
