@@ -2,7 +2,7 @@ local Expression = require 'expression'
 
 local Object = {}
 
-Object.SET_METHOD_PREFIX = '$set '
+Object.SET_METHOD_PREFIX = 'set '
 function Object.setter_method_name(field)
     return Object.SET_METHOD_PREFIX .. field
 end

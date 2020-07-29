@@ -20,7 +20,7 @@ reset: `do
     self.takingDamage = false
 end`
 
-"$set takingDamage": `do
+"set takingDamage": `do
     if value then
         self.currentLife = math.max(0, currentLife - 1)
         self.gameover = currentLife <= 0
