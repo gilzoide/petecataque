@@ -7,7 +7,6 @@ paused: true
 
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
-    world:disable_method('update', paused)
     self:reset()
 end`
 
@@ -32,6 +31,8 @@ reset: `do
 end`
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
+    paused: `root.paused or root.gameover`
+
     [Arena id: arena]
     [Player id: player1 color: [0 1 0]
         leftKey: a
@@ -93,15 +94,10 @@ lifeBarMargin: 10
     end`
 ]
 
-"$set gameover": `do
-    world:disable_method('update', value)
-end`
-
 [KeyDetector key: return
     [When
         '!gameover, pressed': `do
             root.paused = not paused
-            world:disable_method('update', paused)
             if paused then
                 score:showPaused()
             else
@@ -110,7 +106,7 @@ end`
         end`
 
         'gameover, pressed': `do
-            self:reset()
+            root:reset()
             score:hide()
             root.gameover = false
         end`
