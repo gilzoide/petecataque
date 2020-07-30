@@ -3,7 +3,7 @@ p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R('Player').radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
-paused: true
+gamepaused: true
 
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
@@ -31,7 +31,7 @@ reset: `do
 end`
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
-    paused: `root.paused or root.gameover`
+    paused: `root.gamepaused or root.gameover`
 
     [Arena id: arena]
     [Player id: player1 color: [0 1 0]
@@ -97,8 +97,8 @@ lifeBarMargin: 10
 [KeyDetector key: return
     [When
         '!gameover, pressed': `do
-            root.paused = not paused
-            if paused then
+            root.gamepaused = not gamepaused
+            if gamepaused then
                 score:showPaused()
             else
                 score:hide()

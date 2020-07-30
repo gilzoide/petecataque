@@ -6,14 +6,14 @@ local function iterate_scene(skip_if_field)
         local kp, obj, parent, skip
         repeat
             kp, obj, parent = iterator(skip)
-            skip = obj and (obj.disabled or obj[skip_if_field])
+            skip = obj and obj[skip_if_field]
         until not skip
         return kp, obj, parent
     end
 end
 
 function Director.update(dt)
-    for kp, obj in iterate_scene() do
+    for kp, obj in iterate_scene('paused') do
         if obj.update then
             DEBUG.PUSH_CALL(obj, 'update')
             obj:update(dt)

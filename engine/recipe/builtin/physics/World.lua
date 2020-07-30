@@ -45,12 +45,6 @@ function World:create_wrapped()
     return world
 end
 
-function World:update(dt)
-    if not self.paused then
-        self.world:update(dt)
-    end
-end
-
 function World:add_beginContact_handler(handler, callback)
     self.beginContactHandlers[handler] = callback
 end
