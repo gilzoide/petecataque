@@ -5,6 +5,8 @@ petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 paused: true
 
+PREFS: { R prefs.data }
+
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
     world:disable_method('update', paused)
@@ -33,7 +35,7 @@ end`
 
 [AudioSource id: BGM
     source: { R 'Stack - fase.ogg' }
-    playing: true looping: true
+    playing: `PREFS.BGM_playing` looping: true
     
     [KeyDetector key: m
         mute: false
@@ -86,6 +88,10 @@ lifeBarMargin: 10
         currentLife: `player2.currentLife`
         takingDamage: `player2.takingDamage`
     ]
+]
+
+[TintButton
+    onclick: `do print('OLARS') end`
 ]
 
 [Score id: score]

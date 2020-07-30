@@ -66,6 +66,16 @@ function index_first_of(index, ...)
     end
     return nil
 end
+function rawindex_first_of(index, ...)
+    for i = 1, select('#', ...) do
+        local t = select(i, ...)
+        if t then
+            local value = rawget(t, index)
+            if value ~= nil then return value end
+        end
+    end
+    return nil
+end
 function create_index_first_of(index_chain)
     return index_chain and function(t, index)
         return index_first_of(index, unpack(index_chain))
@@ -92,9 +102,12 @@ function string.startswith(s, prefix)
     return s:sub(1, #prefix) == prefix
 end
 
-function table_extend(t, ...)
-    for i = 1, select('#', ...) do
-        t[#t + 1] = select(i, ...)
+function table_extend(t, other)
+    if other then
+        local n = #t
+        for i, v in ipairs(other) do
+            t[n + i] = v
+        end
     end
     return t
 end
@@ -130,16 +143,6 @@ function deg2rad(angle)
 end
 function rad2deg(angle)
     return angle * 180 / math.pi
-end
-
-function bind(f, ...)
-    local bound_args = {...}
-    return function(...)
-        local args = {}
-        for i = 1, #bound_args do args[i] = bound_args[i] end
-        table_extend(args, ...)
-        return f(unpack(args))
-    end
 end
 
 function deepcopy(value)

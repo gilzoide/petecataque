@@ -28,6 +28,10 @@ function love.draw()
     DEBUG.DRAW()
 end
 
+function love.quit()
+    Scene:release()
+end
+
 love.mousemoved = Input.mousemoved
 love.mousepressed = Input.mousepressed
 love.mousereleased = Input.mousereleased

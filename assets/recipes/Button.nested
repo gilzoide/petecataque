@@ -1,0 +1,11 @@
+Rectangle
+
+rx: `cornerRadius`
+
+color: [1 1 1]
+fillColor: `color`
+
+[MouseArea id: MOUSE]
+[When "MOUSE.released: inside": {
+    Expression.call onclick
+}]

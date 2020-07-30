@@ -51,6 +51,7 @@ function Resources.new()
     resources:register_loader('audio_stream', audio.load_stream, { '.ogg', '.oga', '.ogv', '.mp3' })
     resources:register_loader('audio_static', audio.load_static, { '.wav' })
     -- Other nested serialized data
+    resources:register_loader('data', require 'resources.data', { '.data' })
     resources:register_loader('points', require 'resources.points', { '.points' })
 
     return resources

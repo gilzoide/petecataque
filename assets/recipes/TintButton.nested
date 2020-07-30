@@ -1,0 +1,6 @@
+Button
+
+pressedColor: [1 1 1 0.5]
+fillColor: `MOUSE.down and pressedColor or color`
+
+init: `do print_nested(self.recipe.__super.__super) end`

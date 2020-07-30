@@ -60,8 +60,7 @@ function Object.new(recipe, obj, parent, root_param)
         end
     end
 
-    local super = recipe.__super
-    if super then
+    for super in Recipe.iter_super_reversed(recipe) do
         for i = 2, #super do
             obj[#obj + 1] = super[i]({}, obj, obj)
         end
