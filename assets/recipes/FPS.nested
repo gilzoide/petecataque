@@ -1,4 +1,4 @@
-font: { R.font Gontserrat-Medium.ttf 14 }
+font: { R Gontserrat-Medium.ttf 14 }
 
 [Graphics 
     draw: {

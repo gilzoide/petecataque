@@ -12,7 +12,7 @@ Aperte Enter para começar
 pauseText: "Aperte Enter para continuar"
 wonTextFmt: "Vitória do jogador %d! =D
 Aperte Enter para recomeçar"
-# winner, paused
+# winnerIndex
 
 [Text id: text text: `initialText`
     x: `root.x` y: `root.y`
