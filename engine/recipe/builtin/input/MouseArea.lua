@@ -4,8 +4,9 @@ MouseArea.button = 1
 
 function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')
-    if not log.warnassert(self.target, "Couldn't find hitTestFromOrigin in MouseArea parent") then
-        self.disabled = true
+    if not self.target then
+        DEBUG.WARN("Couldn't find hitTestFromOrigin in MouseArea parent")
+        self.paused = true
     end
 end
 

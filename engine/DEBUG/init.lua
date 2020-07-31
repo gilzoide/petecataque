@@ -1,6 +1,8 @@
 local empty = require 'empty'
 
-local DEBUG = {}
+local DEBUG = {
+    errors = {},
+}
 
 DEBUG.hotreload = require 'DEBUG.hotreload'
 
@@ -32,6 +34,14 @@ local function stringify_call(c)
     return string.format("\t%s '%s.%s'", where, recipe[1], name)
 end
 
+local function stringified_traceback()
+    local msg = { 'recipe traceback:' }
+    for i = #DEBUG, 1, -1 do
+        table.insert(msg, stringify_call(DEBUG[i]))
+    end
+    return table.concat(msg, '\n')
+end
+
 function DEBUG.PUSH_CALL(recipe, name)
     table.insert(DEBUG, { recipe, name })
 end
@@ -43,10 +53,7 @@ end
 
 function DEBUG.DUMP_TRACE(msg)
     print(msg)
-    print('recipe traceback:')
-    for i = #DEBUG, 1, -1 do
-        print(stringify_call(DEBUG[i]))
-    end
+    print(stringified_traceback())
 end
 
 function DEBUG.LOAD(arg)
@@ -61,6 +68,24 @@ function DEBUG.UPDATE(dt)
 end
 
 function DEBUG.DRAW()
+    if #DEBUG.errors > 0 then
+
+    end
+end
+
+function DEBUG.WARN(fmt, ...)
+    local msg = string.format(fmt, ...)
+    local recipe_traceback = stringified_traceback()
+    local lua_traceback = debug.traceback()
+    print(msg)
+    print(recipe_traceback)
+    print(debug.traceback())
+    table.insert(DEBUG.errors, { msg, recipe_traceback, lua_traceback })
+end
+function DEBUG.WARNIF(cond, ...)
+    if cond then
+        DEBUG.WARN(...)
+    end
 end
 
 function love.errorhandler(msg)

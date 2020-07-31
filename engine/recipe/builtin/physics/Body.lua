@@ -28,12 +28,12 @@ function Body:create_wrapped()
     local world = self.world
     if not world then
         world = self:first_parent_of('World')
-        log.warnassert(world, "Couldn't find World in Body parent")
+        DEBUG.WARNIF(not world, "Couldn't find World in Body parent")
     end
     if world then
         return love.physics.newBody(world.world)
     else
-        self.disabled = true
+        self.paused = true
     end
 end
 

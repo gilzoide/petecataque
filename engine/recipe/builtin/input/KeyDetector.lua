@@ -1,8 +1,9 @@
 local KeyDetector = Recipe.new('KeyDetector')
 
 function KeyDetector:init()
-    if not log.warnassert(self.key, "Need a key to detect") then
-        self.disabled = true
+    if not self.key then
+        DEBUG.WARN("Need a key to detect")
+        self.paused = true
     end
 end
 

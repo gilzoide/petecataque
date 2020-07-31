@@ -24,8 +24,8 @@ end
 function love.draw()
     Setqueue:flip()
     Director.draw()
-    Setqueue:frame_ended()
     DEBUG.DRAW()
+    Setqueue:frame_ended()
 end
 
 love.mousemoved = Input.mousemoved

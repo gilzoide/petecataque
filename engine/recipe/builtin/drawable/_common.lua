@@ -1,7 +1,8 @@
 local drawable_common = {}
 
 function drawable_common.disable_draw_if_nil(self, drawable)
-    if not log.warnassert(drawable, "Missing drawable on %s, disabling draw", self:type()) then
+    if not drawable then
+        DEBUG.WARN("Missing drawable on %s, disabling draw", self:type())
         self:enable_method('draw', false)
     end
 end

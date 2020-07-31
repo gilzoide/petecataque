@@ -38,7 +38,6 @@ function errorf(fmt, ...)
     return error(string.format(fmt, ...))
 end
 
-log = require 'log'
 Expression = require 'expression'
 Object = require 'object'
 Recipe = require 'recipe'
@@ -72,9 +71,9 @@ function create_index_first_of(index_chain)
     end
 end
 
-function safeunpack(v)
+function safeunpack(v, i, j)
     if type(v) == 'table' then
-        return unpack(v)
+        return unpack(v, i, j)
     elseif v ~= nil then
         return v
     end

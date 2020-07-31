@@ -17,7 +17,10 @@ local World = Recipe.wrapper.new('World', {
 local function create_callback(handlers)
     return function(a, b, ...)
         a, b = a:getUserData(), b:getUserData()
-        if not log.warnassert(a and b, "FIXME Fixture have no user data!!!") then return end
+        if not (a and b) then
+            DEBUG.WARN("FIXME Fixture have no user data!!!")
+            return
+        end
         for k, v in pairs(handlers) do
             if k:match(a, b) then
                 v(k, a, b, ...)

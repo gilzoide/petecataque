@@ -7,9 +7,8 @@ function CollisionTracker:init()
     if get(world, 'type') ~= 'World' then
         world = self:first_parent_of('World')
         self.world = world
-        log.warnassert(world, "Unable to create a CollisionTracker without a World")
     end
-    if world and log.warnassert(self.a, self.b, "Unable to create a CollisionTracker without targets") then
+    if world and self.a and self.b then
         world:add_beginContact_handler(self, CollisionTracker.callBeginContact)
         world:add_endContact_handler(self, CollisionTracker.callEndContact)
         if self.preSolve then
@@ -19,7 +18,10 @@ function CollisionTracker:init()
             world:add_postSolve_handler(self, CollisionTracker.callPostSolve)
         end
     else
-        self.disabled = true
+        DEBUG.WARNIF(not world, "Unable to create a CollisionTracker without a World")
+        DEBUG.WARNIF(not self.a, "Unable to create a CollisionTracker without target 'a'")
+        DEBUG.WARNIF(not self.b, "Unable to create a CollisionTracker without target 'b'")
+        self.paused = true
     end
 end
 

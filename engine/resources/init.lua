@@ -57,11 +57,12 @@ end
 
 local function wrap_loader(self, loader)
     return function(...)
-        local loaded_resource, keypath = self:get(...)
+        local loaded_resource, keypath, msg = self:get(...)
         if loaded_resource then
             return loaded_resource
         else
-            loaded_resource = log.warnassert(loader(unpack(keypath)))
+            loaded_resource, msg = loader(unpack(keypath))
+            DEBUG.WARNIF(not loaded_resource, msg)
             set_or_create(self.loaded, keypath, loaded_resource)
             return loaded_resource
         end
@@ -74,7 +75,7 @@ function Resources:register_loader(kind, loader, extension_associations)
     self[kind] = loader
     if extension_associations then
         for i, ext in ipairs(extension_associations) do
-            log.warnassert(self.loader_by_ext[ext] == nil, "Overriding loader for file extension %q: %q", ext, kind)
+            DEBUG.WARNIF(self.loader_by_ext[ext] ~= nil, "Overriding loader for file extension %q: %q", ext, kind)
             self.loader_by_ext[ext] = loader
         end
     end
