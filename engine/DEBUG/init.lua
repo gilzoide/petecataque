@@ -58,6 +58,10 @@ end
 
 function DEBUG.LOAD(arg)
     DEBUG.hotreload.load()
+    DEBUG.error_scene = Recipe.load_nested('engine/DEBUG/error_scene.nested')()
+    DEBUG.error_message_recipe = Recipe.load_nested('engine/DEBUG/error_message.nested')
+    DEBUG.scene = Scene.new()
+    DEBUG.scene:add(DEBUG.error_scene)
     if arg[2] == '--debug' then
         require 'debugger'()
     end
@@ -68,9 +72,7 @@ function DEBUG.UPDATE(dt)
 end
 
 function DEBUG.DRAW()
-    if #DEBUG.errors > 0 then
-
-    end
+    Director.draw(DEBUG.scene)
 end
 
 function DEBUG.WARN(fmt, ...)

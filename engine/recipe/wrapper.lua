@@ -45,6 +45,7 @@ local function create_method(method_name)
 end
 
 function wrapper.new(name, options)
+    assert(type(name) == 'string')
     local recipe = Recipe.new(name, options.extends)
 
     if options.getters then

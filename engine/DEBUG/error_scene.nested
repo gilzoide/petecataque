@@ -1,0 +1,8 @@
+Rectangle
+
+fillColor: [0.34902 0.615686 0.862745]
+
+right: 0
+bottom: 0
+
+hidden: `self:child_count() <= 0`
