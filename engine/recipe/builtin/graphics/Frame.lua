@@ -10,7 +10,7 @@ local root_frame = {
     y = 0, height = WINDOW_HEIGHT,
 }
 
-function Frame:init()
+function Frame:preinit()
     self.parent_frame = self:first_parent_of('Frame') or root_frame
 end
 
