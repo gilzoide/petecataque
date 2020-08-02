@@ -60,8 +60,7 @@ function Object.new(recipe, obj, parent, root_param)
         end
     end
 
-    local super = recipe.__super
-    if super then
+    for super in Recipe.iter_super_reversed(recipe) do
         for i = 2, #super do
             obj[#obj + 1] = super[i]({}, obj, obj)
         end
@@ -157,10 +156,10 @@ Object.__pairs = default_object_pairs
 
 function Object:iter_recipes()
     return coroutine.wrap(function()
-        local current = self.__recipe
-        while current do
-            coroutine.yield(current)
-            current = current.__super
+        local recipe = self.__recipe
+        coroutine.yield(recipe)
+        for super in Recipe.iter_super(recipe) do
+            coroutine.yield(super)
         end
     end)
 end

@@ -1,0 +1,5 @@
+Button
+
+pressedColor: [1 1 1 0.5]
+fillColor: `MOUSE.down and pressedColor or color`
+

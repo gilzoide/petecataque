@@ -1,19 +1,6 @@
-local Rectangle = Recipe.new('Rectangle')
+local Rectangle = Recipe.new('Rectangle', 'Frame.lua')
 
-Rectangle.x = 0
-Rectangle.y = 0
-Rectangle.width = 100
-Rectangle.height = 100
-Rectangle.anchorPoint = {0, 0}
 -- rx = nil, ry = nil, segments = nil,
-
-local function anchor_position(self)
-    local x = self.width * self.anchorPoint[1]
-    local y = self.height * self.anchorPoint[2]
-    return x, y
-end
-
-Rectangle.draw_push = 'all'
 
 local function draw_rectangle(self, drawmode, x, y)
     if self.rx then
@@ -23,9 +10,9 @@ local function draw_rectangle(self, drawmode, x, y)
     end
 end
 
+Rectangle.draw_push = 'all'
 function Rectangle:draw()
-    local ax, ay = anchor_position(self)
-    local x, y = self.x - ax, self.y - ay
+    local x, y = self.x, self.y
     
     local fillColor = self.fillColor
     if fillColor then
@@ -41,9 +28,6 @@ function Rectangle:draw()
     love.graphics.translate(x, y)
 end
 
-function Rectangle:hitTestFromOrigin(x, y)
-    return x >= 0 and x <= self.width
-        and y >= 0 and y <= self.height
-end
+
 
 return Rectangle

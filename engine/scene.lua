@@ -44,4 +44,10 @@ function Scene:iterate()
     return nested.iterate(self, iterator_flags)
 end
 
+function Scene:release()
+    for i, obj in ipairs(self) do
+        Object.release(obj)
+    end
+end
+
 return Scene

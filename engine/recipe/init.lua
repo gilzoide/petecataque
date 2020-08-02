@@ -16,7 +16,37 @@ function Recipe.extends(recipe, super)
         super = R(super)
     end
     assertf(type(super) == 'table', "Invalid super definition %s", type(super))
-    recipe.__super = super
+    recipe.__super = table_extend({ super }, super.__super)
+    if super.__init_recipe then
+        DEBUG.PUSH_CALL(recipe, '__init_recipe')
+        super:__init_recipe(recipe)
+        DEBUG.POP_CALL(recipe, '__init_recipe')
+    end
+end
+
+function Recipe.iter_super(recipe)
+    if recipe.__super then
+        local super_chain = recipe.__super
+        local i = 0
+        return function()
+            i = i + 1
+            return super_chain[i]
+        end
+    else
+        return function() return nil end
+    end
+end
+function Recipe.iter_super_reversed(recipe)
+    if recipe.__super then
+        local super_chain = recipe.__super
+        local i = #super_chain + 1
+        return function()
+            i = i - 1
+            return super_chain[i]
+        end
+    else
+        return function() return nil end
+    end
 end
 
 function Recipe.is_recipe(v)
@@ -35,8 +65,8 @@ function Recipe.load_nested(filename)
 end
 
 function Recipe.__index(t, index)
-    local super = rawget(t, '__super')
-    return super and super[index]
+    local super_chain = rawget(t, '__super')
+    return rawindex_first_of(index, safeunpack(super_chain))
 end
 Recipe.__pairs = default_object_pairs
 Recipe.__call = Object.new

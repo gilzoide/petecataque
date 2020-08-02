@@ -28,6 +28,10 @@ function love.draw()
     Setqueue:frame_ended()
 end
 
+function love.quit()
+    Scene:release()
+end
+
 love.mousemoved = Input.mousemoved
 love.mousepressed = Input.mousepressed
 love.mousereleased = Input.mousereleased

@@ -5,6 +5,8 @@ petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 100
 gamepaused: true
 
+PREFS: { R prefs.data }
+
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
     self:reset()
@@ -29,6 +31,19 @@ reset: `do
     player2.body.angularVelocity = 0
     player2:reset()
 end`
+
+[AudioSource id: BGM
+    source: { R 'Stack - fase.ogg' }
+    playing: `PREFS.BGM_playing` looping: true
+    
+    [KeyDetector key: m
+        mute: false
+        [When pressed: `do
+            self.mute = not self.mute
+            love.audio.setVolume(mute and 0 or 1)
+        end`]
+    ]
+]
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
     paused: `root.gamepaused or root.gameover`
@@ -74,6 +89,10 @@ lifeBarMargin: 10
         currentLife: `player2.currentLife`
         takingDamage: `player2.takingDamage`
     ]
+]
+
+[TintButton
+    onclick: `do print('OLARS') end`
 ]
 
 [Score id: score]
