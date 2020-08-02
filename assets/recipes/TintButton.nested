@@ -1,5 +1,6 @@
 Button
 
-pressedColor: [1 1 1 0.5]
-fillColor: `MOUSE.down and pressedColor or color`
+hoverColor: [0.9 0.9 0.9]
+pressedColor: [0.9 0.9 0.9 0.9]
+fillColor: `(MOUSE.down and pressedColor) or (MOUSE.hover and hoverColor) or color`
 
