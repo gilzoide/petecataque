@@ -41,8 +41,8 @@ function recipe_nested.preprocess(name, recipe)
         table.insert(recipe, 1, name)
     else
         if recipe_name ~= name then
-            Recipe.extends(recipe, recipe_name)
             recipe[1] = name
+            Recipe.extends(recipe, recipe_name)
         end
     end
 

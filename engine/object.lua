@@ -25,10 +25,12 @@ function Object:type()
 end
 
 function Object:typeOf(t)
-    for recipe in self:iter_recipes() do
+    local recipe = self.__recipe
+    while recipe do
         if recipe[1] == t then
             return true
         end
+        recipe = recipe.__super
     end
     return false
 end
@@ -60,7 +62,7 @@ function Object.new(recipe, obj, parent, root_param)
         end
     end
 
-    for super in Recipe.iter_super_reversed(recipe) do
+    for super in Recipe.iter_super_chain(recipe) do
         for i = 2, #super do
             obj[#obj + 1] = super[i]({}, obj, obj)
         end
@@ -71,6 +73,13 @@ function Object.new(recipe, obj, parent, root_param)
         obj[#obj + 1] = recipe[i]({}, obj, root_or_obj)
     end
 
+    for super in Recipe.iter_super_chain(recipe) do
+        if super.init then
+            DEBUG.PUSH_CALL(super, 'init')
+            super.init(obj)
+            DEBUG.POP_CALL(super, 'init')
+        end
+    end
     if recipe.init then
         DEBUG.PUSH_CALL(recipe, 'init')
         recipe.init(obj)
@@ -153,16 +162,6 @@ function Object:__newindex(index, value)
 end
 
 Object.__pairs = default_object_pairs
-
-function Object:iter_recipes()
-    return coroutine.wrap(function()
-        local recipe = self.__recipe
-        coroutine.yield(recipe)
-        for super in Recipe.iter_super(recipe) do
-            coroutine.yield(super)
-        end
-    end)
-end
 
 function Object:iter_parents()
     local current = self
