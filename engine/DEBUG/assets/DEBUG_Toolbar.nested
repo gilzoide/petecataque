@@ -19,7 +19,6 @@ fgColor: [1 1 1]
 
     [Image image: { R DEBUG_Pause.png } x: 0 y: 0]
 ]
-[Print text: `` limit: `WINDOW_WIDTH` align: right]
 
 [Graphics draw: `do
     setColor(root.fgColor)

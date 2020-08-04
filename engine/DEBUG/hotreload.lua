@@ -22,6 +22,22 @@ function hotreload.load()
     ]]):start(hotreload.channel, fswatch_cmd(R.path))
 end
 
+local function iter_scene_reloading_objects(recipes_changed, previously_loaded, scene)
+    local objects_iterator, skip = scene:iterate()
+    while true do
+        local kp, obj, parent = objects_iterator(skip)
+        if not kp then break end
+        local recipe_path = obj[1] and R.asset_map:full_path(obj[1])
+        local previously_loaded = recipes_changed[recipe_path]
+        if previously_loaded then
+            parent[kp[#kp]] = hotreload.rebuild_object(obj, previously_loaded, R(recipe_path), parent ~= scene and parent or nil)
+            skip = true
+        else
+            skip = false
+        end
+    end
+end
+
 function hotreload.update(dt)
     local recipes_changed
     while hotreload.channel:getCount() > 0 do
@@ -39,19 +55,8 @@ function hotreload.update(dt)
     end
 
     if recipes_changed then
-        local objects_iterator, skip = Scene:iterate()
-        while true do
-            local kp, obj, parent = objects_iterator(skip)
-            if not kp then break end
-            local recipe_path = obj[1] and R.asset_map:full_path(obj[1])
-            local previously_loaded = recipes_changed[recipe_path]
-            if previously_loaded then
-                parent[kp[#kp]] = hotreload.rebuild_object(obj, previously_loaded, R(recipe_path), parent)
-                skip = true
-            else
-                skip = false
-            end
-        end
+        iter_scene_reloading_objects(recipes_changed, previously_loaded, Scene)
+        iter_scene_reloading_objects(recipes_changed, previously_loaded, DEBUG.scene)
     end
 end
 

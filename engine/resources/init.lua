@@ -4,7 +4,7 @@ local Recipe = require 'recipe'
 local Resources = {}
 Resources.__index = Resources
 
-Resources.path = { 'engine/recipe/builtin', 'assets' }
+Resources.path = { 'engine/recipe/builtin', 'engine/DEBUG/assets', 'assets' }
 
 function Resources:get_keypath(name, ...)
     name = self.asset_map:full_path(name)
