@@ -23,6 +23,7 @@ end
 
 function love.draw()
     Setqueue:flip()
+    DEBUG.PREDRAW()
     Director.draw()
     DEBUG.DRAW()
     Setqueue:frame_ended()

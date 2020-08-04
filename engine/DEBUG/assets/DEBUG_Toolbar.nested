@@ -17,7 +17,17 @@ fgColor: [1 1 1]
     fillColor: false
     lineColor: `root.fgColor`
 
-    [Image image: { R DEBUG_Pause.png } x: 0 y: 0]
+    appPaused: false
+    onclick: `do
+        self.appPaused = not appPaused
+        Scene.paused = appPaused
+    end`
+
+    [Image image: `PAUSE_BUTTON.appPaused and playImage or pauseImage`
+        pauseImage: { R DEBUG_Pause.png }
+        playImage: { R DEBUG_Play.png }
+        x: 0 y: 0
+    ]
 ]
 
 [Graphics draw: `do

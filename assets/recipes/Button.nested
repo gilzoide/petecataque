@@ -7,5 +7,5 @@ fillColor: `color`
 
 [MouseArea id: MOUSE]
 [When "MOUSE.released: inside": {
-    Expression.call onclick
+    Expression.call onclick self
 }]

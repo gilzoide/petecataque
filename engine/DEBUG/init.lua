@@ -73,6 +73,10 @@ end
 
 function DEBUG.UPDATE(dt)
     DEBUG.hotreload.update(dt)
+    Director.update(dt, DEBUG.scene)
+end
+
+function DEBUG.PREDRAW()
 end
 
 function DEBUG.DRAW()
