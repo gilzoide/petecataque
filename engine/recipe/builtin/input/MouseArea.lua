@@ -10,9 +10,8 @@ function MouseArea:init()
     end
 end
 
-function MouseArea:draw(dt)
-    local x, y = love.graphics.inverseTransformPoint(unpack(mouse.position))
-    local inside = self.target:hitTestFromOrigin(x, y)
+function MouseArea:update(dt)
+    local inside = self.__inside
     if inside and get(mouse, self.button, 'pressed') then
         self.down = true
         self.pressed = true
@@ -24,6 +23,11 @@ function MouseArea:draw(dt)
         set_next_frame(self, 'released', nil)
     end
     self.hover = inside
+end
+
+function MouseArea:draw()
+    local x, y = love.graphics.inverseTransformPoint(unpack(mouse.position))
+    self.__inside = self.target:hitTestFromOrigin(x, y)
 end
 
 return MouseArea
