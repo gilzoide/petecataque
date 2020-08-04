@@ -34,6 +34,12 @@ function recipe_nested.load(filename, contents)
     return recipe
 end
 
+function recipe_nested.new(name, recipe)
+    assertf(type(recipe) == 'table', "Nested recipe must be a table, found %s", type(recipe))
+    recipe_nested.preprocess(name, recipe)
+    return recipe
+end
+
 local preprocess_iterate_flags = { table_only = true }
 function recipe_nested.preprocess(name, recipe)
     local recipe_name = recipe[1]
