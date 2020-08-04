@@ -91,10 +91,6 @@ lifeBarMargin: 10
     ]
 ]
 
-[TintButton
-    onclick: `do print('OLARS') end`
-]
-
 [Score id: score]
 
 [When

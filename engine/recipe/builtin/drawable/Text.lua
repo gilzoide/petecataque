@@ -14,6 +14,7 @@ local Text = Recipe.wrapper.new('Text', {
 })
 
 Text.font = love.graphics.getFont()
+Text.align = 'left'
 
 function Text:create_wrapped()
     return love.graphics.newText(self.font, self.text)

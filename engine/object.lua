@@ -154,7 +154,8 @@ function Object:__newindex(index, value)
         local set_method = recipe[set_method_index]
         if iscallable(set_method) then
             DEBUG.PUSH_CALL(self, set_method_index)
-            set_method(self, value)
+            local result = set_method(self, value)
+            if result ~= nil then value = result end
             DEBUG.POP_CALL(self, set_method_index)
             index = '_' .. index
         -- elseif Expression.is_getter(recipe[index]) then
