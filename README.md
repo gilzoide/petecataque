@@ -7,4 +7,5 @@ using [Lua](https://www.lua.org/), [LÖVE](https://love2d.org/) and
 ### Assets used
 - https://ospiro.com/products-services/gontserrat/
 - https://github.com/slembcke/debugger.lua
+- https://github.com/EmmanuelOga/easing
 - https://soundcloud.com/gilzoide/stack-fase

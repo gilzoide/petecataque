@@ -93,6 +93,8 @@ lifeBarMargin: 10
 
 [Score id: score]
 
+[OptionsMenu]
+
 [When
     player1.gameover: `do
         self.gameover = true
