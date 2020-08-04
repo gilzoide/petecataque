@@ -4,6 +4,7 @@ Frame.x = 0
 Frame.y = 0
 Frame.width = 100
 Frame.height = 100
+Frame.anchorPoint = { 0, 0 }
 
 local root_frame = {
     x = 0, width = WINDOW_WIDTH,
@@ -15,7 +16,7 @@ function Frame:preinit()
 end
 
 Object.add_getter(Frame, 'left', function(self)
-    return self.x
+    return self.x - self.anchorPoint[1] * self.width
 end)
 Object.add_setter(Frame, 'left', function(self, value)
     self.x = value
@@ -27,7 +28,7 @@ Object.add_setter(Frame, 'right', function(self, value)
     self.width = self.parent_frame.width - value - self.x
 end)
 Object.add_getter(Frame, 'top', function(self)
-    return self.y
+    return self.y - self.anchorPoint[2] * self.height
 end)
 Object.add_setter(Frame, 'top', function(self, value)
     self.y = value
@@ -41,7 +42,7 @@ end)
 
 Frame.draw_push = 'transform'
 function Frame:draw()
-    love.graphics.translate(self.x, self.y)
+    love.graphics.translate(self.left, self.top)
 end
 
 function Frame:hitTestFromOrigin(x, y)

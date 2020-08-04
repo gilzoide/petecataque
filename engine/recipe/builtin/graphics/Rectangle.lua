@@ -12,7 +12,7 @@ end
 
 Rectangle.draw_push = 'all'
 function Rectangle:draw()
-    local x, y = self.x, self.y
+    local x, y = self.left, self.top
     
     local fillColor = self.fillColor
     if fillColor then
