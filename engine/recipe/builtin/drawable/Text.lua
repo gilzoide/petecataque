@@ -16,8 +16,7 @@ local Text = Recipe.wrapper.new('Text', {
 Text.font = love.graphics.getFont()
 
 function Text:create_wrapped()
-    local obj = love.graphics.newText(self.font, self.text)
-    return obj
+    return love.graphics.newText(self.font, self.text)
 end
 
 Text.draw_push = 'transform'
@@ -35,6 +34,19 @@ Object.add_setter(Text, 'text', function(self, text)
             self.drawable:set(text)
         end
     end
+end)
+
+Object.add_getter(Text, "left", function(self)
+    return self.x
+end)
+Object.add_getter(Text, "right", function(self)
+    return self.x + self.width
+end)
+Object.add_getter(Text, "top", function(self)
+    return self.y
+end)
+Object.add_getter(Text, "bottom", function(self)
+    return self.y + self.height
 end)
 
 return Text

@@ -1,0 +1,31 @@
+Rectangle
+
+x: 0
+y: `WINDOW_HEIGHT`
+height: 32
+width: `WINDOW_WIDTH`
+fillColor: [0.34902 0.615686 0.862745]
+
+fgColor: [1 1 1]
+
+[Text id: TITLE text: DEBUG font: `DEBUG.font` color: `fgColor`
+    x: 10 y: `(parent.height - self.height) * 0.5`
+]
+[Button id: PAUSE_BUTTON
+    x: `TITLE.right + TITLE.x` y: 0
+    width: `self.height` height: `root.height`
+    fillColor: false
+    lineColor: `root.fgColor`
+
+    [Image image: { R DEBUG_Pause.png } x: 0 y: 0]
+]
+[Print text: `` limit: `WINDOW_WIDTH` align: right]
+
+[Graphics draw: `do
+    setColor(root.fgColor)
+    line(0, 0, self.width, 0)
+
+    setFont(DEBUG.font)
+    printf(string.format("FPS: %d", love.timer.getFPS()), 0, TITLE.y, WINDOW_WIDTH, 'right')
+end`]
+

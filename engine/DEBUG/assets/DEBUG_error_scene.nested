@@ -1,0 +1,17 @@
+Frame
+
+left: 20
+right: 20
+top: 20
+bottom: 20
+
+init: `do
+    self.font = love.graphics.newFont(24)
+end`
+
+draw: `do
+    love.graphics.clear(0.34902, 0.615686, 0.862745)
+    love.graphics.setColor(1, 1, 1)
+end`
+
+hidden: `self:child_count() <= 0`

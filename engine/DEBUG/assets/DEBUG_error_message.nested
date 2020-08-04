@@ -1,0 +1,13 @@
+Frame
+
+font: `DEBUG.font`
+
+[Text id: MESSAGE font: `root.font` x: 0 y: 0
+    text: `root.message`
+]
+[Text id: RECIPE_TRACEBACK font: `root.font` x: 0 y: `MESSAGE.bottom`
+    text: `root.recipe_traceback`
+]
+[Text id: LUA_TRACEBACK font: `root.font` x: 0 y: `RECIPE_TRACEBACK.bottom`
+    text: `root.lua_traceback`
+]
