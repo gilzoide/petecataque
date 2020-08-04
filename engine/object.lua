@@ -20,6 +20,10 @@ function Object.add_setter(self_or_recipe, field_name, function_or_expression)
     self_or_recipe[Object.setter_method_name(field_name)] = function_or_expression
 end
 
+function Object.is_object(v)
+    return getmetatable(v) == Object
+end
+
 function Object:type()
     return self[1]
 end

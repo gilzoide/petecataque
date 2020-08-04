@@ -190,7 +190,7 @@ end
 
 key = {}
 mouse = {
-    position = {0, 0}
+    position = { love.mouse.getPosition() }
 }
 Input = require 'input'
 

@@ -14,8 +14,8 @@ function MouseArea:draw(dt)
     local x, y = love.graphics.inverseTransformPoint(unpack(mouse.position))
     local inside = self.target:hitTestFromOrigin(x, y)
     if inside and get(mouse, self.button, 'pressed') then
-        self.pressed = true
         self.down = true
+        self.pressed = true
         set_next_frame(self, 'pressed', nil)
     end
     if self.down and get(mouse, self.button, 'released') then
