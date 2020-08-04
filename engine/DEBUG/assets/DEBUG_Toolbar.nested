@@ -7,6 +7,7 @@ width: `WINDOW_WIDTH`
 fillColor: [0.34902 0.615686 0.862745]
 
 fgColor: [1 1 1]
+appPaused: false
 
 [Text id: TITLE text: DEBUG font: `DEBUG.font` color: `fgColor`
     x: 10 y: `(parent.height - self.height) * 0.5`
@@ -17,9 +18,8 @@ fgColor: [1 1 1]
     fillColor: false
     lineColor: `root.fgColor`
 
-    appPaused: false
     onclick: `do
-        self.appPaused = not appPaused
+        root.appPaused = not appPaused
         Scene.paused = appPaused
     end`
 
@@ -27,6 +27,34 @@ fgColor: [1 1 1]
         pauseImage: { R DEBUG_Pause.png }
         playImage: { R DEBUG_Play.png }
         x: 0 y: 0
+    ]
+]
+[Rectangle id: DEBUG_POSITION
+    x: `PAUSE_BUTTON.x + PAUSE_BUTTON.width` y: 0
+    width: 150 height: `root.height`
+    lineColor: `root.fgColor`
+
+    [Text x: 10 y: `TITLE.y` font: `DEBUG.font`
+        update: `do self.text = string.format("x: %d", math.floor(DEBUG.x)) end`
+    ]
+    [Text x: `parent.width * 0.5` y: `TITLE.y` font: `DEBUG.font`
+        update: `do self.text = string.format("y: %d", math.floor(DEBUG.y)) end`
+    ]
+
+    [MouseArea id: DEBUG_POSITION_MOUSE
+        [When
+            pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true) end`
+            released: `do  love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false) end`
+            mouse.2.pressed: `do
+                DEBUG.x = 0
+                DEBUG.y = 0
+            end`
+            'self.down, mouse.moved': `do
+                local dx, dy = mouse.moved.dx, mouse.moved.dy
+                DEBUG.x = DEBUG.x + dx
+                DEBUG.y = DEBUG.y + dy
+            end`
+        ]
     ]
 ]
 
@@ -37,4 +65,3 @@ fgColor: [1 1 1]
     setFont(DEBUG.font)
     printf(string.format("FPS: %d", love.timer.getFPS()), 0, TITLE.y, WINDOW_WIDTH, 'right')
 end`]
-

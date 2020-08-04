@@ -40,7 +40,12 @@ end
 Body.draw_push = 'transform'
 
 function Body:draw()
-    love.graphics.replaceTransform(love.math.newTransform(self.x, self.y, self.angle))
+    local x, y = self.body:getPosition()
+    if DEBUG.enabled then
+        x = x + DEBUG.x
+        y = y + DEBUG.y
+    end
+    love.graphics.replaceTransform(love.math.newTransform(x, y, self.angle))
 end
 
 Body.__copy_state = {

@@ -6,7 +6,8 @@ function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')
     if not self.target then
         DEBUG.WARN("Couldn't find hitTestFromOrigin in MouseArea parent")
-        self.paused = true
+        self:disable_method('update', true)
+        self:disable_method('draw', true)
     end
 end
 
@@ -29,5 +30,9 @@ function MouseArea:draw()
     local x, y = love.graphics.inverseTransformPoint(unpack(mouse.position))
     self.__inside = self.target:hitTestFromOrigin(x, y)
 end
+
+Object.add_getter(MouseArea, 'mouse', function(self)
+    return mouse
+end)
 
 return MouseArea

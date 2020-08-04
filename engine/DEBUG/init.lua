@@ -1,6 +1,7 @@
 local empty = require 'empty'
 
 local DEBUG = {
+    x = 0, y = 0,
     errors = {},
 }
 
@@ -77,9 +78,11 @@ function DEBUG.UPDATE(dt)
 end
 
 function DEBUG.PREDRAW()
+    love.graphics.translate(DEBUG.x, DEBUG.y)
 end
 
 function DEBUG.DRAW()
+    love.graphics.origin()
     Director.draw(DEBUG.scene)
 end
 
