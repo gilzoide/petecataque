@@ -97,10 +97,6 @@ lifeBarMargin: 10
 
 [Score id: score]
 
-[Transform y: `WINDOW_HEIGHT - 20`
-    [FPS]
-]
-
 [When
     player1.gameover: `do
         self.gameover = true
