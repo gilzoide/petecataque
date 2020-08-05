@@ -12,7 +12,7 @@ isCollapsed: true
 
 [Tween id: TOGGLE_TWEEN
     from: 0 to: `root.height`
-    duration: 0.3
+    duration: 0.5
     yoyo: true
     running: false
     easing: inOutCubic

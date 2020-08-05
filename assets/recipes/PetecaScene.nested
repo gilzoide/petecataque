@@ -36,13 +36,10 @@ end`
     source: { R 'Stack - fase.ogg' }
     playing: `PREFS.BGM_playing` looping: true
     
-    [KeyDetector key: m
-        mute: false
-        [When pressed: `do
-            self.mute = not self.mute
-            love.audio.setVolume(mute and 0 or 1)
-        end`]
-    ]
+    [When ACTION.mute.pressed: `do
+        self.mute = not self.mute
+        love.audio.setVolume(mute and 0 or 1)
+    end`]
 ]
 
 [World id: world yg: `9.81 * METER_BY_PIXEL`
@@ -50,13 +47,13 @@ end`
 
     [Arena id: arena]
     [Player id: player1 color: [0 1 0]
-        leftKey: a
-        rightKey: d
+        goingLeft: `ACTION.p1left.down`
+        goingRight: `ACTION.p1right.down`
         otherPlayer: `player2`
     ]
     [Player id: player2 color: [1 1 0] flipX: true
-        leftKey: left
-        rightKey: right
+        goingLeft: `ACTION.p2left.down`
+        goingRight: `ACTION.p2right.down`
         otherPlayer: `player1`
     ]
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
@@ -72,6 +69,17 @@ end`
     [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
         beginContact: { b.root.takingDamage: true  }
         endContact:   { b.root.takingDamage: false }
+    ]
+]
+
+[InputMap id: ACTION
+    key: [
+        a: p1left
+        d: p1right
+        left: p2left
+        right: p2right
+        return: pause
+        m: mute
     ]
 ]
 
@@ -105,23 +113,20 @@ lifeBarMargin: 10
         self.gameover = true
         score:showWinner(1)
     end`
-]
 
-[KeyDetector key: return
-    [When
-        '!gameover, pressed': `do
-            root.gamepaused = not gamepaused
-            if gamepaused then
-                score:showPaused()
-            else
-                score:hide()
-            end
-        end`
-
-        'gameover, pressed': `do
-            root:reset()
+    '!gameover, ACTION.pause.pressed': `do
+        self.gamepaused = not gamepaused
+        if gamepaused then
+            score:showPaused()
+        else
             score:hide()
-            root.gameover = false
-        end`
-    ]
+        end
+    end`
+
+    'gameover, ACTION.pause.pressed': `do
+        self:reset()
+        score:hide()
+        self.gameover = false
+    end`
 ]
+

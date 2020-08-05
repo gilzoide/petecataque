@@ -43,10 +43,7 @@ end`
     ]
 ]
 
-[KeyDetector id: toTheLeft key: `leftKey`]
-[KeyDetector id: toTheRight key: `rightKey`]
-
 [When
-    "toTheLeft.down !toTheRight.down": `do body.angularVelocity = -angularVelocity end`
-    "!toTheLeft.down toTheRight.down": `do body.angularVelocity = angularVelocity end`
+    "goingLeft !goingRight": `do body.angularVelocity = -angularVelocity end`
+    "!goingLeft goingRight": `do body.angularVelocity = angularVelocity end`
 ]

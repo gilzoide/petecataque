@@ -1,6 +1,4 @@
 local MouseArea = Recipe.new('MouseArea')
-    
-MouseArea.button = 1
 
 function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')
@@ -9,19 +7,22 @@ function MouseArea:init()
         self:disable_method('update', true)
         self:disable_method('draw', true)
     end
+    self.button = { {}, {}, {} }
 end
 
 function MouseArea:update(dt)
     local inside = self.__inside
-    if inside and get(mouse, self.button, 'pressed') then
-        self.down = true
-        self.pressed = true
-        set_next_frame(self, 'pressed', nil)
-    end
-    if self.down and get(mouse, self.button, 'released') then
-        self.down = nil
-        self.released = inside and 'inside' or 'outside' 
-        set_next_frame(self, 'released', nil)
+    for i, button in ipairs(self.button) do
+        if inside and get(mouse, i, 'pressed') then
+            button.down = true
+            button.pressed = true
+            set_next_frame(button, 'pressed', nil)
+        end
+        if button.down and get(mouse, i, 'released') then
+            button.down = nil
+            button.released = inside and 'inside' or 'outside' 
+            set_next_frame(button, 'released', nil)
+        end
     end
     self.hover = inside
 end
@@ -32,7 +33,7 @@ function MouseArea:draw()
 end
 
 Object.add_getter(MouseArea, 'mouse', function(self)
-    return mouse
+    return _ENV.mouse
 end)
 
 return MouseArea

@@ -188,7 +188,7 @@ function iscallable(v)
     end
 end
 
-key = {}
+keyboard = {}
 mouse = {
     position = { love.mouse.getPosition() }
 }
