@@ -74,12 +74,12 @@ end`
 
 [InputMap id: ACTION
     key: [
-        a: p1left
-        d: p1right
-        left: p2left
-        right: p2right
-        return: pause
-        m: mute
+        p1left: a
+        p1right: d
+        p2left: left
+        p2right: right
+        pause: return
+        mute: m
     ]
 ]
 
