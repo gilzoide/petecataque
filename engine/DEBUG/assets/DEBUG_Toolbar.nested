@@ -31,10 +31,10 @@ appPaused: false
 ]
 [InputMap id: KEY
     key: [
-        move_up: [up w]
-        move_left: [left a]
-        move_down: [down s]
-        move_right: [right d]
+        pan_up: [up w]
+        pan_left: [left a]
+        pan_down: [down s]
+        pan_right: [right d]
         scale_up: [up w right d]
         scale_down: [down s left a]
         edit_faster: [lshift rshift]
@@ -67,28 +67,30 @@ appPaused: false
                 DEBUG.x = DEBUG.x + dx * editSpeed
                 DEBUG.y = DEBUG.y + dy * editSpeed
             end`
-            'button.1.down, KEY.move_up.down': `do
-                DEBUG.y = DEBUG.y - DEBUG_POSITION.editSpeed
-            end`
-            'button.1.down, KEY.move_left.down': `do
-                DEBUG.x = DEBUG.x - DEBUG_POSITION.editSpeed
-            end`
-            'button.1.down, KEY.move_down.down': `do
+            'button.1.down, KEY.pan_up.down': `do
                 DEBUG.y = DEBUG.y + DEBUG_POSITION.editSpeed
             end`
-            'button.1.down, KEY.move_right.down': `do
+            'button.1.down, KEY.pan_left.down': `do
                 DEBUG.x = DEBUG.x + DEBUG_POSITION.editSpeed
+            end`
+            'button.1.down, KEY.pan_down.down': `do
+                DEBUG.y = DEBUG.y - DEBUG_POSITION.editSpeed
+            end`
+            'button.1.down, KEY.pan_right.down': `do
+                DEBUG.x = DEBUG.x - DEBUG_POSITION.editSpeed
             end`
         ]
     ]
 ]
 [Rectangle id: DEBUG_SCALE
     x: `DEBUG_POSITION.x + DEBUG_POSITION.width` y: 0
-    width: 150 height: `root.height`
+    width: 100 height: `root.height`
     lineColor: `root.fgColor`
 
     moveScale: 0.01
     editSpeed: `KEY.edit_faster.down and 5 or 1`
+    minScale: 0.1
+    maxScale: 9
 
     [Text x: 10 y: `TITLE.y` font: `DEBUG.font`
         update: `do self.text = string.format("scale: %.2f", DEBUG.sx) end`
@@ -104,17 +106,17 @@ appPaused: false
             end`
             'button.1.down, mouse.moved': `do
                 local delta = math.max(mouse.moved.dx, mouse.moved.dy) * DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx = clamp(DEBUG.sx + delta, 0.5, 4)
+                DEBUG.sx = clamp(DEBUG.sx + delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
                 DEBUG.sy = DEBUG.sx
             end`
             'button.1.down, KEY.scale_up.down': `do
                 local delta = DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx  = clamp(DEBUG.sx + delta, 0.5, 4)
+                DEBUG.sx  = clamp(DEBUG.sx + delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
                 DEBUG.sy = DEBUG.sx
             end`
             'button.1.down, KEY.scale_down.down': `do
                 local delta = DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx  = clamp(DEBUG.sx - delta, 0.5, 4)
+                DEBUG.sx  = clamp(DEBUG.sx - delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
                 DEBUG.sy = DEBUG.sx
             end`
         ]
