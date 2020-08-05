@@ -2,6 +2,7 @@ local empty = require 'empty'
 
 local DEBUG = {
     x = 0, y = 0,
+    sx = 1, sy = 1,
     errors = {},
 }
 
@@ -79,6 +80,7 @@ end
 
 function DEBUG.PREDRAW()
     love.graphics.translate(DEBUG.x, DEBUG.y)
+    love.graphics.scale(DEBUG.sx, DEBUG.sy)
 end
 
 function DEBUG.DRAW()

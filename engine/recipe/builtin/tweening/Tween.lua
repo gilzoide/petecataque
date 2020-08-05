@@ -10,16 +10,15 @@ Tween.to = 1
 Tween.easing = 'linear'
 
 Object.add_setter(Tween, 'time', function(self, time)
-    local from, to, duration = self.from, self.to, self.duration
-    if time > duration or time < 0 then
+    if time > self.duration or time < 0 then
         if self.yoyo then
             self.speed = -self.speed
         elseif self.looping then
-            time = time % duration
+            time = time % self.duration
         end
 
         self.running = self.looping
-        time = clamp(time, 0, duration)
+        time = clamp(time, 0, self.duration)
     end
 
     return time
