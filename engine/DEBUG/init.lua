@@ -79,8 +79,8 @@ function DEBUG.UPDATE(dt)
 end
 
 function DEBUG.PREDRAW()
-    love.graphics.translate(DEBUG.x, DEBUG.y)
     love.graphics.scale(DEBUG.sx, DEBUG.sy)
+    love.graphics.translate(DEBUG.x, DEBUG.y)
 end
 
 function DEBUG.DRAW()
