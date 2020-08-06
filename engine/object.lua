@@ -41,6 +41,22 @@ function Object:typeOf(t)
     return false
 end
 
+local function apply_initial_setters(recipe, obj)
+    while recipe.__super do
+        for k, v in nested.kpairs(recipe) do
+            if type(k) == 'string' and recipe[Object.setter_method_name(k)] then
+                if Expression.is_getter(v) then
+                    DEBUG.PUSH_CALL(recipe, k)
+                    v = v(obj)
+                    DEBUG.POP_CALL(recipe, k)
+                end
+                obj[k] = v
+            end
+        end
+        recipe = recipe.__super
+    end
+end
+
 function Object.new(recipe, obj, parent, root_param)
     DEBUG.PUSH_CALL(recipe, "new")
     assertf(obj == nil or #obj == 0, "FIXME %q", nested.encode(obj))
@@ -55,18 +71,9 @@ function Object.new(recipe, obj, parent, root_param)
         root_param['_' .. recipe.id] = obj
     end
 
-    if recipe.preinit then
-        DEBUG.PUSH_CALL(recipe, 'preinit')
-        recipe.preinit(obj)
-        DEBUG.POP_CALL(recipe, 'preinit')
-    end
+    Recipe.invoke(recipe, 'preinit', obj)
 
-    for k, v in nested.kpairs(recipe) do
-        if type(k) == 'string' and recipe[Object.setter_method_name(k)] then
-            if Expression.is_getter(v) then v = v(obj) end
-            obj[k] = v
-        end
-    end
+    apply_initial_setters(recipe, obj)
 
     for super in Recipe.iter_super_chain(recipe) do
         for i = 2, #super do
@@ -80,17 +87,9 @@ function Object.new(recipe, obj, parent, root_param)
     end
 
     for super in Recipe.iter_super_chain(recipe) do
-        if super.init then
-            DEBUG.PUSH_CALL(super, 'init')
-            super.init(obj)
-            DEBUG.POP_CALL(super, 'init')
-        end
+        Recipe.invoke(super, 'init', obj)
     end
-    if recipe.init then
-        DEBUG.PUSH_CALL(recipe, 'init')
-        recipe.init(obj)
-        DEBUG.POP_CALL(recipe, 'init')
-    end
+    Recipe.invoke(recipe, 'init', obj)
 
     DEBUG.POP_CALL(recipe, "new")
     
@@ -101,12 +100,7 @@ local release_iterator_flags = { order = nested.POSTORDER, table_only = true }
 function Object:release()
     self.disabled = true
     for kp, obj, parent in nested.iterate(self, release_iterator_flags) do
-        local destroy = obj.destroy
-        if destroy then
-            DEBUG.PUSH_CALL(obj, 'destroy')
-            destroy(obj)
-            DEBUG.POP_CALL(obj, 'destroy')
-        end
+        obj:invoke('destroy')
         if parent then parent[kp[#kp]] = nil end
     end
 end
@@ -169,6 +163,10 @@ function Object:__newindex(index, value)
 end
 
 Object.__pairs = default_object_pairs
+
+function Object:invoke(method_name, ...)
+    return Recipe.invoke(self, method_name, self, ...)
+end
 
 function Object:iter_parents()
     local current = self

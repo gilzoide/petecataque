@@ -40,6 +40,23 @@ function Recipe.is_recipe(v)
     return getmetatable(v) == Recipe
 end
 
+function Recipe.invoke(recipe, method_name, obj, ...)
+    local method = recipe[method_name]
+    if method then
+        DEBUG.PUSH_CALL(recipe, method_name)
+        method(obj, ...)
+        DEBUG.POP_CALL(recipe, method_name)
+    end
+end
+
+function Recipe.__index(t, index)
+    local super = rawget(t, '__super')
+    return super and super[index]
+end
+Recipe.__pairs = default_object_pairs
+Recipe.__call = Object.new
+
+-- Loading from file
 function Recipe.load_lua(filename)
     local lua_recipe = assert(love.filesystem.load(filename))()
     assertf(Recipe.is_recipe(lua_recipe), "Expected Lua recipe return from %q", filename)
@@ -51,11 +68,5 @@ function Recipe.load_nested(filename)
     return assert(Recipe.nested.load(filename, contents))
 end
 
-function Recipe.__index(t, index)
-    local super = rawget(t, '__super')
-    return super and super[index]
-end
-Recipe.__pairs = default_object_pairs
-Recipe.__call = Object.new
 
 return Recipe
