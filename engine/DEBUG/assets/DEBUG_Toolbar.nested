@@ -8,12 +8,14 @@ fillColor: [0.34902 0.615686 0.862745]
 
 fgColor: [1 1 1]
 appPaused: false
+margins: 10
 
 [Text id: TITLE text: DEBUG font: `DEBUG.font` color: `fgColor`
-    x: 10 y: `(parent.height - self.height) * 0.5`
+    width: 70 height: 32
+    align: center valign: center
 ]
 [Button id: PAUSE_BUTTON
-    x: `TITLE.right + TITLE.x` y: 0
+    x: `TITLE.width` y: 0
     width: `self.height` height: `root.height`
     fillColor: false
     lineColor: `root.fgColor`
@@ -35,90 +37,65 @@ appPaused: false
         pan_left: [left a]
         pan_down: [down s]
         pan_right: [right d]
-        scale_up: [up w right d]
-        scale_down: [down s left a]
+        scale_up: [e]
+        scale_down: [q]
         edit_faster: [lshift rshift]
     ]
 ]
-[Rectangle id: DEBUG_POSITION
+[Rectangle id: DEBUG_TRANSFORM
     x: `PAUSE_BUTTON.x + PAUSE_BUTTON.width` y: 0
-    width: 150 height: `root.height`
+    width: 250 height: `root.height`
+    margin: 10
     lineColor: `root.fgColor`
 
-    [Text x: 10 y: `TITLE.y` font: `DEBUG.font`
-        update: `do self.text = string.format("x: %d", math.floor(DEBUG.x)) end`
+    [Text id: TEXT_X x: `parent.margin` right: `parent.width * 0.7` height: `parent.height` font: `DEBUG.font`
+        text: `string.format("x: %d", math.floor(DEBUG.x))`
+        align: left valign: center
     ]
-    [Text x: `parent.width * 0.5` y: `TITLE.y` font: `DEBUG.font`
-        update: `do self.text = string.format("y: %d", math.floor(DEBUG.y)) end`
+    [Text id: TEXT_Y x: `parent.width * 0.3` right: `parent.width * 0.4` height: `parent.height` font: `DEBUG.font`
+        text: `string.format("y: %d", math.floor(DEBUG.y))`
+        align: left valign: center
+    ]
+    [Text x: `parent.width * 0.6` right: `parent.margin` height: `parent.height` font: `DEBUG.font`
+        text: `string.format("scale: %.2f", DEBUG.sx)`
+        align: left valign: center
     ]
 
+    scaleSpeed: 0.01
+    scaleMin: 0.1
+    scaleMax: 9
     editSpeed: `KEY.edit_faster.down and 5 or 1`
 
+    addScale: `do
+        local self, delta = ...
+        DEBUG.sx = clamp(DEBUG.sx + delta * scaleSpeed * editSpeed, scaleMin, scaleMax)
+        DEBUG.sy = DEBUG.sx
+    end`
+    addTranslation: `do
+        local self, dx, dy = ...
+        DEBUG.x = DEBUG.x + dx * editSpeed
+        DEBUG.y = DEBUG.y + dy * editSpeed
+    end`
+
     [MouseArea id: DEBUG_POSITION_MOUSE
+        editing: false
         [When
-            button.1.pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true) end`
-            button.1.released: `do  love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false) end`
+            button.1.pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true); self.editing = true end`
+            button.1.released: `do love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false); self.editing = false end`
             button.2.pressed: `do
                 DEBUG.x = 0
                 DEBUG.y = 0
+                DEBUG.sx = 1
+                DEBUG.sy = 1
             end`
-            'button.1.down, mouse.moved': `do
-                local dx, dy, editSpeed = mouse.moved.dx, mouse.moved.dy, DEBUG_POSITION.editSpeed
-                DEBUG.x = DEBUG.x + dx * editSpeed
-                DEBUG.y = DEBUG.y + dy * editSpeed
-            end`
-            'button.1.down, KEY.pan_up.down': `do
-                DEBUG.y = DEBUG.y + DEBUG_POSITION.editSpeed
-            end`
-            'button.1.down, KEY.pan_left.down': `do
-                DEBUG.x = DEBUG.x + DEBUG_POSITION.editSpeed
-            end`
-            'button.1.down, KEY.pan_down.down': `do
-                DEBUG.y = DEBUG.y - DEBUG_POSITION.editSpeed
-            end`
-            'button.1.down, KEY.pan_right.down': `do
-                DEBUG.x = DEBUG.x - DEBUG_POSITION.editSpeed
-            end`
-        ]
-    ]
-]
-[Rectangle id: DEBUG_SCALE
-    x: `DEBUG_POSITION.x + DEBUG_POSITION.width` y: 0
-    width: 100 height: `root.height`
-    lineColor: `root.fgColor`
-
-    moveScale: 0.01
-    editSpeed: `KEY.edit_faster.down and 5 or 1`
-    minScale: 0.1
-    maxScale: 9
-
-    [Text x: 10 y: `TITLE.y` font: `DEBUG.font`
-        update: `do self.text = string.format("scale: %.2f", DEBUG.sx) end`
-    ]
-
-    [MouseArea id: DEBUG_POSITION_MOUSE
-        [When
-            button.1.pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true) end`
-            button.1.released: `do  love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false) end`
-            button.2.pressed: `do
-                DEBUG.sx = DEBUG_SCALE.editSpeed
-                DEBUG.sy = DEBUG_SCALE.editSpeed
-            end`
-            'button.1.down, mouse.moved': `do
-                local delta = math.max(mouse.moved.dx, mouse.moved.dy) * DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx = clamp(DEBUG.sx + delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
-                DEBUG.sy = DEBUG.sx
-            end`
-            'button.1.down, KEY.scale_up.down': `do
-                local delta = DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx  = clamp(DEBUG.sx + delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
-                DEBUG.sy = DEBUG.sx
-            end`
-            'button.1.down, KEY.scale_down.down': `do
-                local delta = DEBUG_SCALE.moveScale * DEBUG_SCALE.editSpeed
-                DEBUG.sx  = clamp(DEBUG.sx - delta, DEBUG_SCALE.minScale, DEBUG_SCALE.maxScale)
-                DEBUG.sy = DEBUG.sx
-            end`
+            'editing, mouse.moved': `do DEBUG_TRANSFORM:addTranslation(mouse.moved.dx, mouse.moved.dy) end`
+            'editing, mouse.wheelmoved': `do DEBUG_TRANSFORM:addScale(mouse.wheelmoved.y) end`
+            'editing, KEY.pan_up.down': `do DEBUG_TRANSFORM:addTranslation(0, 1) end`
+            'editing, KEY.pan_left.down': `do DEBUG_TRANSFORM:addTranslation(1, 0) end`
+            'editing, KEY.pan_down.down': `do DEBUG_TRANSFORM:addTranslation(0, -1) end`
+            'editing, KEY.pan_right.down': `do DEBUG_TRANSFORM:addTranslation(-1, 0) end`
+            'editing, KEY.scale_up.down': `do DEBUG_TRANSFORM:addScale(1) end`
+            'editing, KEY.scale_down.down': `do DEBUG_TRANSFORM:addScale(-1) end`
         ]
     ]
 ]

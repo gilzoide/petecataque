@@ -1,8 +1,9 @@
 Text
 
 width: `WINDOW_WIDTH * 0.8`
-x: `(WINDOW_WIDTH - width) * 0.5`
+x: `WINDOW_WIDTH * 0.5`
 y: `WINDOW_HEIGHT * 0.4`
+anchorPoint: [0.5 0]
 font: { R Gontserrat-Medium.ttf 26 }
 align: center valign: center
 

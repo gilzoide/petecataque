@@ -16,6 +16,11 @@ local fallback_font = love.graphics.newFont()
 Text.align = 'left'
 Text.valign = 'top'
 
+function Text:__init_recipe(recipe)
+    local text = recipe.text
+    Object.set_method_enabled(recipe, 'update', Expression.is_getter(text))
+end
+
 local function update_text(self, text)
     local width = self.width
     if width then
@@ -57,13 +62,7 @@ function Text:draw()
     end
 end
 
-Object.add_setter(Text, 'text', function(self, text)
-    local is_getter = Expression.is_getter(text)
-    self:set_method_enabled('update', is_getter)
-    if not is_getter then
-        update_text(self, text)
-    end
-end)
+Object.add_setter(Text, 'text', update_text)
 
 Object.add_getter(Text, 'width', function(self)
     return self.drawable:getWidth()
