@@ -18,11 +18,7 @@ function Recipe.extends(recipe, super)
     assertf(type(super) == 'table', "Invalid super definition %s", type(super))
     recipe.__super = super
     for super in Recipe.iter_super_chain(recipe) do
-        if super.__init_recipe then
-            DEBUG.PUSH_CALL(super, '__init_recipe')
-            super:__init_recipe(recipe)
-            DEBUG.POP_CALL(super, '__init_recipe')
-        end
+        Recipe.invoke(super, '__init_recipe', super, recipe)
     end
 end
 local function yield_super(recipe)
@@ -41,12 +37,13 @@ function Recipe.is_recipe(v)
 end
 
 function Recipe.invoke(recipe, method_name, obj, ...)
-    local method = recipe[method_name]
+    local method, result = recipe[method_name]
     if method then
         DEBUG.PUSH_CALL(recipe, method_name)
-        method(obj, ...)
+        result = safepack(method(obj, ...))
         DEBUG.POP_CALL(recipe, method_name)
     end
+    return result
 end
 
 function Recipe.__index(t, index)

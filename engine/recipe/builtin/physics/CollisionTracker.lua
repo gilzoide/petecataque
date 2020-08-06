@@ -26,31 +26,21 @@ function CollisionTracker:init()
 end
 
 function CollisionTracker:callBeginContact(...)
-    DEBUG.PUSH_CALL(self, 'beginContact')
     self.touching = true
-    local callback = self.beginContact
-    if callback then callback(self, ...) end
-    DEBUG.POP_CALL(self, 'beginContact')
+    self:invoke('beginContact', ...)
 end
 
 function CollisionTracker:callEndContact(...)
-    DEBUG.PUSH_CALL(self, 'endContact')
     self.touching = false
-    local callback = self.endContact
-    if callback then callback(self, ...) end
-    DEBUG.POP_CALL(self, 'endContact')
+    self:invoke('endContact', ...)
 end
 
 function CollisionTracker:callPreSolve(...)
-    DEBUG.PUSH_CALL(self, 'preSolve')
-    self:preSolve(...)
-    DEBUG.POP_CALL(self, 'preSolve')
+    self:invoke('preSolve', ...)
 end
 
 function CollisionTracker:callPostSolve(...)
-    DEBUG.PUSH_CALL(self, 'postSolve')
-    self:postSolve(...)
-    DEBUG.POP_CALL(self, 'postSolve')
+    self:invoke('postSolve', ...)
 end
 
 function CollisionTracker:match(a, b)

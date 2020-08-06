@@ -16,11 +16,7 @@ function Director.update(dt, scene)
     scene = scene or Scene
     if scene.paused then return end
     for kp, obj in iterate_scene(scene, 'paused') do
-        if obj.update then
-            DEBUG.PUSH_CALL(obj, 'update')
-            obj:update(dt)
-            DEBUG.POP_CALL(obj, 'update')
-        end
+        obj:invoke('update', dt)
     end
 end
 

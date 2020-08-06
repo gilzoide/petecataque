@@ -15,32 +15,24 @@ end
 local function create_getter(wrapped_getter_name, field_name)
     local _field_name = '_' .. field_name
     return Expression.getter_from_function(function(self)
-        DEBUG.PUSH_CALL(self, wrapped_getter_name)
         local wrapped = self.__wrapped
-        local value = wrapped and safepack(wrapped[wrapped_getter_name](wrapped)) or self[_field_name]
-        DEBUG.POP_CALL(self, wrapped_getter_name)
-        return value
+        return wrapped and Object.invoke(wrapped, wrapped_getter_name) or self[_field_name]
     end)
 end
 
 local function create_setter(wrapped_setter_name, field_name)
     return function(self, value)
-        DEBUG.PUSH_CALL(self, wrapped_setter_name)
         local wrapped = self.__wrapped
         if wrapped then
-            wrapped[wrapped_setter_name](wrapped, safeunpack(value))
+            Object.invoke(wrapped, wrapped_setter_name, safeunpack(value))
         end
-        DEBUG.POP_CALL(self, wrapped_setter_name)
     end
 end
 
 local function create_method(method_name)
     return function(self, ...)
-        DEBUG.PUSH_CALL(self, method_name)
         local wrapped = self.__wrapped
-        local value = wrapped and safepack(wrapped[method_name](wrapped, ...))
-        DEBUG.POP_CALL(self, method_name)
-        return value
+        return wrapped and Object.invoke(wrapped, method_name, ...)
     end
 end
 
@@ -71,9 +63,7 @@ function wrapper.new(name, options)
     end
 
     recipe.preinit = function(self)
-        DEBUG.PUSH_CALL(self, 'create_wrapped')
-        self.__wrapped = recipe.create_wrapped(self)
-        DEBUG.POP_CALL(self, 'create_wrapped')
+        self.__wrapped = Recipe.invoke(recipe, 'create_wrapped', self)
     end
 
     if options.wrapped_index then
