@@ -42,8 +42,8 @@ isCollapsed: true
 
     [Text id: TOGGLE_HIDDEN_TEXT text: ↓ font: { R Gontserrat-Medium.ttf 24 }
         color: `borderColor`
-        x: 0 y: `(parent.height - self.height) * 0.5`
+        width: `parent.width` height: `parent.height`
 
-        limit: `parent.width` align: center
+        align: center valign: center
     ]
 ]
