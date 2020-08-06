@@ -104,10 +104,4 @@ function Expression.getter_from_function(f)
     return Expression.from_function(f, GETTER_EXPRESSION)
 end
 
-function Expression.call(e, ...)
-    if Expression.is_expression(e) then
-        return e(...)
-    end
-end
-
 return Expression
