@@ -5,7 +5,7 @@ Print.y = 0
 
 local function disable_draw_if_empty_text(self, text)
     local have_text = text and #text > 0
-    self:enable_method('draw', have_text)
+    self:set_method_enabled('draw', have_text)
 end
 
 function Print:init()

@@ -48,10 +48,12 @@ function wrapper.new(name, options)
     assert(type(name) == 'string')
     local recipe = Recipe.new(name, options.extends)
 
+    local added_getters
     if options.getters then
+        added_getters = {}
         for i, getter in ipairs(options.getters) do
             local field_name = field_name_less_getset(getter)
-            Object.add_getter(recipe, field_name, create_getter(getter, field_name))
+            added_getters[field_name] = Object.add_getter(recipe, field_name, create_getter(getter, field_name))
         end
     end
 
@@ -78,24 +80,22 @@ function wrapper.new(name, options)
         Object.add_getter(recipe, options.wrapped_index, wrapper.get_wrapped)
     end
 
-    recipe.__init_recipe = wrapper.init_recipe
+    if added_getters then
+        recipe.__init_recipe = function(recipe, child)
+            for k, v in pairs(added_getters) do
+                local value_in_child = child[k]
+                if value_in_child then
+                    child['_' .. k], child[k] = value_in_child, nil
+                end
+            end
+        end
+    end
 
     return recipe
 end
 
 function wrapper.get_wrapped(self)
     return self.__wrapped
-end
-
-function wrapper.init_recipe(super, child)
-    for k, v in nested.kpairs(super) do
-        if Expression.is_getter(v) and v[2] ~= wrapper.get_wrapped then
-            local value_in_child = child[k]
-            if value_in_child then
-                child['_' .. k], child[k] = value_in_child, nil
-            end
-        end
-    end
 end
 
 return wrapper

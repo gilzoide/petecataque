@@ -3,7 +3,7 @@ local drawable_common = {}
 function drawable_common.disable_draw_if_nil(self, drawable)
     if not drawable then
         DEBUG.WARN("Missing drawable on %s, disabling draw", self:type())
-        self:enable_method('draw', false)
+        self:disable_method('draw')
     end
 end
 

@@ -8,10 +8,10 @@ local CircleShape = Recipe.wrapper.new('CircleShape', {
     },
 })
 
-CircleShape.radius = 10
+local default_radius = 10
 
 function CircleShape:create_wrapped()
-    return love.physics.newCircleShape(self.radius)
+    return love.physics.newCircleShape(self.radius or default_radius)
 end
 
 CircleShape.draw_push = 'all'

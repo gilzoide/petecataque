@@ -11,11 +11,11 @@ local ChainShape = Recipe.wrapper.new('ChainShape', {
     },
 })
 
-ChainShape.points = { 0,0, 0,1 }
+local default_points = { 0,0, 0,1 }
 ChainShape.loop = true
 
 function ChainShape:create_wrapped()
-    return love.physics.newChainShape(self.loop, self.points)
+    return love.physics.newChainShape(self.loop, self.points or default_points)
 end
 
 ChainShape.draw_push = 'all'

@@ -12,12 +12,14 @@ function Object.add_getter(self_or_recipe, field_name, getter_or_func)
         getter_or_func = Expression.getter_from_function(getter_or_func)
     end
     self_or_recipe[field_name] = getter_or_func
+    return getter_or_func
 end
 
 Object.SET_METHOD_ARGUMENT_NAMES = { 'value' }
 function Object.add_setter(self_or_recipe, field_name, function_or_expression)
     Expression.bind_argument_names(function_or_expression, Object.SET_METHOD_ARGUMENT_NAMES)
     self_or_recipe[Object.setter_method_name(field_name)] = function_or_expression
+    return function_or_expression
 end
 
 function Object.is_object(v)
@@ -203,12 +205,15 @@ function Object:child_count()
     return #self - 1
 end
 
-function Object:enable_method(method_name, enable)
+function Object:set_method_enabled(method_name, enable)
     rawset(self, method_name, (enable or false) and nil)
     return enable
 end
-function Object:disable_method(method_name, disable)
-    return self:enable_method(method_name, not disable)
+function Object:enable_method(method_name)
+    return self:set_method_enabled(method_name, true)
+end
+function Object:disable_method(method_name)
+    return self:set_method_enabled(method_name, false)
 end
 
 return Object

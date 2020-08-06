@@ -22,7 +22,7 @@ function Transform:create_wrapped()
 end
 
 function Transform:init()
-    self:enable_method('draw', self:child_count() > 0)
+    self:set_method_enabled('draw', self:child_count() > 0)
 end
 
 Transform.draw_push = 'transform'

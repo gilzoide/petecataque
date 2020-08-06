@@ -40,8 +40,20 @@ function recipe_nested.new(name, recipe)
     return recipe
 end
 
-local preprocess_iterate_flags = { table_only = true }
+local function preprocess_getset(t)
+    for k, v in nested.kpairs(t) do
+        if type(v) == 'table' and v.__opening_token == '{' then
+            t[k] = Expression.from_table(v, v.__file, v.__line)
+        end
+        if type(k) == 'string' and k:startswith(Object.SET_METHOD_PREFIX) then
+            Expression.bind_argument_names(v, Object.SET_METHOD_ARGUMENT_NAMES)
+        end
+    end
+end
+
+local preprocess_iterate_flags = { table_only = true, skip_root = true }
 function recipe_nested.preprocess(name, recipe)
+    preprocess_getset(recipe)
     local recipe_name = recipe[1]
     if type(recipe_name) ~= 'string' then
         table.insert(recipe, 1, name)
@@ -51,22 +63,14 @@ function recipe_nested.preprocess(name, recipe)
             Recipe.extends(recipe, recipe_name)
         end
     end
+    setmetatable(recipe, Recipe)
 
     for kp, t, parent in nested.iterate(recipe, preprocess_iterate_flags) do
-        for k, v in nested.kpairs(t) do
-            if type(v) == 'table' and v.__opening_token == '{' then
-                t[k] = Expression.from_table(v, v.__file, v.__line)
-            end
-            if type(k) == 'string' and k:startswith(Object.SET_METHOD_PREFIX) then
-                Expression.bind_argument_names(v, Object.SET_METHOD_ARGUMENT_NAMES)
-            end
-        end
-        if #kp > 0 then
-            local super_recipe_name = t[1]
-            assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
-            t.__parent = parent
-            Recipe.extends(t, super_recipe_name)
-        end
+        preprocess_getset(t)
+        local super_recipe_name = t[1]
+        assertf(super_recipe_name[1] ~= recipe[1], "Cannot have recursive recipes @ %s:%s", super_recipe_name.__file, super_recipe_name.__line)
+        t.__parent = parent
+        Recipe.extends(t, super_recipe_name)
         setmetatable(t, Recipe)
     end
 end

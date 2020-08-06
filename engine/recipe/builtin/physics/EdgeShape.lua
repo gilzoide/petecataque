@@ -8,10 +8,10 @@ local EdgeShape = Recipe.wrapper.new('EdgeShape', {
     },
 })
 
-EdgeShape.points = { 0,0, 0,1 }
+local default_points = { 0,0, 0,1 }
 
 function EdgeShape:create_wrapped()
-    return love.physics.newEdgeShape(unpack(self.points))
+    return love.physics.newEdgeShape(unpack(self.points or default_points))
 end
 
 EdgeShape.draw_push = 'all'

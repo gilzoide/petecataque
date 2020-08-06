@@ -8,8 +8,10 @@ local PolygonShape = Recipe.wrapper.new('PolygonShape', {
     },
 })
 
+local default_points = { 0,0, 0,1, 1,1, 1,0 }
+
 function PolygonShape:create_wrapped()
-    return love.physics.newPolygonShape(self.points or { 0,0, 0,1, 1,1, 1,0 })
+    return love.physics.newPolygonShape(self.points or default_points)
 end
 
 PolygonShape.draw_push = 'all'
