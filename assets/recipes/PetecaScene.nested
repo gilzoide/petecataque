@@ -2,7 +2,7 @@ p1x: `WINDOW_WIDTH * 0.25`
 p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R('Player').radius`
 petecaX: `WINDOW_WIDTH * 0.5`
-petecaY: 100
+petecaY: 120
 gamepaused: true
 
 PREFS: { R prefs.data }
@@ -42,7 +42,7 @@ end`
     end`]
 ]
 
-[World id: world yg: `9.81 * METER_BY_PIXEL`
+[World id: WORLD yg: `9.81 * METER_BY_PIXEL`
     paused: `root.gamepaused or root.gameover`
 
     [Arena id: arena]

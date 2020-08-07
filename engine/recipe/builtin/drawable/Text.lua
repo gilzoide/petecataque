@@ -58,6 +58,12 @@ function Text:draw()
 end
 
 Object.add_setter(Text, 'text', update_text)
+Object.add_getter(Text, 'textWidth', function(self)
+    return self.drawable:getWidth()
+end)
+Object.add_getter(Text, 'textHeight', function(self)
+    return self.drawable:getHeight()
+end)
 Text.ondirty = update_text
 
 return Text

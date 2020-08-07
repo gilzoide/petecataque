@@ -1,0 +1,37 @@
+Frame
+
+size: 32
+anchor: [0 0 0 0]
+checked: false
+
+color: [1 1 1]
+lineColor: `color`
+lineWidth: `size * 0.1`
+borderWidth: `size * 0.05`
+checkedPoints: { R CheckMark.points size size }
+
+toggle: `do
+    self.checked = not self.checked
+    self:invoke('ontoggle', self.checked)
+end`
+
+[Button id: BUTTON
+    anchor: [0 0 0 0]
+    width: `root.size` height: `root.size`
+    rx: `size * 0.2`
+
+    onclick: `do
+        root.checked = not root.checked
+        root:invoke('ontoggle', root.checked)
+    end`
+
+    [Graphics hidden: `not root.checked`
+        draw: `do
+            love.graphics.setLineWidth(lineWidth)
+            love.graphics.setLineJoin('bevel')
+            love.graphics.setColor(lineColor)
+            love.graphics.line(checkedPoints)
+        end`
+    ]
+]
+

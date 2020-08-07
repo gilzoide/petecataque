@@ -1,8 +1,12 @@
 Frame
 
+menuWidth: 220
+menuHeight: 200
+
 anchorX: [0.5 0.5] anchorY: [0 0]
-marginTop: -200
-marginX: [-150 150]
+marginTop: `-menuHeight`
+marginLeft: `-menuWidth * 0.5`
+marginRight: `menuWidth * 0.5`
 
 bgColor: [0.12 0.12 0.12]
 borderColor: [1 1 1]
@@ -10,7 +14,7 @@ borderColor: [1 1 1]
 isCollapsed: true
 
 [Tween id: TOGGLE_TWEEN
-    from: 0 to: 200
+    from: 0 to: `menuHeight`
     duration: 0.5
     yoyo: true
     running: false
@@ -22,11 +26,31 @@ isCollapsed: true
         fillColor: `bgColor`
         lineColor: `borderColor`
         marginBottom: -1
+
+        [CheckBox id: CHECK_MUTE margin: [30 30 62 62]
+            checked: true
+
+            [Text font: { R Gontserrat-Medium.ttf 24 }
+                anchorX: [1 1]
+                marginLeft: 10 marginRight: `self.marginLeft + self.textWidth`
+
+                text: Música
+                valign: center
+
+                [Text font: { R Symbola.ttf 24 }
+                    anchorX: [1 1]
+                    marginTop: 4
+                    marginX: [10 40]
+                    text: `CHECK_MUTE.checked and "🔊" or "🔈"`
+                    valign: center
+                ]
+            ]
+        ]
     ]
 
     [Button id: TOGGLE_HIDDEN
         # lineColor: `borderColor`
-        fillColor: `bgColor`
+        # fillColor: `bgColor`
 
         anchorX: [0.5 0.5] anchorY: [1 1]
         marginX: [-32 32]
