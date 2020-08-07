@@ -22,12 +22,7 @@ function Text:__init_recipe(recipe)
 end
 
 local function update_text(self, text)
-    local width = self.width
-    if width then
-        self.drawable:setf(text, width, self.align)
-    else
-        self.drawable:set(text)
-    end
+    self.drawable:setf(text, self.width, self.align)
 end
 
 function Text:create_wrapped()
@@ -63,12 +58,5 @@ function Text:draw()
 end
 
 Object.add_setter(Text, 'text', update_text)
-
-Object.add_getter(Text, 'width', function(self)
-    return self.drawable:getWidth()
-end)
-Object.add_getter(Text, 'height', function(self)
-    return self.drawable:getHeight()
-end)
 
 return Text

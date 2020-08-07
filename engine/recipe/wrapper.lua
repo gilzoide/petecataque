@@ -63,7 +63,9 @@ function wrapper.new(name, options)
     end
 
     recipe.preinit = function(self)
-        self.__wrapped = Recipe.invoke(recipe, 'create_wrapped', self)
+        if not self.__wrapped then
+            self.__wrapped = self:invoke('create_wrapped', self)
+        end
     end
 
     if options.wrapped_index then

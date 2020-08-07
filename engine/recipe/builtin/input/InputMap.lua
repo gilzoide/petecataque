@@ -13,6 +13,7 @@ local aggregate_keys_mt = {
             return not down and released
         end
     end,
+    __pairs = default_object_pairs,
 }
 
 function InputMap:init()

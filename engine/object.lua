@@ -22,6 +22,8 @@ function Object.add_setter(self_or_recipe, field_name, function_or_expression)
     return function_or_expression
 end
 
+Object.NO_RAWSET = {}
+
 function Object.is_object(v)
     return getmetatable(v) == Object
 end
@@ -71,6 +73,9 @@ function Object.new(recipe, obj, parent, root_param)
         root_param['_' .. recipe.id] = obj
     end
 
+    for super in Recipe.iter_super_chain(recipe) do
+        Recipe.invoke(super, 'preinit', obj)
+    end
     Recipe.invoke(recipe, 'preinit', obj)
 
     apply_initial_setters(recipe, obj)
@@ -151,8 +156,12 @@ function Object:__newindex(index, value)
         if iscallable(set_method) then
             DEBUG.PUSH_CALL(self, set_method_index)
             local result = set_method(self, value)
-            if result ~= nil then value = result end
             DEBUG.POP_CALL(self, set_method_index)
+            if result == Object.NO_RAWSET then
+                return
+            elseif result ~= nil then
+                value = result
+            end
             index = '_' .. index
         end
     end

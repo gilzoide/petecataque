@@ -208,7 +208,10 @@ State = {
 }
 
 function dump_state()
-    local s = nested.encode(State)
+    local s = nested.encode(Scene)
+    if DEBUG.enabled then
+        s = s .. '\n\n' .. nested.encode(DEBUG.scene)
+    end
     print(s, '\n')
     love.system.setClipboardText(s)
 end
