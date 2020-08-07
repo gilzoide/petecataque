@@ -1,9 +1,8 @@
 Frame
 
-x: `WINDOW_WIDTH * 0.5`
-y: `TOGGLE_TWEEN.value`
-width: 300
-height: 200
+anchorX: [0.5 0.5] anchorY: [0 0]
+marginTop: -200
+marginX: [-150 150]
 
 bgColor: [0.12 0.12 0.12]
 borderColor: [1 1 1]
@@ -11,39 +10,37 @@ borderColor: [1 1 1]
 isCollapsed: true
 
 [Tween id: TOGGLE_TWEEN
-    from: 0 to: `root.height`
+    from: 0 to: 200
     duration: 0.5
     yoyo: true
     running: false
     easing: inOutCubic
 ]
 
-[Rectangle id: MENU
-    fillColor: `bgColor`
-    lineColor: `borderColor`
+[Transform y: `TOGGLE_TWEEN.value`
+    [Rectangle id: MENU
+        fillColor: `bgColor`
+        lineColor: `borderColor`
+        marginBottom: -1
+    ]
 
-    y: -1
-    width: `root.width` height: `root.height`
-    anchorPoint: [0.5 1]
-]
+    [Button id: TOGGLE_HIDDEN
+        # lineColor: `borderColor`
+        fillColor: `bgColor`
 
-[Button id: TOGGLE_HIDDEN
-    # lineColor: `borderColor`
-    fillColor: `bgColor`
-    x: 0 y: 0
-    anchorPoint: [0.5 0]
-    width: 64 height: 32
+        anchorX: [0.5 0.5] anchorY: [1 1]
+        marginX: [-32 32]
+        height: 32
 
-    onclick: `do
-        root.isCollapsed = not isCollapsed
-        TOGGLE_HIDDEN_TEXT.text = isCollapsed and '↓' or '↑'
-        TOGGLE_TWEEN.running = true
-    end`
+        onclick: `do
+            root.isCollapsed = not isCollapsed
+            TOGGLE_HIDDEN_TEXT.text = isCollapsed and '↓' or '↑'
+            TOGGLE_TWEEN.running = true
+        end`
 
-    [Text id: TOGGLE_HIDDEN_TEXT text: ↓ font: { R Gontserrat-Medium.ttf 24 }
-        color: `borderColor`
-        width: `parent.width` height: `parent.height`
-
-        align: center valign: center
+        [Text id: TOGGLE_HIDDEN_TEXT text: ↓ font: { R Gontserrat-Medium.ttf 24 }
+            color: `borderColor`
+            align: center valign: center
+        ]
     ]
 ]

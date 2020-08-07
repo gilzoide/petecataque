@@ -16,13 +16,11 @@ Transform.x = 0
 Transform.y = 0
 
 function Transform:create_wrapped()
-    local transform = love.math.newTransform(self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
-    self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky = nil, nil, nil, nil, nil, nil, nil, nil, nil
-    return transform
+    return love.math.newTransform(0, 0)
 end
 
-function Transform:init()
-    self:set_method_enabled('draw', self:child_count() > 0)
+function Transform:update(dt)
+    self.transform:setTransformation(self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
 end
 
 Transform.draw_push = 'transform'
