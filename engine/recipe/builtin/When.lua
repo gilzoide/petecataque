@@ -14,7 +14,6 @@ function When:__init_recipe(recipe)
 end
 
 function When:update(dt)
-    DEBUG.PUSH_CALL(self, 'update')
     local condition_actions = self.__when
     local obj = self.parent
     for i = 1, #condition_actions do
@@ -26,7 +25,6 @@ function When:update(dt)
             DEBUG.POP_CALL(action, nested.encode(action))
         end
     end
-    DEBUG.POP_CALL(self, 'update')
 end
 
 return When

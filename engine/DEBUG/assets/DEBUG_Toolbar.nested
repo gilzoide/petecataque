@@ -15,6 +15,27 @@ draw: `do
     self:invoke_super('draw')
 end`
 
+togglePause: `do
+    self.appPaused = not appPaused
+    Scene.paused = appPaused
+end`
+
+[InputMap id: KEY
+    key: [
+        pan_up: [up w]
+        pan_left: [left a]
+        pan_down: [down s]
+        pan_right: [right d]
+        scale_up: [e]
+        scale_down: [q]
+        pause: [p]
+        ctrl_modifier: [lctrl rctrl]
+        edit_faster: [lshift rshift]
+    ]
+
+    [When "pause.pressed, ctrl_modifier.down": `do root:invoke('togglePause') end`]
+]
+
 [Text id: TITLE font: `DEBUG.font` color: `fgColor`
     anchorX: [0 0]
     marginRight: 70
@@ -27,27 +48,13 @@ end`
     lineColor: `root.fgColor`
 
     [MouseArea
-        [When "button.1.released: inside": `do
-            root.appPaused = not appPaused
-            Scene.paused = appPaused
-        end`]
+        [When "button.1.released: inside": `do root:invoke('togglePause') end`]
     ]
 
     [Image image: `PAUSE_BUTTON.appPaused and playImage or pauseImage`
         pauseImage: { R DEBUG_Pause.png }
         playImage: { R DEBUG_Play.png }
         x: 0 y: 0
-    ]
-]
-[InputMap id: KEY
-    key: [
-        pan_up: [up w]
-        pan_left: [left a]
-        pan_down: [down s]
-        pan_right: [right d]
-        scale_up: [e]
-        scale_down: [q]
-        edit_faster: [lshift rshift]
     ]
 ]
 [Rectangle id: DEBUG_TRANSFORM
