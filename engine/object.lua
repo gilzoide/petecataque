@@ -177,6 +177,9 @@ end
 function Object:invoke(method_name, ...)
     return Recipe.invoke(self, method_name, self, ...)
 end
+function Object:invoke_super(method_name, ...)
+    return Recipe.invoke_super(self.__recipe, method_name, self, ...)
+end
 function Object:invoke_after_frames(n, method_name, ...)
     if self[method_name] then
         InvokeQueue:queue_after(n, Object.invoke, self, method_name, ...)

@@ -2,20 +2,24 @@ Rectangle
 
 anchorY: [1 1]
 height: 32
+marginX: [-1 1]
 fillColor: [0.34902 0.615686 0.862745]
+lineColor: `fgColor`
 
 fgColor: [1 1 1]
 appPaused: false
 margins: 10
+
+draw: `do
+    love.graphics.setLineStyle('rough')
+    self:invoke_super('draw')
+end`
 
 [Text id: TITLE font: `DEBUG.font` color: `fgColor`
     anchorX: [0 0]
     marginRight: 70
     align: center valign: center
     text: DEBUG 
-    init: `do
-        print_nested(self.parent.rect, self.rect, self.width, self.height)
-    end`
 ]
 [Rectangle id: PAUSE_BUTTON
     anchorX: [0 0]
@@ -121,7 +125,7 @@ margins: 10
 
 [Text font: `DEBUG.font`
     anchorX: [1 1]
-    marginLeft: -70
+    marginLeft: -70 marginRight: `-root.margins`
     text: `string.format("FPS: %d", love.timer.getFPS())`
     align: right valign: center
 ]

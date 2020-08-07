@@ -63,8 +63,6 @@ Object.add_getter(Frame, 'width', function(self)
     return self.right - self.left
 end)
 Object.add_setter(Frame, 'width', function(self, value)
-    DEBUG.WARNIF(self.anchorLeft ~= self.anchorRight, "Setting width only makes sense when anchors X values are the same, got %s and %s",
-            self.anchorLeft, self.anchorRight)
     self.marginRight = self.marginLeft + value
     return Object.NO_RAWSET
 end)
@@ -72,8 +70,6 @@ Object.add_getter(Frame, 'height', function(self)
     return self.bottom - self.top
 end)
 Object.add_setter(Frame, 'height', function(self, value)
-    DEBUG.WARNIF(self.anchorTop ~= self.anchorBottom, "Setting height only makes sense when anchors Y values are the same, got %f and %f",
-            self.anchorTop, self.anchorBottom)
     self.marginBottom = self.marginTop + value
     return Object.NO_RAWSET
 end)
