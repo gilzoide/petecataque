@@ -89,7 +89,7 @@ margins: 10
                 DEBUG.sy = 1
             end`
             'editing, mouse.moved': `do DEBUG_TRANSFORM:addTranslation(mouse.moved.dx, mouse.moved.dy) end`
-            'editing, mouse.wheelmoved': `do DEBUG_TRANSFORM:addScale(mouse.wheelmoved.y) end`
+            'wheelmoved': `do DEBUG_TRANSFORM:addScale(wheelmoved.y) end`
             'editing, KEY.pan_up.down': `do DEBUG_TRANSFORM:addTranslation(0, 1) end`
             'editing, KEY.pan_left.down': `do DEBUG_TRANSFORM:addTranslation(1, 0) end`
             'editing, KEY.pan_down.down': `do DEBUG_TRANSFORM:addTranslation(0, -1) end`
@@ -100,10 +100,12 @@ margins: 10
     ]
 ]
 
+[Text font: `DEBUG.font` right: `root.margins` height: `root.height`
+    text: `string.format("FPS: %d", love.timer.getFPS())`
+    align: right valign: center
+]
+
 [Graphics draw: `do
     setColor(root.fgColor)
     line(0, 0, self.width, 0)
-
-    setFont(DEBUG.font)
-    printf(string.format("FPS: %d", love.timer.getFPS()), 0, TITLE.y, WINDOW_WIDTH, 'right')
 end`]

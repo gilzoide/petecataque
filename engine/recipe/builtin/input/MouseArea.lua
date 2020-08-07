@@ -35,5 +35,11 @@ end
 Object.add_getter(MouseArea, 'mouse', function(self)
     return _ENV.mouse
 end)
+Object.add_getter(MouseArea, 'moved', function(self)
+    return self.__inside and _ENV.mouse.moved or nil
+end)
+Object.add_getter(MouseArea, 'wheelmoved', function(self)
+    return self.__inside and _ENV.mouse.wheelmoved or nil
+end)
 
 return MouseArea
