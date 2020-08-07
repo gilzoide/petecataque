@@ -45,8 +45,18 @@ function Recipe.invoke(recipe, method_name, obj, ...)
     end
     return result
 end
+function Recipe.invoke_super(recipe, ...)
+    local super = recipe.__super
+    return super and Recipe.invoke(super, ...)
+end
 
+local methods = {
+    iter_super_chain = Recipe.iter_super_chain,
+    invoke = Recipe.invoke,
+    invoke_super = Recipe.invoke_super,
+}
 function Recipe.__index(t, index)
+    if methods[index] then return methods[index] end
     local super = rawget(t, '__super')
     return super and super[index]
 end

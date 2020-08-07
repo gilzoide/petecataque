@@ -10,6 +10,8 @@ Frame.anchorLeft = 0
 Frame.anchorBottom = 1
 Frame.anchorRight = 1
 
+Frame.dirty = false
+
 local root_frame = {
     x = 0, width = WINDOW_WIDTH,
     y = 0, height = WINDOW_HEIGHT,
@@ -18,6 +20,22 @@ local root_frame = {
 function Frame:preinit()
     self.__parent_frame = self:first_parent_of('Frame') or root_frame
 end
+
+local function set_dirty(self, value)
+    if not self.dirty then
+        self.dirty = true
+        self:invoke_next_frame('ondirty')
+        set_next_frame(self, 'dirty', false)
+    end
+end
+Object.add_setter(Frame, 'marginTop', set_dirty)
+Object.add_setter(Frame, 'marginLeft', set_dirty)
+Object.add_setter(Frame, 'marginBottom', set_dirty)
+Object.add_setter(Frame, 'marginRight', set_dirty)
+Object.add_setter(Frame, 'anchorTop', set_dirty)
+Object.add_setter(Frame, 'anchorLeft', set_dirty)
+Object.add_setter(Frame, 'anchorBottom', set_dirty)
+Object.add_setter(Frame, 'anchorRight', set_dirty)
 
 Object.add_getter(Frame, 'left', function(self)
     return self.__parent_frame.width * self.anchorLeft + self.marginLeft

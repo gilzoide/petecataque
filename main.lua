@@ -16,17 +16,16 @@ end
 function love.update(dt)
     _ENV.dt = dt
     _ENV.TIME = _ENV.TIME + dt
-    Setqueue:update(dt)
     Director.update(dt)
     DEBUG.UPDATE(dt)
 end
 
 function love.draw()
-    Setqueue:flip()
+    InvokeQueue:flip()
     DEBUG.PREDRAW()
     Director.draw()
     DEBUG.DRAW()
-    Setqueue:frame_ended()
+    InvokeQueue:frame_ended()
 end
 
 function love.quit()

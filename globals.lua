@@ -195,7 +195,7 @@ mouse = {
 Input = require 'input'
 
 Scene = require 'scene'.new()
-Setqueue = require 'setqueue'.new()
+InvokeQueue = require 'invoke_queue'.new()
 Director = require 'director'
 Resources = require 'resources'.new()
 R = Resources
@@ -204,7 +204,7 @@ State = {
     resources = Resources,
     key = key,
     mouse = mouse,
-    setqueue = Setqueue,
+    invoke_queue = InvokeQueue,
 }
 
 function dump_state()
@@ -216,6 +216,9 @@ function dump_state()
     love.system.setClipboardText(s)
 end
 
+function set_after_frames(n, ...)
+    InvokeQueue:queue_after(n, set, ...)
+end
 function set_next_frame(...)
-    Setqueue:queue(...)
+    set_after_frames(1, ...)
 end

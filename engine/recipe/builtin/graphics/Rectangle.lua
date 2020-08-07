@@ -12,22 +12,18 @@ end
 
 Rectangle.draw_push = 'all'
 function Rectangle:draw()
-    local x, y = self.left, self.top
+    Rectangle:invoke_super('draw', self)
     
     local fillColor = self.fillColor
     if fillColor then
         love.graphics.setColor(fillColor)
-        draw_rectangle(self, 'fill', x, y)
+        draw_rectangle(self, 'fill', 0, 0)
     end
     local lineColor = self.lineColor
     if lineColor then
         love.graphics.setColor(lineColor)
-        draw_rectangle(self, 'line', x, y)
+        draw_rectangle(self, 'line', 0, 0)
     end
-
-    love.graphics.translate(x, y)
 end
-
-
 
 return Rectangle

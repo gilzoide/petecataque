@@ -4,8 +4,8 @@ function MouseArea:init()
     self.target = self:first_parent_with('hitTestFromOrigin')
     if not self.target then
         DEBUG.WARN("Couldn't find hitTestFromOrigin in MouseArea parent")
-        self:disable_method('update', true)
-        self:disable_method('draw', true)
+        self:disable_method('update')
+        self:disable_method('draw')
     end
     self.button = { {}, {}, {} }
 end

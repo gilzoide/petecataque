@@ -6,5 +6,5 @@ color: [1 1 1]
 fillColor: `color`
 
 [MouseArea id: MOUSE
-    [When "button.1.released: inside": `do self:invoke('onclick') end`]
+    [When "button.1.released: inside": `do root:invoke('onclick') end`]
 ]

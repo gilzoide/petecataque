@@ -1,29 +1,33 @@
 Rectangle
 
-x: 0
-y: `WINDOW_HEIGHT`
+anchorY: [1 1]
 height: 32
-width: `WINDOW_WIDTH`
 fillColor: [0.34902 0.615686 0.862745]
 
 fgColor: [1 1 1]
 appPaused: false
 margins: 10
 
-[Text id: TITLE text: DEBUG font: `DEBUG.font` color: `fgColor`
-    width: 70 height: 32
+[Text id: TITLE font: `DEBUG.font` color: `fgColor`
+    anchorX: [0 0]
+    marginRight: 70
     align: center valign: center
+    text: DEBUG 
+    init: `do
+        print_nested(self.parent.rect, self.rect, self.width, self.height)
+    end`
 ]
-[Button id: PAUSE_BUTTON
-    x: `TITLE.width` y: 0
-    width: `self.height` height: `root.height`
-    fillColor: false
+[Rectangle id: PAUSE_BUTTON
+    anchorX: [0 0]
+    marginLeft: `TITLE.right` width: 32
     lineColor: `root.fgColor`
 
-    onclick: `do
-        root.appPaused = not appPaused
-        Scene.paused = appPaused
-    end`
+    [MouseArea
+        [When "button.1.released: inside": `do
+            root.appPaused = not appPaused
+            Scene.paused = appPaused
+        end`]
+    ]
 
     [Image image: `PAUSE_BUTTON.appPaused and playImage or pauseImage`
         pauseImage: { R DEBUG_Pause.png }
@@ -43,27 +47,48 @@ margins: 10
     ]
 ]
 [Rectangle id: DEBUG_TRANSFORM
-    x: `PAUSE_BUTTON.x + PAUSE_BUTTON.width` y: 0
-    width: 250 height: `root.height`
-    margin: 10
+    marginLeft: `PAUSE_BUTTON.right` width: 250
     lineColor: `root.fgColor`
 
-    [Text id: TEXT_X x: `parent.margin` right: `parent.width * 0.7` height: `parent.height` font: `DEBUG.font`
+    [Text font: `DEBUG.font`
+        anchorX: [0 0.3]
+        left: `root.margins`
         text: `string.format("x: %d", math.floor(DEBUG.x))`
         align: left valign: center
+
+        [MouseArea
+            [When button.2.pressed: `do
+                DEBUG.x = 0
+            end`]
+        ]
     ]
-    [Text id: TEXT_Y x: `parent.width * 0.3` right: `parent.width * 0.4` height: `parent.height` font: `DEBUG.font`
+    [Text font: `DEBUG.font`
+        anchorX: [0.3 0.6]
         text: `string.format("y: %d", math.floor(DEBUG.y))`
         align: left valign: center
+
+        [MouseArea
+            [When button.2.pressed: `do
+                DEBUG.y = 0
+            end`]
+        ]
     ]
-    [Text x: `parent.width * 0.6` right: `parent.margin` height: `parent.height` font: `DEBUG.font`
+    [Text font: `DEBUG.font`
+        anchorX: [0.6 1]
+        marginRight: `root.margins`
         text: `string.format("scale: %.2f", DEBUG.sx)`
         align: left valign: center
+
+        [MouseArea
+            [When button.2.pressed: `do
+                DEBUG.sx, DEBUG.sy = 1, 1
+            end`]
+        ]
     ]
 
     scaleSpeed: 0.01
     scaleMin: 0.1
-    scaleMax: 9
+    scaleMax: 9.9
     editSpeed: `KEY.edit_faster.down and 5 or 1`
 
     addScale: `do
@@ -82,12 +107,6 @@ margins: 10
         [When
             button.1.pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true); self.editing = true end`
             button.1.released: `do love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false); self.editing = false end`
-            button.2.pressed: `do
-                DEBUG.x = 0
-                DEBUG.y = 0
-                DEBUG.sx = 1
-                DEBUG.sy = 1
-            end`
             'editing, mouse.moved': `do DEBUG_TRANSFORM:addTranslation(mouse.moved.dx, mouse.moved.dy) end`
             'wheelmoved': `do DEBUG_TRANSFORM:addScale(wheelmoved.y) end`
             'editing, KEY.pan_up.down': `do DEBUG_TRANSFORM:addTranslation(0, 1) end`
@@ -100,7 +119,9 @@ margins: 10
     ]
 ]
 
-[Text font: `DEBUG.font` right: `root.margins` height: `root.height`
+[Text font: `DEBUG.font`
+    anchorX: [1 1]
+    marginLeft: -70
     text: `string.format("FPS: %d", love.timer.getFPS())`
     align: right valign: center
 ]

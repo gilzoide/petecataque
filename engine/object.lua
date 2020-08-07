@@ -28,21 +28,6 @@ function Object.is_object(v)
     return getmetatable(v) == Object
 end
 
-function Object:type()
-    return self[1]
-end
-
-function Object:typeOf(t)
-    local recipe = self.__recipe
-    while recipe do
-        if recipe[1] == t then
-            return true
-        end
-        recipe = recipe.__super
-    end
-    return false
-end
-
 local function apply_initial_setters(recipe, obj)
     while recipe.__super do
         for k, v in nested.kpairs(recipe) do
@@ -117,11 +102,13 @@ local function rawget_self_or_recipe(self, index)
 end
 
 function Object:__index(index)
+    if index == nil then return nil end
     if index == 'self' then return self end
     if index == 'recipe' then return rawget(self, '__recipe') end
     if index == 'root' then return rawget(self, '__root') end
     if index == 'parent' then return rawget(self, '__parent') end
-    if index == nil then return nil end
+    if Object[index] then return Object[index] end
+
     local value_in_recipe = rawget(self, '__recipe')[index]
     if Expression.is_getter(value_in_recipe) then
         local in_middle_of_indexing = rawget(self, '__in_middle_of_indexing')  -- avoid possible infinite recursion
@@ -143,7 +130,7 @@ function Object:__index(index)
         elseif value_in_recipe ~= nil then
             return value_in_recipe
         elseif index ~= 'update' and index ~= 'draw' and index ~= 'draw_push' and index ~= 'hidden' then
-            return index_first_of(index, rawget(self, '__root'), Object)
+            return index_first_of(index, rawget(self, '__root'))
         end
     end
 end
@@ -170,8 +157,33 @@ end
 
 Object.__pairs = default_object_pairs
 
+-- Methods
+function Object:type()
+    return self[1]
+end
+
+function Object:typeOf(t)
+    local recipe = self.__recipe
+    while recipe do
+        if recipe[1] == t then
+            return true
+        end
+        recipe = recipe.__super
+    end
+    return false
+end
+
+
 function Object:invoke(method_name, ...)
     return Recipe.invoke(self, method_name, self, ...)
+end
+function Object:invoke_after_frames(n, method_name, ...)
+    if self[method_name] then
+        InvokeQueue:queue_after(n, Object.invoke, self, method_name, ...)
+    end
+end
+function Object:invoke_next_frame(...)
+    return self:invoke_after_frames(1, ...)
 end
 
 function Object:iter_parents()

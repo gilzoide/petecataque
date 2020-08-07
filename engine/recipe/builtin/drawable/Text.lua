@@ -22,7 +22,7 @@ function Text:__init_recipe(recipe)
 end
 
 local function update_text(self, text)
-    self.drawable:setf(text, self.width, self.align)
+    self.drawable:setf(text or self.text, self.width, self.align)
 end
 
 function Text:create_wrapped()
@@ -35,7 +35,7 @@ end
 
 Text.draw_push = 'transform'
 function Text:draw()
-    love.graphics.translate(self.left, self.top)
+    Text:invoke_super('draw', self)
 
     local color = self.color
     if color then
@@ -58,5 +58,6 @@ function Text:draw()
 end
 
 Object.add_setter(Text, 'text', update_text)
+Text.ondirty = update_text
 
 return Text
