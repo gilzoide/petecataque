@@ -22,7 +22,18 @@ function Text:__init_recipe(recipe)
 end
 
 local function update_text(self, text)
-    self.drawable:setf(text or self.text, self.width, self.align)
+    local drawable = self.drawable
+    drawable:setf(text or self.text, self.width, self.align)
+
+    local drawable_height = drawable:getHeight()
+    local vspace, valign, y = self.height - drawable_height, self.valign
+    if valign == 'center' then
+        self.text_offset_y = vspace * 0.5
+    elseif valign == 'bottom' then
+        self.text_offset_y = vspace
+    else
+        self.text_offset_y = 0
+    end
 end
 
 function Text:create_wrapped()
@@ -63,19 +74,6 @@ Object.add_getter(Text, 'textHeight', function(self)
     return self.drawable:getHeight()
 end)
 
-function Text:ondirty(value)
-    update_text(self)
-
-    local drawable = self.drawable
-    local drawable_height = drawable:getHeight()
-    local vspace, valign, y = self.height - drawable_height, self.valign
-    if valign == 'center' then
-        self.text_offset_y = vspace * 0.5
-    elseif valign == 'bottom' then
-        self.text_offset_y = vspace
-    else
-        self.text_offset_y = 0
-    end
-end
+Text.ondirty = update_text
 
 return Text
