@@ -26,7 +26,13 @@ local function update_text(self, text)
 end
 
 function Text:create_wrapped()
+    self.__initialising = true
     return love.graphics.newText(self.font or fallback_font, self.text)
+end
+
+function Text:init()
+    self.__initialising = nil
+    update_text(self)
 end
 
 function Text:update(dt)
@@ -57,7 +63,11 @@ function Text:draw()
     end
 end
 
-Object.add_setter(Text, 'text', update_text)
+Object.add_setter(Text, 'text', function(self, text)
+    if not self.__initialising then
+        update_text(self, text)
+    end
+end)
 Object.add_getter(Text, 'textWidth', function(self)
     return self.drawable:getWidth()
 end)

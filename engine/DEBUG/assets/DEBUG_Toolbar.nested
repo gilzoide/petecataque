@@ -58,6 +58,7 @@ end`
     ]
 ]
 [Rectangle id: DEBUG_TRANSFORM
+    anchorX: [0 0]
     marginLeft: `PAUSE_BUTTON.right` width: 250
     lineColor: `root.fgColor`
 

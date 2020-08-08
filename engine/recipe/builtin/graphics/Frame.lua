@@ -10,6 +10,19 @@ Frame.anchorLeft = 0
 Frame.anchorBottom = 1
 Frame.anchorRight = 1
 
+function Frame:calculate_layout()
+    local parent_width, parent_height = self.__parent_frame.width, self.__parent_frame.height
+    self._top = parent_height * self.anchorTop + self.marginTop
+    self._left = parent_width * self.anchorLeft + self.marginLeft
+    self._bottom = parent_height * self.anchorBottom + self.marginBottom
+    self._right = parent_width * self.anchorRight + self.marginRight
+    self._x = self.left
+    self._y = self.right
+    self._width = self.right - self.left
+    self._height = self.bottom - self.top
+    self.dirty = false
+end
+
 Frame.dirty = false
 
 local root_frame = {
@@ -19,55 +32,37 @@ local root_frame = {
 
 function Frame:preinit()
     self.__parent_frame = self:first_parent_of('Frame') or root_frame
-end
-
-local function set_dirty(self, value)
-    if not self.dirty then
-        self.dirty = true
-        self:invoke_next_frame('ondirty')
-        set_next_frame(self, 'dirty', false)
+    if self.__parent_frame.dirty then
+        self.__parent_frame:calculate_layout()
     end
 end
-Object.add_setter(Frame, 'marginTop', set_dirty)
-Object.add_setter(Frame, 'marginLeft', set_dirty)
-Object.add_setter(Frame, 'marginBottom', set_dirty)
-Object.add_setter(Frame, 'marginRight', set_dirty)
-Object.add_setter(Frame, 'anchorTop', set_dirty)
-Object.add_setter(Frame, 'anchorLeft', set_dirty)
-Object.add_setter(Frame, 'anchorBottom', set_dirty)
-Object.add_setter(Frame, 'anchorRight', set_dirty)
+function Frame:init()
+    self:calculate_layout()
+end
 
-Object.add_getter(Frame, 'left', function(self)
-    return self.__parent_frame.width * self.anchorLeft + self.marginLeft
-end)
-Object.add_getter(Frame, 'top', function(self)
-    return self.__parent_frame.height * self.anchorTop + self.marginTop
-end)
-Object.add_getter(Frame, 'right', function(self)
-    return self.__parent_frame.width * self.anchorRight + self.marginRight
-end)
-Object.add_getter(Frame, 'bottom', function(self)
-    return self.__parent_frame.height * self.anchorBottom + self.marginBottom
-end)
+function Frame:set_dirty(value)
+    if not self.dirty then
+        self.dirty = true
+        self:invoke_next_frame('calculate_layout')
+        self:invoke_next_frame('ondirty')
+    end
+end
+Object.add_setter(Frame, 'marginTop', Frame.set_dirty)
+Object.add_setter(Frame, 'marginLeft', Frame.set_dirty)
+Object.add_setter(Frame, 'marginBottom', Frame.set_dirty)
+Object.add_setter(Frame, 'marginRight', Frame.set_dirty)
+Object.add_setter(Frame, 'anchorTop', Frame.set_dirty)
+Object.add_setter(Frame, 'anchorLeft', Frame.set_dirty)
+Object.add_setter(Frame, 'anchorBottom', Frame.set_dirty)
+Object.add_setter(Frame, 'anchorRight', Frame.set_dirty)
+
 Object.add_getter(Frame, 'rect', function(self)
     return { self.top, self.left, self.bottom, self.right }
 end)
 
-Object.add_getter(Frame, 'x', function(self)
-    return self.left
-end)
-Object.add_getter(Frame, 'y', function(self)
-    return self.top
-end)
-Object.add_getter(Frame, 'width', function(self)
-    return self.right - self.left
-end)
 Object.add_setter(Frame, 'width', function(self, value)
     self.marginRight = self.marginLeft + value
     return Object.NO_RAWSET
-end)
-Object.add_getter(Frame, 'height', function(self)
-    return self.bottom - self.top
 end)
 Object.add_setter(Frame, 'height', function(self, value)
     self.marginBottom = self.marginTop + value
@@ -130,7 +125,7 @@ end)
 
 Frame.draw_push = 'transform'
 function Frame:draw()
-    love.graphics.translate(self.x, self.y)
+    love.graphics.translate(self.left, self.top)
 end
 
 function Frame:hitTestFromOrigin(x, y)
