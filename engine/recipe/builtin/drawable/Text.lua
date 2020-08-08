@@ -39,7 +39,7 @@ function Text:update(dt)
     update_text(self, self.text)
 end
 
-Text.draw_push = 'transform'
+Text.draw_push = 'all'
 function Text:draw()
     Text:invoke_super('draw', self)
 

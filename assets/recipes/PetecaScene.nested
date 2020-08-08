@@ -81,16 +81,15 @@ end`
     ]
 ]
 
-lifeBarMargin: 10
-[LifeBar id: player1Life color: `player1.color`
-    x: `lifeBarMargin` y: `lifeBarMargin`
+[LifeBar anchor: [0 0 0 0.4] margin: [10 10] height: 15
+    color: `player1.color`
     maxLife: `player1.maxLife`
     currentLife: `player1.currentLife`
     takingDamage: `player1.takingDamage`
 ]
 [Transform x: `WINDOW_WIDTH` sx: -1 sy: 1
-    [LifeBar id: player2Life color: `player2.color`
-        x: `lifeBarMargin` y: `lifeBarMargin`
+    [LifeBar color: `player2.color`
+        anchor: [0 0 0 0.4] margin: [10 10] height: 15
         maxLife: `player2.maxLife`
         currentLife: `player2.currentLife`
         takingDamage: `player2.takingDamage`

@@ -1,23 +1,21 @@
-x: 0, y: 0
+Frame
+
 color: [1 0 0]
 bgColor: [0 0 0]
 borderColor: [1 1 1]
 damageColor: [1 0 0]
 damageBgColor: [1 0 0 0.3]
-width: 320
-height: 15
 
 currentLife: 1
 maxLife: 1
 lifePercent: `currentLife / maxLife`
 
-[Rectangle x: `root.x` y: `root.y` width: `root.width` height: `root.height`
-    fillColor: `takingDamage and damageBgColor or bgColor`
-
-    [Rectangle width: `parent.width * lifePercent` height: `parent.height`
-        fillColor: `takingDamage and damageColor or root.color`
-    ]
-    [Rectangle width: `parent.width` height: `parent.height`
-        lineColor: `borderColor`
-    ]
-]
+draw: `do
+    love.graphics.translate(x, y)
+    love.graphics.setColor(takingDamage and damageBgColor or bgColor)
+    love.graphics.rectangle('fill', 0, 0, width, height)
+    love.graphics.setColor(takingDamage and damageColor or color)
+    love.graphics.rectangle('fill', 0, 0, width * lifePercent, height)
+    love.graphics.setColor(borderColor)
+    love.graphics.rectangle('line', 0, 0, width, height)
+end`

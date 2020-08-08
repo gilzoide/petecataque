@@ -16,10 +16,10 @@ function Frame:calculate_layout()
     self._left = parent_width * self.anchorLeft + self.marginLeft
     self._bottom = parent_height * self.anchorBottom + self.marginBottom
     self._right = parent_width * self.anchorRight + self.marginRight
-    self._x = self.left
-    self._y = self.right
-    self._width = self.right - self.left
-    self._height = self.bottom - self.top
+    self._x = self._left
+    self._y = self._top
+    self._width = self._right - self._left
+    self._height = self._bottom - self._top
     self.dirty = false
 end
 
