@@ -12,6 +12,7 @@ bgColor: [0.12 0.12 0.12]
 borderColor: [1 1 1]
 
 isCollapsed: true
+options: { R options.save }
 
 [Tween id: TOGGLE_TWEEN
     from: 0 to: `menuHeight`
@@ -27,23 +28,25 @@ isCollapsed: true
         lineColor: `borderColor`
         marginBottom: -1
 
-        [CheckBox id: CHECK_MUTE margin: [30 30 62 62]
-            checked: true
+        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [30 30 62 0]
+            checked: `options.MUSIC`
+            ontoggle: `do
+                options.MUSIC = self.checked
+                options:save()
+                root:invoke('ontogglemusic')
+            end`
 
-            [Text font: { R Gontserrat-Medium.ttf 24 }
-                anchorX: [1 1]
-                marginLeft: 10 marginRight: `self.marginLeft + self.textWidth`
-
+            [Text id: CHECK_MUSIC_TEXT font: { R Gontserrat-Medium.ttf 24 }
+                marginLeft: `MUSIC.size + 10`
                 text: Música
                 valign: center
+            ]
 
-                [Text font: { R Symbola.ttf 24 }
-                    anchorX: [1 1]
-                    marginTop: 4
-                    marginX: [10 40]
-                    text: `CHECK_MUTE.checked and "🔊" or "🔈"`
-                    valign: center
-                ]
+            [Text font: { R Symbola.ttf 24 }
+                marginTop: 4
+                marginLeft: `CHECK_MUSIC_TEXT.left + CHECK_MUSIC_TEXT.textWidth + 10`
+                text: `MUSIC.checked and "🔊" or "🔈"`
+                valign: center
             ]
         ]
     ]
@@ -58,11 +61,11 @@ isCollapsed: true
 
         onclick: `do
             root.isCollapsed = not isCollapsed
-            TOGGLE_HIDDEN_TEXT.text = isCollapsed and '↓' or '↑'
             TOGGLE_TWEEN.running = true
         end`
 
-        [Text id: TOGGLE_HIDDEN_TEXT text: ↓ font: { R Gontserrat-Medium.ttf 24 }
+        [Text id: TOGGLE_HIDDEN_TEXT font: { R Gontserrat-Medium.ttf 24 }
+            text: `isCollapsed and '↓' or '↑'`
             color: `borderColor`
             align: center valign: center
         ]

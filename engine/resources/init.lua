@@ -7,8 +7,8 @@ Resources.__index = Resources
 Resources.path = { 'engine/recipe/builtin', 'engine/DEBUG/assets', 'assets' }
 
 function Resources:get_keypath(name, ...)
-    name = self.asset_map:full_path(name)
-    return name and { name, ... }
+    name = self.asset_map:full_path(name) or name
+    return { name, ... }
 end
 
 function Resources:get(...)
@@ -55,6 +55,7 @@ function Resources.new()
     -- Other nested serialized data
     resources:register_loader('data', require 'resources.data', { '.data' })
     resources:register_loader('points', require 'resources.points', { '.points' })
+    resources:register_loader('save', require 'resources.save', { '.save' })
 
     return resources
 end

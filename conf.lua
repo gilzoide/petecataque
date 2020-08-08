@@ -8,6 +8,7 @@ WINDOW_HEIGHT = 600
 function love.conf(t)
     t.window.width = WINDOW_WIDTH
     t.window.height = WINDOW_HEIGHT
+    t.identity = 'petecataque'
     t.window.title = 'PETECATAQUE'
     t.window.icon = 'assets/icon.png'
     t.window.highdpi = true

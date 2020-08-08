@@ -5,7 +5,10 @@ petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 120
 gamepaused: true
 
-PREFS: { R prefs.data }
+options: { R options.save }
+toggleMusic: `do
+    BGM.playing = options.MUSIC
+end`
 
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
@@ -34,12 +37,7 @@ end`
 
 [AudioSource id: BGM
     source: { R 'Stack - fase.ogg' }
-    playing: `PREFS.BGM_playing` looping: true
-    
-    [When ACTION.mute.pressed: `do
-        self.mute = not self.mute
-        love.audio.setVolume(mute and 0 or 1)
-    end`]
+    playing: `options.MUSIC` looping: true
 ]
 
 [World id: WORLD yg: `9.81 * METER_BY_PIXEL`
@@ -79,7 +77,7 @@ end`
         p2left: left
         p2right: right
         pause: return
-        mute: m
+        toggle_music: m
     ]
 ]
 
@@ -101,7 +99,7 @@ lifeBarMargin: 10
 
 [Score id: score]
 
-[OptionsMenu]
+[OptionsMenu id: OPTIONS_MENU ontogglemusic: `root.toggleMusic`]
 
 [When
     player1.gameover: `do
@@ -128,5 +126,7 @@ lifeBarMargin: 10
         score:hide()
         self.gameover = false
     end`
+
+    'ACTION.toggle_music.pressed': `do OPTIONS_MENU.MUSIC:toggle() end`
 ]
 

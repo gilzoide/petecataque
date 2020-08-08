@@ -11,6 +11,12 @@ function AssetMap.get_basename(path)
     return basename
 end
 
+function AssetMap.get_filename(path)
+    local filename = path:match("([^/]+)$")
+    return filename
+end
+
+
 local asset_map_mt = {
     __pairs = default_object_pairs,
     __mode = "v",
@@ -54,9 +60,7 @@ function AssetMap.new(search_paths)
 end
 
 function AssetMap:full_path(file)
-    local path = get(self, file, '__path')
-    DEBUG.WARNIF(not path, "Couldn't find file %q", file)
-    return path
+    return get(self, file, '__path')
 end
 
 return AssetMap

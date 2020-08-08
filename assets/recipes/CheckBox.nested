@@ -1,7 +1,6 @@
 Frame
 
 size: 32
-anchor: [0 0 0 0]
 checked: false
 
 color: [1 1 1]
@@ -20,10 +19,7 @@ end`
     width: `root.size` height: `root.size`
     rx: `size * 0.2`
 
-    onclick: `do
-        root.checked = not root.checked
-        root:invoke('ontoggle', root.checked)
-    end`
+    onclick: `do root:invoke('toggle') end`
 
     [Graphics hidden: `not root.checked`
         draw: `do

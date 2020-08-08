@@ -100,6 +100,9 @@ end
 function string.startswith(s, prefix)
     return s:sub(1, #prefix) == prefix
 end
+function string.endswith(s, suffix)
+    return s:sub(- #suffix) == suffix
+end
 
 function table_extend(t, other)
     if other then
@@ -144,6 +147,17 @@ function rad2deg(angle)
     return angle * 180 / math.pi
 end
 
+function shallowcopy(value)
+    if type(value) == 'table' then
+        local newvalue = {}
+        for k, v in pairs(value) do
+            newvalue[k] = v
+        end
+        return newvalue
+    else
+        return value
+    end
+end
 function deepcopy(value)
     if type(value) == 'table' then
         local newvalue = {}
