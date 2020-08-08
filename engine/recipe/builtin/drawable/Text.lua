@@ -48,19 +48,7 @@ function Text:draw()
         love.graphics.setColor(color)
     end
 
-    local drawable = self.drawable
-    local drawable_height = drawable:getHeight()
-    if drawable_height > 0 then
-        local vspace, valign, y = self.height - drawable_height, self.valign
-        if valign == 'center' then
-            y = vspace * 0.5
-        elseif valign == 'bottom' then
-            y = vspace
-        else
-            y = 0
-        end
-        love.graphics.draw(self.drawable, 0, y)
-    end
+    love.graphics.draw(self.drawable, 0, self.text_offset_y)
 end
 
 Object.add_setter(Text, 'text', function(self, text)
@@ -74,6 +62,20 @@ end)
 Object.add_getter(Text, 'textHeight', function(self)
     return self.drawable:getHeight()
 end)
-Text.ondirty = update_text
+
+function Text:ondirty(value)
+    update_text(self)
+
+    local drawable = self.drawable
+    local drawable_height = drawable:getHeight()
+    local vspace, valign, y = self.height - drawable_height, self.valign
+    if valign == 'center' then
+        self.text_offset_y = vspace * 0.5
+    elseif valign == 'bottom' then
+        self.text_offset_y = vspace
+    else
+        self.text_offset_y = 0
+    end
+end
 
 return Text
