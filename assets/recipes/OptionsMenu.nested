@@ -1,6 +1,6 @@
 Frame
 
-menuWidth: 220
+menuWidth: 320
 menuHeight: 200
 
 anchorX: [0.5 0.5] anchorY: [0 0]
@@ -11,24 +11,28 @@ marginRight: `menuWidth * 0.5`
 bgColor: [0.12 0.12 0.12]
 borderColor: [1 1 1]
 
-isCollapsed: true
 options: { R options.save }
 
+toggleCollapsed: `do
+    TOGGLE_TWEEN.running = true
+    self:invoke('ontogglecollapse', TOGGLE_TWEEN.rewinding)
+end`
+
 [Tween id: TOGGLE_TWEEN
-    from: 0 to: `menuHeight`
+    from: 0 to: 1
     duration: 0.5
     yoyo: true
     running: false
     easing: inOutCubic
 ]
 
-[Transform y: `TOGGLE_TWEEN.value`
+[Transform y: `TOGGLE_TWEEN.value * menuHeight`
     [Rectangle id: MENU
         fillColor: `bgColor`
         lineColor: `borderColor`
         marginBottom: -1
 
-        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [30 30 62 0]
+        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [30 30 62 -30]
             checked: `options.MUSIC`
             ontoggle: `do
                 options.MUSIC = self.checked
@@ -48,6 +52,11 @@ options: { R options.save }
                 text: `MUSIC.checked and "🔊" or "🔈"`
                 valign: center
             ]
+
+            [Text font: { R Gontserrat-Medium.ttf 24 }
+                text: M
+                align: right
+            ]
         ]
     ]
 
@@ -59,15 +68,14 @@ options: { R options.save }
         marginX: [-32 32]
         height: 32
 
-        onclick: `do
-            root.isCollapsed = not isCollapsed
-            TOGGLE_TWEEN.running = true
-        end`
+        onclick: `do root:toggleCollapsed() end`
 
-        [Text id: TOGGLE_HIDDEN_TEXT font: { R Gontserrat-Medium.ttf 24 }
-            text: `isCollapsed and '↓' or '↑'`
-            color: `borderColor`
-            align: center valign: center
+        [Transform y: `TOGGLE_TWEEN.value * TOGGLE_HIDDEN.height` sx: 1 sy: `(1 - TOGGLE_TWEEN.value) * 2 - 1`
+            [Text id: TOGGLE_HIDDEN_TEXT font: { R Gontserrat-Medium.ttf 24 }
+                text: ↓
+                color: `borderColor`
+                align: center valign: center
+            ]
         ]
     ]
 ]

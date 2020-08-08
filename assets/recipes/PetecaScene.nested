@@ -3,7 +3,17 @@ p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R('Player').radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 120
-gamepaused: true
+
+gamepaused: false
+gameover: true
+pauseGame: `do
+    self.gamepaused = not self.gamepaused
+    if self.gamepaused then
+        score:showPaused()
+    else
+        score:hide()
+    end
+end`
 
 options: { R options.save }
 toggleMusic: `do
@@ -98,7 +108,13 @@ end`
 
 [Score id: score]
 
-[OptionsMenu id: OPTIONS_MENU ontogglemusic: `root.toggleMusic`]
+[OptionsMenu id: OPTIONS_MENU
+    ontogglemusic: `root.toggleMusic`
+    ontogglecollapse: `do
+        local self, collapsing = ...
+        root:pauseGame(not collapsing)
+    end`
+]
 
 [When
     player1.gameover: `do
@@ -112,12 +128,7 @@ end`
     end`
 
     '!gameover, ACTION.pause.pressed': `do
-        self.gamepaused = not gamepaused
-        if gamepaused then
-            score:showPaused()
-        else
-            score:hide()
-        end
+        OPTIONS_MENU:toggleCollapsed()
     end`
 
     'gameover, ACTION.pause.pressed': `do

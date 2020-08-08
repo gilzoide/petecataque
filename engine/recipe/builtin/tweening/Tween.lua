@@ -30,4 +30,8 @@ Object.add_getter(Tween, 'value', function(self)
     return f(time, from, to - from, duration)
 end)
 
+Object.add_getter(Tween, 'rewinding', function(self)
+    return self.speed < 0
+end)
+
 return Tween
