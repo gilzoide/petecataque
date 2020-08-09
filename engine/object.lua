@@ -130,7 +130,8 @@ function Object:__index(index)
         elseif value_in_recipe ~= nil then
             return value_in_recipe
         elseif index ~= 'update' and index ~= 'draw' and index ~= 'draw_push' and index ~= 'hidden' then
-            return index_first_of(index, rawget(self, '__root'))
+            local root = rawget(self, '__root')
+            return root and root[index]
         end
     end
 end

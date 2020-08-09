@@ -39,5 +39,6 @@ luac.out
 *.x86_64
 *.hex
 
-release/
+[Bb]uild/
+[Rr]elease/
 tags

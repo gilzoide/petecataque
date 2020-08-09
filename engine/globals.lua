@@ -43,17 +43,10 @@ Object = require 'object'
 Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
-METER_BY_PIXEL = 60
-love.physics.setMeter(METER_BY_PIXEL)
-
 get = nested.get
 get_or_create = nested.get_or_create
 set = nested.set
 set_or_create = nested.set_or_create
-function unset(obj, ...)
-    local kp = select('#', ...) > 1 and {...} or ...
-    set(obj, kp, nil)
-end
 
 function index_first_of(index, ...)
     for i = 1, select('#', ...) do
@@ -123,12 +116,6 @@ function index_or_create(t, index)
     return value
 end
 
-function addchild(obj)
-    local self = getfenv(2)
-    self[#self + 1] = obj
-    Scene:track(obj)
-    return obj
-end
 function addtoscene(obj)
     Scene:add(obj)
 end

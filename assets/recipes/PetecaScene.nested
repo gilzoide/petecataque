@@ -3,6 +3,7 @@ p2x: `WINDOW_WIDTH * 0.75`
 py: `WINDOW_HEIGHT - R('Player').radius`
 petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 120
+metersByPixel: 60
 
 gamepaused: false
 gameover: true
@@ -18,6 +19,10 @@ end`
 options: { R options.save }
 toggleMusic: `do
     BGM.playing = options.MUSIC
+end`
+
+preinit: `do
+    love.physics.setMeter(metersByPixel)
 end`
 
 init: `do
@@ -50,7 +55,7 @@ end`
     playing: `options.MUSIC` looping: true
 ]
 
-[World id: WORLD yg: `9.81 * METER_BY_PIXEL`
+[World id: WORLD yg: `9.81 * metersByPixel`
     paused: `root.gamepaused or root.gameover`
 
     [Arena id: arena]

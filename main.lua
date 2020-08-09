@@ -1,15 +1,14 @@
-require 'globals'
+local Input = require 'input'
 
 function love.load(arg)
+    require 'globals'
+
     DEBUG.LOAD(arg)
-    DEBUG.STARTTIMER('load')
     
     local initial_scene = arg[1] or 'PetecaScene'
     local scene = assert(R(initial_scene))()
     addtoscene(scene)
 
-    -- print(nested.encode(scene))
-    DEBUG.REPORTTIMER('load')
     _ENV.TIME = 0
 end
 
