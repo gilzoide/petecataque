@@ -108,7 +108,7 @@ end`
 
 [Score id: score]
 
-[OptionsMenu id: OPTIONS_MENU
+[OptionsMenu id: OPTIONS_MENU paused: `gameover`
     ontogglemusic: `root.toggleMusic`
     ontogglecollapse: `do
         local self, collapsing = ...
