@@ -10,9 +10,14 @@ DEBUG.hotreload = require 'DEBUG.hotreload'
 
 DEBUG.enabled = true
 
-function DEBUG.LOG(fmt, ...)
-    local msg = string.format(fmt, ...)
-    io.stderr:write(msg .. '\n')
+function DEBUG.LOG(...)
+    io.stderr:write(...)
+    io.stderr:write('\n')
+end
+
+function DEBUG.LOGF(fmt, ...)
+    local msg = string.format(fmt or "", ...)
+    DEBUG.LOG(msg)
 end
 
 function DEBUG.STARTTIMER(name)
