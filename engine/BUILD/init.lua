@@ -4,11 +4,16 @@ local ignore = shallowcopy(ignore_patterns)
 setmetatable(ignore, wildcard_pattern.aggregate)
 ignore:extend("engine/DEBUG", "engine/BUILD", "*.md")
 
+local iswindows = love.system.getOS() == 'Windows'
+
 function generate(output_file)
     local writer = ninja.Writer.new(output_file or 'build.ninja')
+    if iswindows then
+        writer:include('engine/BUILD/windows.ninja'):newline()
+    else
+        writer:include('engine/BUILD/unix.ninja'):newline()
+    end
     writer:variable('builddir', 'build'):newline()
-    writer:rule('copy', 'cp $in $out'):newline()
-    writer:rule('zip', 'zip -9 $out $in'):newline()
     local files = {}
     local source = love.filesystem.getSource()
     for filename, path in iter_file_tree('', ignore) do

@@ -1,0 +1,6 @@
+rule copy
+  command = cp $in $out
+
+rule zip
+  command = zip -9 $out $in
+
