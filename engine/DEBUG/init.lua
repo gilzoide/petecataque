@@ -81,6 +81,11 @@ function DEBUG.LOAD(arg)
     if arg[1] == '--debug' then
         require 'debugger'()
         table.remove(arg, 1)
+    elseif arg[1] == '--ninja' then
+        require 'BUILD'(arg[2])
+        table.remove(arg, 2)
+        table.remove(arg, 1)
+        love.event.quit()
     end
 end
 

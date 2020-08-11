@@ -1,5 +1,5 @@
 local AssetMap = {}
-AssetMap.__index = AssetMap
+AssetMap.__pairs = default_object_pairs
 
 function AssetMap.split_extension(path)
     local basename, ext = path:match("^([^.]*)(.*)")
@@ -22,45 +22,46 @@ local asset_map_mt = {
     __mode = "v",
 }
 
-local function scan_dir(self, dir, info)
-    for i, item in ipairs(love.filesystem.getDirectoryItems(dir)) do
-        if not item:startswith('.') then
-            local path = dir .. '/' .. item
-            love.filesystem.getInfo(path, info)
-            if info.type == 'directory' then
-                scan_dir(self, path, info)
-            elseif info.type == 'file' then
-                local t = setmetatable({ __path = path }, asset_map_mt)
-                self[path] = t
-                if self[item] == nil then
-                    self[item] = t
-                elseif self[item] ~= false then
-                    DEBUG.WARN("Resource filename at path %q matches %q. Disabling loading filename %q", path, self[item].path, item)
-                    self[item] = false
-                end
+local function scan_dir(self, dir)
+    local by_filename, by_basename = self.__filename, self.__basename
+    for item, path in iter_file_tree(dir, ignore_patterns) do
+        local t = setmetatable({ __path = path }, asset_map_mt)
+        self[path] = t
 
-                local basename, ext = AssetMap.split_extension(item)
-                if self[basename] == nil then
-                    self[basename] = t
-                elseif self[basename] ~= false then
-                    DEBUG.WARN("Resource basename at path %q matches %q. Disabling loading basename %q", path, self[basename].path, basename)
-                    self[basename] = false
-                end
-            end
+        if by_filename[item] == nil then
+            by_filename[item] = t
+        elseif by_filename[item] ~= false then
+            DEBUG.WARN("Resource filename at path %q matches %q. Disabling loading filename %q", path, by_filename[item].path, item)
+            by_filename[item] = false
+        end
+
+        local basename, ext = AssetMap.split_extension(item)
+        if by_basename[basename] == nil then
+            by_basename[basename] = t
+        elseif by_basename[basename] ~= false then
+            DEBUG.WARN("Resource basename at path %q matches %q. Disabling loading basename %q", path, by_basename[basename].path, basename)
+            by_basename[basename] = false
         end
     end
 end
 
 function AssetMap.new(search_paths)
-    local asset_map, info = {}, {}
+    local asset_map = { __basename = {}, __filename = {} }
     for i, dir in ipairs(search_paths) do
-        scan_dir(asset_map, dir, info)
+        scan_dir(asset_map, dir)
     end
     return setmetatable(asset_map, AssetMap)
 end
 
 function AssetMap:full_path(file)
     return get(self, file, '__path')
+end
+
+local methods = {
+    full_path = AssetMap.full_path,
+}
+function AssetMap:__index(index)
+    return index_first_of(index, methods, rawget(self, '__filename'), rawget(self, '__basename'))
 end
 
 return AssetMap

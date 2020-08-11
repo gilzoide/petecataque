@@ -2,7 +2,6 @@ local Input = require 'input'
 
 function love.load(arg)
     require 'globals'
-
     DEBUG.LOAD(arg)
     
     local initial_scene = arg[1] or 'PetecaScene'

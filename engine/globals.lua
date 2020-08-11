@@ -29,6 +29,14 @@ nested = require 'nested'
 nested_function = require 'nested.function'
 nested_ordered = require 'nested.ordered'
 nested_match = require 'nested.match'
+wildcard_pattern = require 'wildcard_pattern'
+
+do
+    local gitignore = io.open(".gitignore")
+    ignore_patterns = gitignore and wildcard_pattern.aggregate.from(io.lines(".gitignore")) or wildcard_pattern.aggregate.new()
+    ignore_patterns:extend(".*")
+    if gitignore then gitignore:close() end
+end
 
 function assertf(cond, fmt, ...)
     return assert(cond, string.format(fmt, ...))
@@ -168,6 +176,24 @@ function iter_chain(...)
             end
         end
     end)
+end
+
+local function iter_dir(dir, info, ignore)
+    local prefix = dir ~= '' and dir .. '/' or dir
+    for i, item in ipairs(love.filesystem.getDirectoryItems(dir)) do
+        local path = prefix .. item
+        if not (ignore and ignore(path)) then
+            love.filesystem.getInfo(path, info)
+            if info.type == 'directory' then
+                iter_dir(path, info, ignore)
+            elseif info.type == 'file' then
+                coroutine.yield(item, path)
+            end
+        end
+    end
+end
+function iter_file_tree(dir, ignore)
+    return coroutine.wrap(function() return iter_dir(dir, {}, ignore) end)
 end
 
 function print_nested(...)

@@ -10,6 +10,7 @@ using [Lua](https://www.lua.org/), [LÖVE](https://love2d.org/) and
 - __Easing__ library by Tweener authors, Yuichi Tateno, Emmanuel Oga: https://github.com/EmmanuelOga/easing
 - __Stack - Fase__ music by gilzoide: https://soundcloud.com/gilzoide/stack-fase
 - __Symbola__ font by George Douros: https://fontlibrary.org/en/font/symbola
+- __ninja_syntax.lua__ library by Charles Grunwald (Juntalis): https://github.com/juntalis/ninja\_syntax.lua
 
 
 ### Engine features
