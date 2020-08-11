@@ -10,14 +10,14 @@ function hotreload.load()
     hotreload.source = love.filesystem.getSource()
     love.thread.newThread([[
     local channel, fswatch_cmd = ...
-    print("DEBUG.HOTRELOAD starting command: '" .. fswatch_cmd .. "'")
+    io.stderr:write(string.format("DEBUG.HOTRELOAD starting command: %q\n", fswatch_cmd))
     local fswatch = io.popen(fswatch_cmd)
     if fswatch:read(0) then
         for line in fswatch:lines() do
             channel:push(line)
         end
     else
-        print(string.format('DEBUG.HOTRELOAD failed running %q and is disabled', fswatch_cmd))
+        io.stderr:write(string.format('DEBUG.HOTRELOAD failed running %q and is disabled\n', fswatch_cmd))
     end
     ]]):start(hotreload.channel, fswatch_cmd(R.path))
 end
@@ -45,7 +45,7 @@ function hotreload.update(dt)
         if line:startswith(hotreload.source) then
             line = line:sub(#hotreload.source + 2)
         end
-        print('DEBUG.HOTRELOAD', line)
+        DEBUG.LOG('DEBUG.HOTRELOAD %q', line)
         local previously_loaded = R:get(line)
         R:unload(line)
         if Recipe.is_recipe(previously_loaded) then

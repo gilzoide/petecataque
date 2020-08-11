@@ -10,12 +10,17 @@ DEBUG.hotreload = require 'DEBUG.hotreload'
 
 DEBUG.enabled = true
 
+function DEBUG.LOG(fmt, ...)
+    local msg = string.format(fmt, ...)
+    io.stderr:write(msg .. '\n')
+end
+
 function DEBUG.STARTTIMER(name)
     DEBUG[name] = love.timer.getTime()
 end
 
 function DEBUG.REPORTTIMER(name)
-    print('DEBUG.REPORTTIMER', name, love.timer.getTime() - DEBUG[name])
+    DEBUG.LOG('DEBUG.REPORTTIMER', name, love.timer.getTime() - DEBUG[name])
 end
 
 function DEBUG.FILE_LINE(obj)
@@ -54,8 +59,8 @@ function DEBUG.POP_CALL(recipe, name)
 end
 
 function DEBUG.DUMP_TRACE(msg)
-    print(msg)
-    print(stringified_traceback())
+    DEBUG.LOG(msg)
+    DEBUG.LOG(stringified_traceback())
 end
 
 function DEBUG.LOAD(arg)
@@ -68,8 +73,9 @@ function DEBUG.LOAD(arg)
     DEBUG.toolbar = R('DEBUG_Toolbar')()
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT + DEBUG.toolbar.height)
     DEBUG.scene:add(DEBUG.toolbar)
-    if arg[2] == '--debug' then
+    if arg[1] == '--debug' then
         require 'debugger'()
+        table.remove(arg, 1)
     end
 end
 
@@ -92,9 +98,9 @@ function DEBUG.WARN(fmt, ...)
     local msg = string.format(fmt, ...)
     local recipe_traceback = stringified_traceback()
     local lua_traceback = debug.traceback()
-    print(msg)
-    print(recipe_traceback)
-    print(lua_traceback)
+    DEBUG.LOG(msg)
+    DEBUG.LOG(recipe_traceback)
+    DEBUG.LOG(lua_traceback)
     --local error_message = DEBUG.error_message_recipe { message = msg, recipe_traceback = recipe_traceback, lua_traceback = lua_traceback }
     --DEBUG.error_scene:add_child(error_message)
     --table.insert(DEBUG.errors, { msg, recipe_traceback, lua_traceback })
@@ -107,7 +113,7 @@ end
 
 function love.errorhandler(msg)
     DEBUG.DUMP_TRACE(msg)
-    print(debug.traceback())
+    DEBUG.LOG(debug.traceback())
 end
 
 return DEBUG

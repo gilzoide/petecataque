@@ -176,8 +176,8 @@ function print_nested(...)
         local v = select(i, ...)
         t[i] = nested.encode(v)
     end
-    print(unpack(t))
-    print()
+    DEBUG.LOG(unpack(t))
+    DEBUG.LOG()
 end
 
 function iscallable(v)
@@ -213,7 +213,7 @@ function dump_state()
     if DEBUG.enabled then
         s = s .. '\n\n' .. nested.encode(DEBUG.scene)
     end
-    print(s, '\n')
+    DEBUG.LOG(s, '\n')
     love.system.setClipboardText(s)
 end
 
