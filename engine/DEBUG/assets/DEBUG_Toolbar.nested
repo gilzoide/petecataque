@@ -29,11 +29,15 @@ end`
         scale_up: [e]
         scale_down: [q]
         pause: [p]
+        dump: [d]
         ctrl_modifier: [lctrl rctrl]
         edit_faster: [lshift rshift]
     ]
 
-    [When "pause.pressed, ctrl_modifier.down": `do root:invoke('togglePause') end`]
+    [When
+        "pause.pressed, ctrl_modifier.down": `do root:invoke('togglePause') end`
+        "dump.pressed, ctrl_modifier.down": `do dump_state() end`
+    ]
 ]
 
 [Text id: TITLE font: `DEBUG.font` color: `fgColor`
