@@ -215,7 +215,6 @@ function iscallable(v)
     end
 end
 
-keyboard = {}
 mouse = {
     position = { love.mouse.getPosition() }
 }
@@ -229,7 +228,6 @@ R = Resources
 State = {
     scene = Scene,
     resources = Resources,
-    key = key,
     mouse = mouse,
     invoke_queue = InvokeQueue,
 }

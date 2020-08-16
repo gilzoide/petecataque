@@ -11,7 +11,7 @@ DEBUG.hotreload = require 'DEBUG.hotreload'
 DEBUG.enabled = true
 
 function DEBUG.LOG(...)
-    io.stderr:write(...)
+    io.stderr:write(table.concat({ ... }, '\t'))
     io.stderr:write('\n')
 end
 

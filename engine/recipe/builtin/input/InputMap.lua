@@ -1,29 +1,28 @@
 local InputMap = Recipe.new('InputMap')
 
-local aggregate_keys_mt = {
+local aggregate_from_mt = {
     __index = function(t, index)
         if index == 'down' then
-            local down, pressed, released = Input.aggregate_keys(t)
-            return down or pressed
+            return t.__from:is_down(unpack(t))
         elseif index == 'pressed' then
-            local down, pressed, released = Input.aggregate_keys(t)
-            return not down and pressed
+            return t.__from:is_pressed(unpack(t))
         elseif index == 'released' then
-            local down, pressed, released = Input.aggregate_keys(t)
-            return not down and released
+            return t.__from:is_released(unpack(t))
         end
     end,
+    __from = nil,
     __pairs = default_object_pairs,
 }
 
-function InputMap:init()
-    if self.key then
-        for action, keys in pairs(self.key) do
+Object.add_setter(InputMap, 'key', function(self, value)
+    if value then
+        for action, keys in pairs(value) do
             if type(keys) ~= 'table' then keys = { keys } end
-            self[action] = setmetatable(keys, aggregate_keys_mt)
+            keys.__from = Input.key
+            self[action] = setmetatable(keys, aggregate_from_mt)
         end
     end
-end
+end)
 
 Object.add_getter(InputMap, 'keyboard', function(self)
     return _ENV.keyboard

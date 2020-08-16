@@ -1,34 +1,19 @@
-local Input = {}
+local button_or_axis_table = require 'input.button_or_axis_table'
+
+local Input = {
+    key = button_or_axis_table.new(),
+    scancode = button_or_axis_table.new(),
+}
 
 -- Keyboard
 function Input.keypressed(key, scancode, isrepeat)
-    local info = { pressed = true, scancode = scancode, isrepeat = isrepeat }
-    _ENV.keyboard[key] = info
-    set_next_frame(info, 'pressed', nil)
+    Input.key:pressed(key)
+    Input.scancode:pressed(scancode)
 end
 
 function Input.keyreleased(key, scancode)
-    local info = { released = true, scancode = scancode }
-    _ENV.keyboard[key] = info
-    set_next_frame(_ENV.keyboard, key, nil)
-end
-
-function Input.aggregate_keys(keys)
-    local keyboard = _ENV.keyboard
-    local down, pressed, released = false, false, false
-    for i, key in ipairs(keys) do
-        local info = keyboard[key]
-        if info then
-            if info.released then
-                released = true
-            elseif info.pressed then
-                pressed = true
-            else
-                down = true
-            end
-        end
-    end
-    return down, pressed, released
+    Input.key:released(key)
+    Input.scancode:released(scancode)
 end
 
 -- Mouse
