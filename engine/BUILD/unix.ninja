@@ -4,3 +4,12 @@ rule copy
 rule zip
   command = zip -9 $out $in
 
+rule download
+  command = curl -L $url -o $out
+
+rule unzip
+  command = unzip $in -d $$(dirname $in)
+
+rule win32_exe
+  command = sh engine/BUILD/patch_windows_exe.sh $in $out
+
