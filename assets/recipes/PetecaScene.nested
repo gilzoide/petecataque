@@ -86,13 +86,22 @@ end`
 ]
 
 [InputMap id: ACTION
-    key: [
+    keycode: [
         p1left: a
         p1right: d
         p2left: left
         p2right: right
         pause: return
         toggle_music: m
+    ]
+    gamepad: [
+        [ #1
+            p1left: dpleft
+            p1right: dpright
+            p2left: x
+            p2right: b
+            pause: start
+        ]
     ]
 ]
 

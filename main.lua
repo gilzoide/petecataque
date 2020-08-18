@@ -37,3 +37,8 @@ love.wheelmoved = Input.wheelmoved
 
 love.keypressed = Input.keypressed
 love.keyreleased = Input.keyreleased
+
+love.joystickadded = Input.joystickadded
+love.joystickremoved = Input.joystickremoved
+love.gamepadpressed = Input.gamepadpressed
+love.gamepadreleased = Input.gamepadreleased

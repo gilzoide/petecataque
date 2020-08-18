@@ -1,18 +1,20 @@
-local button_or_axis_table = require 'input.button_or_axis_table'
+local button_table = require 'input.button_table'
+local gamepad = require 'input.gamepad'
 
 local Input = {
-    key = button_or_axis_table.new(),
-    scancode = button_or_axis_table.new(),
+    keycode = button_table.new(),
+    scancode = button_table.new(),
+    joystick = {},
 }
 
 -- Keyboard
 function Input.keypressed(key, scancode, isrepeat)
-    Input.key:pressed(key)
+    Input.keycode:pressed(key)
     Input.scancode:pressed(scancode)
 end
 
 function Input.keyreleased(key, scancode)
-    Input.key:released(key)
+    Input.keycode:released(key)
     Input.scancode:released(scancode)
 end
 
@@ -38,6 +40,23 @@ end
 function Input.wheelmoved(x, y)
     _ENV.mouse.wheelmoved = { x = x, y = y }
     set_next_frame(_ENV.mouse, 'wheelmoved', nil)
+end
+
+-- Gamepad
+function Input.joystickadded(joystick)
+    Input.joystick[joystick:getID()] = gamepad.new()
+end
+
+function Input.joystickremoved(joystick)
+    Input.joystick[joystick:getID()].connected = false
+end
+
+function Input.gamepadpressed(joystick, button)
+    Input.joystick[joystick:getID()]:pressed(button)
+end
+
+function Input.gamepadreleased(joystick, button)
+    Input.joystick[joystick:getID()]:released(button)
 end
 
 return Input

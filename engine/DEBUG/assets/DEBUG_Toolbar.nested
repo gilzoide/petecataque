@@ -21,7 +21,7 @@ togglePause: `do
 end`
 
 [InputMap id: KEY
-    key: [
+    keycode: [
         pan_up: [up w]
         pan_left: [left a]
         pan_down: [down s]

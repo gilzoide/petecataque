@@ -1,31 +1,40 @@
+local button_table = require 'input.button_table'
+
 local InputMap = Recipe.new('InputMap')
 
-local aggregate_from_mt = {
-    __index = function(t, index)
-        if index == 'down' then
-            return t.__from:is_down(unpack(t))
-        elseif index == 'pressed' then
-            return t.__from:is_pressed(unpack(t))
-        elseif index == 'released' then
-            return t.__from:is_released(unpack(t))
+local function update_actions_from(self, action_map, input, clear)
+    clear = not clear
+    for action_name, key in pairs(action_map) do
+        local action = clear and self[action_name] or button_table.EMPTY
+        if type(key) == 'table' then
+            for i = 1, #key do
+                action = button_table.merge_state(action, input[key[i]])
+            end
+        else
+            action = button_table.merge_state(action, input[key])
         end
-    end,
-    __from = nil,
-    __pairs = default_object_pairs,
-}
+        self[action_name] = action
+    end
+end
 
-Object.add_setter(InputMap, 'key', function(self, value)
-    if value then
-        for action, keys in pairs(value) do
-            if type(keys) ~= 'table' then keys = { keys } end
-            keys.__from = Input.key
-            self[action] = setmetatable(keys, aggregate_from_mt)
+function InputMap:init()
+    self:update()
+end
+
+function InputMap:update(dt)
+    local action_map = self.keycode
+    if action_map then update_actions_from(self, action_map, Input.keycode, true) end
+    action_map = self.scancode
+    if action_map then update_actions_from(self, action_map, Input.scancode, false) end
+    action_map = self.gamepad
+    if action_map then
+        for i, gamepad in ipairs(action_map) do
+            local input = Input.joystick[i]
+            if input and input.connected then
+                update_actions_from(self, gamepad, input.button, false)
+            end
         end
     end
-end)
-
-Object.add_getter(InputMap, 'keyboard', function(self)
-    return _ENV.keyboard
-end)
+end
 
 return InputMap
