@@ -5,17 +5,10 @@ petecaX: `WINDOW_WIDTH * 0.5`
 petecaY: 120
 metersByPixel: 60
 
-gamepaused: false
+gamepaused: `OPTIONS_MENU.isOpen`
 gameover: true
-pauseGame: `do
-    self.gamepaused = not self.gamepaused
-    if self.gamepaused then
-        score:showPaused()
-    else
-        score:hide()
-    end
-end`
 
+messages: { R.data score.data }
 options: { R options.save }
 toggleMusic: `do
     BGM.playing = options.MUSIC
@@ -28,6 +21,7 @@ end`
 init: `do
     love.graphics.setBackgroundColor(0.12, 0.12, 0.12)
     self:reset()
+    OPTIONS_MENU:toggleCollapsed()
 end`
 
 reset: `do
@@ -50,6 +44,13 @@ reset: `do
     player2:reset()
 end`
 
+setPlayerWon: `do
+    local self, winning = ...
+    self.gameover = true
+    OPTIONS_MENU.message = messages.wonTextFmt:format(winning)
+    OPTIONS_MENU:toggleCollapsed()
+end`
+
 [AudioSource id: BGM
     source: { R 'Stack - fase.ogg' }
     playing: `options.MUSIC` looping: true
@@ -63,11 +64,13 @@ end`
         goingLeft: `ACTION.p1left.down`
         goingRight: `ACTION.p1right.down`
         otherPlayer: `player2`
+        "set gameover": `do if value then root:setPlayerWon(2) end end`
     ]
     [Player id: player2 color: [1 1 0] flipX: true
         goingLeft: `ACTION.p2left.down`
         goingRight: `ACTION.p2right.down`
         otherPlayer: `player1`
+        "set gameover": `do if value then root:setPlayerWon(1) end end`
     ]
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
@@ -112,42 +115,29 @@ end`
     takingDamage: `player1.takingDamage`
 ]
 [Transform x: `WINDOW_WIDTH` sx: -1 sy: 1
-    [LifeBar color: `player2.color`
-        anchor: [0 0 0 0.4] margin: [10 10] height: 15
+    [LifeBar anchor: [0 0 0 0.4] margin: [10 10] height: 15
+        color: `player2.color`
         maxLife: `player2.maxLife`
         currentLife: `player2.currentLife`
         takingDamage: `player2.takingDamage`
     ]
 ]
 
-[Score id: score]
-
-[OptionsMenu id: OPTIONS_MENU paused: `gameover`
+[OptionsMenu id: OPTIONS_MENU
+    message: `messages.initialText`
     ontogglemusic: `root.toggleMusic`
-    ontogglecollapse: `do
-        local self, collapsing = ...
-        root:pauseGame(not collapsing)
-    end`
 ]
 
 [When
-    player1.gameover: `do
-        self.gameover = true
-        score:showWinner(2)
-    end`
-
-    player2.gameover: `do
-        self.gameover = true
-        score:showWinner(1)
-    end`
-
-    '!gameover, ACTION.pause.pressed': `do
+    'ACTION.pause.pressed': `do
+        if not OPTIONS_MENU.isOpen then
+            OPTIONS_MENU.message = messages.pauseText
+        end
         OPTIONS_MENU:toggleCollapsed()
     end`
 
     'gameover, ACTION.pause.pressed': `do
         self:reset()
-        score:hide()
         self.gameover = false
     end`
 

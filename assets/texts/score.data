@@ -1,0 +1,12 @@
+initialText: "PETECATAQUE
+Jogue a peteca no chão ou no amiguinho
+Use A/D e ←/→ para girar
+
+Aperte Enter para começar
+"
+
+pauseText: "Aperte Enter para continuar"
+
+wonTextFmt: "Vitória do jogador %d! =D
+Aperte Enter para recomeçar"
+

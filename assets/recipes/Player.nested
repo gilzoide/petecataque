@@ -20,6 +20,7 @@ reset: `do
     self.takingDamage = false
 end`
 
+takingDamage: `self._takingDamage or self.gameover`
 "set takingDamage": `do
     if value then
         self.currentLife = math.max(0, currentLife - 1)
