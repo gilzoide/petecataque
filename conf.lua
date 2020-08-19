@@ -5,9 +5,15 @@ end
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 
+do
+    local success, m = pcall(require, 'DEBUG')  -- DEBUG is excluded on release
+    DEBUG = success and m or setmetatable({ enabled = false }, require 'empty')
+    assert(DEBUG.enabled ~= nil, "FIXME")
+end
+
 function love.conf(t)
     t.window.width = WINDOW_WIDTH
-    t.window.height = WINDOW_HEIGHT
+    t.window.height = WINDOW_HEIGHT + (DEBUG.enabled and DEBUG.toolbar_height or 0)
     t.identity = 'petecataque'
     t.window.title = 'PETECATAQUE'
     t.window.icon = 'assets/icon.png'

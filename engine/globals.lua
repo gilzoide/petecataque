@@ -20,11 +20,6 @@ function default_object_pairs(self)
         end
     end)
 end
-do
-    local success, m = pcall(require, 'DEBUG')  -- DEBUG is excluded on release
-    DEBUG = success and m or setmetatable({ enabled = false }, require 'empty')
-    assert(DEBUG.enabled ~= nil, "FIXME")
-end
 nested = require 'nested'
 nested_function = require 'nested.function'
 nested_ordered = require 'nested.ordered'

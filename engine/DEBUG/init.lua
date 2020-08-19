@@ -4,6 +4,7 @@ local DEBUG = {
     x = 0, y = 0,
     sx = 1, sy = 1,
     errors = {},
+    toolbar_height = 32,
 }
 
 DEBUG.hotreload = require 'DEBUG.hotreload'
@@ -76,7 +77,6 @@ function DEBUG.LOAD(arg)
     --DEBUG.error_message_recipe = R('DEBUG_error_message')
     --DEBUG.scene:add(DEBUG.error_scene)
     DEBUG.toolbar = R('DEBUG_Toolbar')()
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT + DEBUG.toolbar.height)
     DEBUG.scene:add(DEBUG.toolbar)
     if arg[1] == '--debug' then
         require 'debugger'()
