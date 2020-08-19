@@ -14,12 +14,14 @@ toggle: `do
     self:invoke('ontoggle', self.checked)
 end`
 
-[Button id: BUTTON
+[MouseArea 
+    [When "button.1.released: inside": `do root:toggle() end`]
+]
+
+[Rectangle id: BUTTON
     anchor: [0 0 0 0]
     width: `root.size` height: `root.size`
     rx: `size * 0.2`
-
-    onclick: `do root:invoke('toggle') end`
 
     [Graphics hidden: `not root.checked`
         draw: `do
