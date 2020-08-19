@@ -3,6 +3,6 @@ root = true
 [*]
 insert_final_newline = true
 
-[*.lua]
+[*.{lua,nested,data,points,save}]
 indent_style = space
 indent_size = 4
