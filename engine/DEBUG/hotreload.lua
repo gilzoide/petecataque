@@ -45,7 +45,7 @@ function hotreload.update(dt)
         if line:startswith(hotreload.source) then
             line = line:sub(#hotreload.source + 2)
         end
-        DEBUG.LOG('DEBUG.HOTRELOAD %q', line)
+        DEBUG.LOGF('DEBUG.HOTRELOAD %q', line)
         local previously_loaded = R:get(line)
         R:unload(line)
         if Recipe.is_recipe(previously_loaded) then
