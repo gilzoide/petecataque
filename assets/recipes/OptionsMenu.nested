@@ -20,6 +20,8 @@ end`
 
 isOpen: `TOGGLE_TWEEN.value > 0`
 
+message: "MESSAGE"
+
 [Tween id: TOGGLE_TWEEN
     from: 0 to: 1
     duration: 0.5
@@ -34,7 +36,12 @@ isOpen: `TOGGLE_TWEEN.value > 0`
         lineColor: `borderColor`
         marginY: [50 -1]
 
-        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [30 30 62 -30]
+        [Text id: TITLE text: PETECATAQUE font: { R Gontserrat-Medium.ttf 26 }
+            align: center
+            marginTop: 15
+        ]
+
+        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [60 30 92 -30]
             checked: `options.MUSIC`
             ontoggle: `do
                 options.MUSIC = self.checked
@@ -68,10 +75,6 @@ isOpen: `TOGGLE_TWEEN.value > 0`
             anchorTop: 0.4
         ]
 
-#        [Graphics draw: `do
-#            local y = MESSAGE.top
-#            love.graphics.line(0, y, parent.width, y)
-#        end`]
     ]
 
     [Button id: TOGGLE_HIDDEN
