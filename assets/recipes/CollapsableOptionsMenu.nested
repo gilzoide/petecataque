@@ -1,0 +1,54 @@
+Frame
+
+menuWidth: 600
+menuHeight: 500
+
+anchorX: [0.5 0.5] anchorY: [0 0]
+marginTop: `-menuHeight`
+marginLeft: `-menuWidth * 0.5`
+marginRight: `menuWidth * 0.5`
+
+bgColor: [0.12 0.12 0.12]
+borderColor: [1 1 1]
+
+toggleCollapsed: `do
+    TOGGLE_TWEEN.running = true
+    self:invoke('ontogglecollapse', TOGGLE_TWEEN.rewinding)
+end`
+
+isOpen: `TOGGLE_TWEEN.value > 0`
+
+message: "MESSAGE"
+
+[Tween id: TOGGLE_TWEEN
+    from: 0 to: 1
+    duration: 0.5
+    yoyo: true
+    running: false
+    easing: inOutCubic
+]
+
+[Transform y: `TOGGLE_TWEEN.value * menuHeight`
+    [OptionsMenu id: MENU
+        marginY: [50 -1]
+
+        fillColor: `bgColor`
+        lineColor: `borderColor`
+
+        message: `root.message`
+    ]
+
+    [Button id: TOGGLE_HIDDEN
+        anchorX: [0.5 0.5] anchorY: [1 1]
+        marginX: [-32 32]
+        height: 32
+
+        onclick: `do root:toggleCollapsed() end`
+
+        [Text id: TOGGLE_HIDDEN_TEXT font: { R Symbola.ttf 24 }
+            text: ↵
+            color: `borderColor`
+            align: center valign: center
+        ]
+    ]
+]

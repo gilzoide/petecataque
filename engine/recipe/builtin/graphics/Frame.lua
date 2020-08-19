@@ -23,7 +23,7 @@ function Frame:calculate_layout()
     self.dirty = false
 end
 
-Frame.dirty = false
+Frame.dirty = true
 
 local root_frame = {
     x = 0, width = WINDOW_WIDTH,

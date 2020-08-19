@@ -1,0 +1,13 @@
+# Rectangle lineColor: [1 1 1]
+Frame
+
+height: 32
+
+font: { R Gontserrat-Medium.ttf 24 }
+
+title: "Player X"
+[Text id: CONTROLS_TITLE_TEXT text: `root.title` font: `root.font`
+    valign: center
+]
+
+[ControlChooser anchorX: [0.3 1]]

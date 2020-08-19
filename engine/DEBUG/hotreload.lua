@@ -80,6 +80,7 @@ end
 
 function hotreload.copy_state(from_obj, to_obj)
     if from_obj and to_obj and from_obj[1] == to_obj[1] then
+        DEBUG.PUSH_CALL(from_obj, "copy_state")
         for k, v in rawpairs(from_obj) do
             if type(k) == 'string' then
                 if not k:startswith('_') then
@@ -100,6 +101,7 @@ function hotreload.copy_state(from_obj, to_obj)
         for i = 2, #to_obj do
             if not hotreload.copy_state(from_obj[i], to_obj[i]) then break end
         end
+        DEBUG.POP_CALL(from_obj, "copy_state")
         return true
     else
         return false

@@ -1,96 +1,37 @@
-Frame
+Rectangle
 
-menuWidth: 600
-menuHeight: 500
-
-anchorX: [0.5 0.5] anchorY: [0 0]
-marginTop: `-menuHeight`
-marginLeft: `-menuWidth * 0.5`
-marginRight: `menuWidth * 0.5`
-
-bgColor: [0.12 0.12 0.12]
-borderColor: [1 1 1]
+fillColor: [0.12 0.12 0.12]
+lineColor: [1 1 1]
 
 options: { R options.save }
 
-toggleCollapsed: `do
-    TOGGLE_TWEEN.running = true
-    self:invoke('ontogglecollapse', TOGGLE_TWEEN.rewinding)
-end`
-
-isOpen: `TOGGLE_TWEEN.value > 0`
-
 message: "MESSAGE"
 
-[Tween id: TOGGLE_TWEEN
-    from: 0 to: 1
-    duration: 0.5
-    yoyo: true
-    running: false
-    easing: inOutCubic
+[Text id: TITLE text: PETECATAQUE font: { R Gontserrat-Medium.ttf 26 }
+    align: center
+    marginTop: 15
 ]
 
-[Transform y: `TOGGLE_TWEEN.value * menuHeight`
-    [Rectangle id: MENU
-        fillColor: `bgColor`
-        lineColor: `borderColor`
-        marginY: [50 -1]
-
-        [Text id: TITLE text: PETECATAQUE font: { R Gontserrat-Medium.ttf 26 }
-            align: center
-            marginTop: 15
-        ]
-
-        [CheckBox id: MUSIC anchor: [0 0 0 1] margin: [60 30 92 -30]
-            checked: `options.MUSIC`
-            ontoggle: `do
-                options.MUSIC = self.checked
-                options:save()
-                root:invoke('ontogglemusic')
-            end`
-
-            [Text id: CHECK_MUSIC_TEXT font: { R Gontserrat-Medium.ttf 24 }
-                marginLeft: `MUSIC.size + 10`
-                text: Música
-                valign: center
-            ]
-
-            [Text font: { R Symbola.ttf 24 }
-                marginTop: 4
-                marginLeft: `CHECK_MUSIC_TEXT.left + CHECK_MUSIC_TEXT.textWidth + 10`
-                text: `MUSIC.checked and "🔊" or "🔈"`
-                valign: center
-            ]
-
-            [Text font: { R Gontserrat-Medium.ttf 24 }
-                text: M
-                align: right
-            ]
-        ]
-
-        [Text id: MESSAGE text: `root.message`
-            font: { R Gontserrat-Medium.ttf 26 }
-            align: center valign: center
-
-            anchorTop: 0.4
-        ]
-
+[Frame margin: [60 30 -30 -30]
+    [OptionsMenuMusic id: MUSIC
+        anchor: [0 0 0 1]
+        ontogglemusic: `root.ontogglemusic`
     ]
 
-    [Button id: TOGGLE_HIDDEN
-        # lineColor: `borderColor`
-        # fillColor: `bgColor`
+    [OptionsMenuControls anchor: [0 0 0 1]
+        title: "Player 1"
+        marginTop: 60
+    ]
+    [OptionsMenuControls anchor: [0 0 0 1]
+        title: "Player 2"
+        marginTop: 100
+    ]
 
-        anchorX: [0.5 0.5] anchorY: [1 1]
-        marginX: [-32 32]
-        height: 32
+    [Text id: MESSAGE text: `root.message`
+        font: { R Gontserrat-Medium.ttf 26 }
+        align: center valign: center
 
-        onclick: `do root:toggleCollapsed() end`
-
-        [Text id: TOGGLE_HIDDEN_TEXT font: { R Symbola.ttf 24 }
-            text: ↵
-            color: `borderColor`
-            align: center valign: center
-        ]
+        anchorTop: 0.4
     ]
 ]
+

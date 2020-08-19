@@ -123,7 +123,7 @@ end`
     ]
 ]
 
-[OptionsMenu id: OPTIONS_MENU
+[CollapsableOptionsMenu id: OPTIONS_MENU
     message: `messages.initialText`
     ontogglemusic: `root.toggleMusic`
 ]

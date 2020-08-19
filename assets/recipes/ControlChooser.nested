@@ -1,0 +1,33 @@
+Frame
+
+font: { R Gontserrat-Medium.ttf 24 }
+
+title: keyboard
+
+current: 0
+"set current": `do
+    local joystickCount = love.joystick.getJoystickCount()
+    if value < 0 then
+        value = joystickCount
+    elseif value > joystickCount then
+        value = 0
+    end
+
+    if value > 0 then
+        self.title = string.format("gamepad %d", value)
+    else
+        self.title = "keyboard"
+    end
+    return value
+end`
+
+selectNext: `do self.current = self.current + 1 end`
+selectPrevious: `do self.current = self.current - 1 end`
+
+[Text text: < align: left valign: center anchorX: [0 0.5]
+    [MouseArea [When "button.1.released: inside": `do root:selectPrevious() end`]]
+]
+[Text text: > align: right valign: center anchorX: [0.5 1]
+    [MouseArea [When "button.1.released: inside": `do root:selectNext() end`]]
+]
+[Text text: `root.title` align: center valign: center]
