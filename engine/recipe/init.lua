@@ -45,6 +45,15 @@ function Recipe.invoke(recipe, method_name, obj, ...)
     end
     return result
 end
+function Recipe.invoke_raw(recipe, method_name, obj, ...)
+    local method, result = rawget(recipe, method_name)
+    if method then
+        DEBUG.PUSH_CALL(recipe, method_name)
+        result = safepack(method(obj, ...))
+        DEBUG.POP_CALL(recipe, method_name)
+    end
+    return result
+end
 function Recipe.invoke_super(recipe, ...)
     local super = recipe.__super
     return super and Recipe.invoke(super, ...)

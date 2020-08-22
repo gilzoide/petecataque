@@ -10,7 +10,8 @@ gameover: true
 
 messages: { R.data score.data }
 options: { R options.save }
-toggleMusic: `do
+controlMap: `R('control_map.data')`
+refreshMusic: `do
     BGM.playing = options.MUSIC
 end`
 
@@ -61,16 +62,18 @@ end`
 
     [Arena id: arena]
     [Player id: player1 color: [0 1 0]
-        goingLeft: `ACTION.p1left.down`
-        goingRight: `ACTION.p1right.down`
+        rotateValue: `P1_CONTROLLER:button_to_axis(unpack(controlMap.P1AXIS))`
         otherPlayer: `player2`
         "set gameover": `do if value then root:setPlayerWon(2) end end`
+
+        [Controller id: P1_CONTROLLER device: `controlMap.P1DEVICE`]
     ]
     [Player id: player2 color: [1 1 0] flipX: true
-        goingLeft: `ACTION.p2left.down`
-        goingRight: `ACTION.p2right.down`
+        rotateValue: `P2_CONTROLLER:button_to_axis(unpack(controlMap.P2AXIS))`
         otherPlayer: `player1`
         "set gameover": `do if value then root:setPlayerWon(1) end end`
+
+        [Controller id: P2_CONTROLLER device: `controlMap.P2DEVICE`]
     ]
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
@@ -88,24 +91,9 @@ end`
     ]
 ]
 
-[InputMap id: ACTION
-    keycode: [
-        p1left: a
-        p1right: d
-        p2left: left
-        p2right: right
-        pause: return
-        toggle_music: m
-    ]
-    gamepad: [
-        [ #1
-            p1left: dpleft
-            p1right: dpright
-            p2left: x
-            p2right: b
-            pause: start
-        ]
-    ]
+[Keyboard id: ACTION
+    pause: `self['return']`
+    toggle_music: `m`
 ]
 
 [LifeBar anchor: [0 0 0 0.4] margin: [10 10] height: 15
@@ -125,7 +113,7 @@ end`
 
 [CollapsableOptionsMenu id: OPTIONS_MENU
     message: `messages.initialText`
-    ontogglemusic: `root.toggleMusic`
+    ontogglemusic: `root.refreshMusic`
 ]
 
 [When
@@ -141,6 +129,6 @@ end`
         self.gameover = false
     end`
 
-    'ACTION.toggle_music.pressed': `do OPTIONS_MENU.MUSIC:toggle() end`
+    'ACTION.toggle_music.pressed': `do OPTIONS_MENU.MENU.MUSIC:toggle() end`
 ]
 

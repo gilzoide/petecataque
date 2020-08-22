@@ -8,6 +8,8 @@ damageColor: [1 0 0]
 bodyColor: `self.takingDamage and damageColor or color`
 racketColor: [0 1 1]
 angularVelocity: 10
+rotateValue: 0
+rotateDeadzone: 0.2
 # flipX
 # takingDamage: true
 
@@ -44,7 +46,8 @@ end`
     ]
 ]
 
-[When
-    "goingLeft !goingRight": `do body.angularVelocity = -angularVelocity end`
-    "!goingLeft goingRight": `do body.angularVelocity = angularVelocity end`
-]
+update: `do
+    if math.abs(rotateValue) > rotateDeadzone then
+        body.angularVelocity = angularVelocity * rotateValue
+    end
+end`

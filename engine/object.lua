@@ -42,6 +42,8 @@ local function apply_initial_setters(recipe, obj)
         end
         recipe = recipe.__super
     end
+
+    Input.register_events(obj)
 end
 
 function Object.new(recipe, obj, parent, root_param)
@@ -77,9 +79,9 @@ function Object.new(recipe, obj, parent, root_param)
     end
 
     for super in Recipe.iter_super_chain(recipe) do
-        Recipe.invoke(super, 'init', obj)
+        Recipe.invoke_raw(super, 'init', obj)
     end
-    Recipe.invoke(recipe, 'init', obj)
+    Recipe.invoke_raw(recipe, 'init', obj)
 
     DEBUG.POP_CALL(recipe, "new")
     
@@ -230,10 +232,10 @@ function Object:set_method_enabled(method_name, enable)
     return enable
 end
 function Object:enable_method(method_name)
-    return self:set_method_enabled(method_name, true)
+    return Object.set_method_enabled(self, method_name, true)
 end
 function Object:disable_method(method_name)
-    return self:set_method_enabled(method_name, false)
+    return Object.set_method_enabled(self, method_name, false)
 end
 
 return Object
