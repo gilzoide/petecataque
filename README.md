@@ -1,5 +1,5 @@
 # PETECATAQUE
-Game made as a proof of concept for a crazy game engine prototyping,
+Game made as a proof of concept for a game engine prototype,
 using [Lua](https://www.lua.org/), [LÖVE](https://love2d.org/) and
 [Nested](https://github.com/gilzoide/nested).
 
@@ -8,7 +8,7 @@ using [Lua](https://www.lua.org/), [LÖVE](https://love2d.org/) and
 - __Gontserrat__ font by Ospiro: https://ospiro.com/products-services/gontserrat/
 - __debugger.lua__ library by Scott Lembcke and Howling Moon Software: https://github.com/slembcke/debugger.lua
 - __Easing__ library by Tweener authors, Yuichi Tateno, Emmanuel Oga: https://github.com/EmmanuelOga/easing
-- __Stack - Fase__ music by gilzoide: https://soundcloud.com/gilzoide/stack-fase
+- __Stack - Fase__ music by gilzoide: https://opengameart.org/content/party-and-gameover-loop
 - __Symbola__ font by George Douros: https://fontlibrary.org/en/font/symbola
 - __ninja_syntax.lua__ library by Charles Grunwald (Juntalis): https://github.com/juntalis/ninja_syntax.lua
 
