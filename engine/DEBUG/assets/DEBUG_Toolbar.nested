@@ -56,8 +56,8 @@ end`
     ]
 
     [Image image: `PAUSE_BUTTON.appPaused and playImage or pauseImage`
-        pauseImage: { R DEBUG_Pause.png }
-        playImage: { R DEBUG_Play.png }
+        pauseImage: `R("DEBUG_Pause.png")`
+        playImage: `R("DEBUG_Play.png")`
         x: 0 y: 0
     ]
 ]

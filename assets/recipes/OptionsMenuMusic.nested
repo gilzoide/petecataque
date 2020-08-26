@@ -2,8 +2,8 @@ CheckBox
 
 height: 32
 
-options: { R options.save }
-font: { R Gontserrat-Medium.ttf 24 }
+options: `R("options.save")`
+font: `R("Gontserrat-Medium.ttf", 24)`
 
 checked: `options.MUSIC`
 ontoggle: `do
@@ -18,7 +18,7 @@ end`
     valign: center
 ]
 
-[Text font: { R Symbola.ttf 24 }
+[Text font: `R("Symbola.ttf", 24)`
     marginTop: 4
     marginLeft: `CHECK_MUSIC_TEXT.left + CHECK_MUSIC_TEXT.textWidth + 10`
     text: `root.checked and "🔊" or "🔈"`

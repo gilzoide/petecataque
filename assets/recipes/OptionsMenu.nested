@@ -3,11 +3,11 @@ Rectangle
 fillColor: [0.12 0.12 0.12]
 lineColor: [1 1 1]
 
-options: { R options.save }
+options: `R("options.save")`
 
 message: "MESSAGE"
 
-[Text id: TITLE text: PETECATAQUE font: { R Gontserrat-Medium.ttf 26 }
+[Text id: TITLE text: PETECATAQUE font: `R("Gontserrat-Medium.ttf", 26)`
     align: center
     marginTop: 15
 ]
@@ -28,7 +28,7 @@ message: "MESSAGE"
     ]
 
     [Text id: MESSAGE text: `root.message`
-        font: { R Gontserrat-Medium.ttf 26 }
+        font: `R("Gontserrat-Medium.ttf", 26)`
         align: center valign: center
 
         anchorTop: 0.4

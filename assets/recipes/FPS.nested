@@ -1,9 +1,0 @@
-font: { R Gontserrat-Medium.ttf 14 }
-
-[Graphics 
-    draw: {
-        setColor 1 1 1;
-        setFont font;
-    }
-    [Print text: `string.format("FPS: %d", love.timer.getFPS())` limit: `WINDOW_WIDTH` align: right]
-]

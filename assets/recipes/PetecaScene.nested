@@ -8,9 +8,9 @@ metersByPixel: 60
 gamepaused: `OPTIONS_MENU.isOpen`
 gameover: true
 
-messages: { R.data score.data }
-options: { R options.save }
-controlMap: `R('control_map.data')`
+messages: `R("score.data")`
+options: `R("options.save")`
+controlMap: `R("control_map.data")`
 refreshMusic: `do
     BGM.playing = options.MUSIC
 end`
@@ -53,7 +53,7 @@ setPlayerWon: `do
 end`
 
 [AudioSource id: BGM
-    source: { R 'Stack - fase.ogg' }
+    source: `R("Stack - fase.ogg")`
     playing: `options.MUSIC` looping: true
 ]
 

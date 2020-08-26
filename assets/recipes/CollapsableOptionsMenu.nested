@@ -45,7 +45,7 @@ message: "MESSAGE"
 
         onclick: `do root:toggleCollapsed() end`
 
-        [Text id: TOGGLE_HIDDEN_TEXT font: { R Symbola.ttf 24 }
+        [Text id: TOGGLE_HIDDEN_TEXT font: `R("Symbola.ttf", 24)`
             text: ↵
             color: `borderColor`
             align: center valign: center

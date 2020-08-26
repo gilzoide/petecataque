@@ -1,6 +1,6 @@
 Frame
 
-font: { R Gontserrat-Medium.ttf 24 }
+font: `R("Gontserrat-Medium.ttf", 24)`
 
 title: keyboard
 

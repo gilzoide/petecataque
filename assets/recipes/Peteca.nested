@@ -10,8 +10,8 @@ lineWidth: 2
 outlineColor: `lastToHit and lastToHit.color or self.color`
 impulseIntensity: 100
 
-baseShapePoints: { R Peteca_base_poly.points base baseHeight }
-featherShapePoints: { R Peteca_feather_poly.points base baseHeight }
+baseShapePoints: `R("Peteca_base_poly.points", base, baseHeight)`
+featherShapePoints: `R("Peteca_feather_poly.points", base, baseHeight)`
 
 [Body id: body x: `root.x` y: `root.y` type: dynamic
     mass: `mass`
@@ -26,17 +26,17 @@ featherShapePoints: { R Peteca_feather_poly.points base baseHeight }
         [Fixture tag: PETECA restitution: 0.9]
     ]
 
-    [Graphics draw: {
-        setLineJoin bevel;
-        setLineWidth lineWidth;
-        setColor colorBase;
-        polygon fill baseShapePoints;
-        setColor colorFeather;
-        polygon fill featherShapePoints;
-        setColor root.outlineColor;
-        polygon \line baseShapePoints;
-        polygon \line featherShapePoints;
-    }]
+    [Graphics draw: `do
+        love.graphics.setLineJoin('bevel')
+        love.graphics.setLineWidth(lineWidth)
+        love.graphics.setColor(colorBase)
+        love.graphics.polygon('fill', baseShapePoints)
+        love.graphics.setColor(colorFeather)
+        love.graphics.polygon('fill', featherShapePoints)
+        love.graphics.setColor(root.outlineColor)
+        love.graphics.polygon('line', baseShapePoints)
+        love.graphics.polygon('line', featherShapePoints)
+    end`]
 ]
 
 impulse: `do

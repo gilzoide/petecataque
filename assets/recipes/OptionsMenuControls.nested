@@ -3,7 +3,7 @@ Frame
 
 height: 32
 
-font: { R Gontserrat-Medium.ttf 24 }
+font: `R("Gontserrat-Medium.ttf", 24)`
 
 title: "Player X"
 [Text id: CONTROLS_TITLE_TEXT text: `root.title` font: `root.font`

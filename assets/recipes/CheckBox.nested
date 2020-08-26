@@ -7,7 +7,7 @@ color: [1 1 1]
 lineColor: `color`
 lineWidth: `size * 0.1`
 borderWidth: `size * 0.05`
-checkedPoints: { R CheckMark.points size size }
+checkedPoints: `R("CheckMark.points", size, size)`
 
 toggle: `do
     self.checked = not self.checked

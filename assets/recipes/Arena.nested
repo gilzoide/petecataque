@@ -1,7 +1,7 @@
-wallPoints: { R Wall.points WINDOW_WIDTH WINDOW_HEIGHT }
-groundPoints: { R Ground.points WINDOW_WIDTH WINDOW_HEIGHT }
+wallPoints: `R("Wall.points", WINDOW_WIDTH, WINDOW_HEIGHT)`
+groundPoints: `R("Ground.points", WINDOW_WIDTH, WINDOW_HEIGHT)`
 
-[Image image: { R icon.png }
+[Image image: `R("icon.png")`
     x: `(WINDOW_WIDTH - width) * 0.5` y: `(WINDOW_HEIGHT - height) * 0.5`
     color: [1 1 1 0.5]
 ]
