@@ -75,7 +75,7 @@ function wrapper.new(name, options)
     if added_getters then
         recipe.__init_recipe = function(recipe, child)
             for k, v in pairs(added_getters) do
-                local value_in_child = child[k]
+                local value_in_child = rawget(child, k)
                 if value_in_child then
                     child['_' .. k], child[k] = value_in_child, nil
                 end
