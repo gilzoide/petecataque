@@ -32,13 +32,13 @@ function MouseArea:draw()
     self.__inside = self.target:hitTestFromOrigin(x, y)
 end
 
-Object.add_getter(MouseArea, 'mouse', function(self)
+MouseArea:add_getter('mouse', function(self)
     return _ENV.mouse
 end)
-Object.add_getter(MouseArea, 'moved', function(self)
+MouseArea:add_getter('moved', function(self)
     return self.__inside and _ENV.mouse.moved or nil
 end)
-Object.add_getter(MouseArea, 'wheelmoved', function(self)
+MouseArea:add_getter('wheelmoved', function(self)
     return self.__inside and _ENV.mouse.wheelmoved or nil
 end)
 

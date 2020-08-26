@@ -1,4 +1,4 @@
-local Graphics = Recipe.new('Graphics', love.graphics)
+local Graphics = Recipe.new('Graphics')
 
 Graphics.draw_push = 'all'
 

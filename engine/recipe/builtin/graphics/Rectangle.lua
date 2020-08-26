@@ -1,4 +1,4 @@
-local Rectangle = Recipe.new('Rectangle', 'Frame.lua')
+local Rectangle = Recipe.new('Rectangle', 'Frame')
 
 -- rx = nil, ry = nil, segments = nil,
 

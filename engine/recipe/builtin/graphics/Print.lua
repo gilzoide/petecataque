@@ -20,6 +20,6 @@ function Print:draw()
     end
 end
 
-Object.add_setter(Print, "text", disable_draw_if_empty_text)
+Print:add_setter("text", disable_draw_if_empty_text)
 
 return Print

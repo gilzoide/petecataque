@@ -143,6 +143,6 @@ end`
 ]
 
 [Graphics draw: `do
-    setColor(root.fgColor)
-    line(0, 0, self.width, 0)
+    love.graphics.setColor(root.fgColor)
+    love.graphics.line(0, 0, self.width, 0)
 end`]

@@ -47,77 +47,77 @@ function Frame:set_dirty(value)
         self:invoke_next_frame('ondirty')
     end
 end
-Object.add_setter(Frame, 'marginTop', Frame.set_dirty)
-Object.add_setter(Frame, 'marginLeft', Frame.set_dirty)
-Object.add_setter(Frame, 'marginBottom', Frame.set_dirty)
-Object.add_setter(Frame, 'marginRight', Frame.set_dirty)
-Object.add_setter(Frame, 'anchorTop', Frame.set_dirty)
-Object.add_setter(Frame, 'anchorLeft', Frame.set_dirty)
-Object.add_setter(Frame, 'anchorBottom', Frame.set_dirty)
-Object.add_setter(Frame, 'anchorRight', Frame.set_dirty)
+Frame:add_setter('marginTop', Frame.set_dirty)
+Frame:add_setter('marginLeft', Frame.set_dirty)
+Frame:add_setter('marginBottom', Frame.set_dirty)
+Frame:add_setter('marginRight', Frame.set_dirty)
+Frame:add_setter('anchorTop', Frame.set_dirty)
+Frame:add_setter('anchorLeft', Frame.set_dirty)
+Frame:add_setter('anchorBottom', Frame.set_dirty)
+Frame:add_setter('anchorRight', Frame.set_dirty)
 
-Object.add_getter(Frame, 'rect', function(self)
+Frame:add_getter('rect', function(self)
     return { self.top, self.left, self.bottom, self.right }
 end)
 
-Object.add_setter(Frame, 'width', function(self, value)
+Frame:add_setter('width', function(self, value)
     self.marginRight = self.marginLeft + value
     return Object.NO_RAWSET
 end)
-Object.add_setter(Frame, 'height', function(self, value)
+Frame:add_setter('height', function(self, value)
     self.marginBottom = self.marginTop + value
     return Object.NO_RAWSET
 end)
 
-Object.add_getter(Frame, 'anchor', function(self)
+Frame:add_getter('anchor', function(self)
     return { self.anchorTop, self.anchorLeft, self.anchorBottom, self.anchorRight }
 end)
-Object.add_setter(Frame, 'anchor', function(self, value)
+Frame:add_setter('anchor', function(self, value)
     self.anchorTop = value.top or value[1] or 0
     self.anchorLeft = value.left or value[2] or 0
     self.anchorBottom = value.bottom or value[3] or 1
     self.anchorRight = value.right or value[4] or 1
     return Object.NO_RAWSET
 end)
-Object.add_getter(Frame, 'anchorX', function(self)
+Frame:add_getter('anchorX', function(self)
     return { self.anchorLeft, self.anchorRight }
 end)
-Object.add_setter(Frame, 'anchorX', function(self, value)
+Frame:add_setter('anchorX', function(self, value)
     self.anchorLeft = value.left or value[1] or 0
     self.anchorRight = value.right or value[2] or 1
     return Object.NO_RAWSET
 end)
-Object.add_getter(Frame, 'anchorY', function(self)
+Frame:add_getter('anchorY', function(self)
     return { self.anchorTop, self.anchorBottom }
 end)
-Object.add_setter(Frame, 'anchorY', function(self, value)
+Frame:add_setter('anchorY', function(self, value)
     self.anchorTop = value.top or value[1] or 0
     self.anchorBottom = value.bottom or value[2] or 1
     return Object.NO_RAWSET
 end)
 
-Object.add_getter(Frame, 'margin', function(self)
+Frame:add_getter('margin', function(self)
     return { self.marginTop, self.marginLeft, self.marginBottom, self.marginRight }
 end)
-Object.add_setter(Frame, 'margin', function(self, value)
+Frame:add_setter('margin', function(self, value)
     self.marginTop = value.top or value[1] or 0
     self.marginLeft = value.left or value[2] or 0
     self.marginBottom = value.bottom or value[3] or 0
     self.marginRight = value.right or value[4] or 0
     return Object.NO_RAWSET
 end)
-Object.add_getter(Frame, 'marginX', function(self)
+Frame:add_getter('marginX', function(self)
     return { self.marginLeft, self.marginRight }
 end)
-Object.add_setter(Frame, 'marginX', function(self, value)
+Frame:add_setter('marginX', function(self, value)
     self.marginLeft = value.left or value[1] or 0
     self.marginRight = value.right or value[2] or 0
     return Object.NO_RAWSET
 end)
-Object.add_getter(Frame, 'marginY', function(self)
+Frame:add_getter('marginY', function(self)
     return { self.marginTop, self.marginBottom }
 end)
-Object.add_setter(Frame, 'marginY', function(self, value)
+Frame:add_setter('marginY', function(self, value)
     self.marginTop = value.top or value[1] or 0
     self.marginBottom = value.bottom or value[2] or 0
     return Object.NO_RAWSET

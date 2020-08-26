@@ -2,26 +2,6 @@ local Expression = require 'expression'
 
 local Object = {}
 
-Object.SET_METHOD_PREFIX = 'set '
-function Object.setter_method_name(field)
-    return Object.SET_METHOD_PREFIX .. field
-end
-
-function Object.add_getter(self_or_recipe, field_name, getter_or_func)
-    if not Expression.is_getter(getter_or_func) then
-        getter_or_func = Expression.getter_from_function(getter_or_func)
-    end
-    self_or_recipe[field_name] = getter_or_func
-    return getter_or_func
-end
-
-Object.SET_METHOD_ARGUMENT_NAMES = { 'value' }
-function Object.add_setter(self_or_recipe, field_name, function_or_expression)
-    Expression.bind_argument_names(function_or_expression, Object.SET_METHOD_ARGUMENT_NAMES)
-    self_or_recipe[Object.setter_method_name(field_name)] = function_or_expression
-    return function_or_expression
-end
-
 Object.NO_RAWSET = {}
 
 function Object.is_object(v)
@@ -29,9 +9,11 @@ function Object.is_object(v)
 end
 
 local function apply_initial_setters(recipe, obj)
+    local already_processed = {}
     while recipe.__super do
         for k, v in nested.kpairs(recipe) do
-            if type(k) == 'string' and recipe[Object.setter_method_name(k)] then
+            if not already_processed[k] and type(k) == 'string' and recipe:setter_for(k) then
+                already_processed[k] = true
                 if Expression.is_getter(v) then
                     DEBUG.PUSH_CALL(recipe, k)
                     v = v(obj)
@@ -61,9 +43,9 @@ function Object.new(recipe, obj, parent, root_param)
     end
 
     for super in Recipe.iter_super_chain(recipe) do
-        Recipe.invoke(super, 'preinit', obj)
+        Recipe.invoke_raw(super, 'preinit', obj)
     end
-    Recipe.invoke(recipe, 'preinit', obj)
+    Recipe.invoke_raw(recipe, 'preinit', obj)
 
     apply_initial_setters(recipe, obj)
 
@@ -141,8 +123,7 @@ end
 function Object:__newindex(index, value)
     if type(index) == 'string' then
         local recipe = rawget(self, '__recipe')
-        local set_method_index = Object.setter_method_name(index)
-        local set_method = recipe[set_method_index]
+        local set_method = recipe:setter_for(index)
         if iscallable(set_method) then
             DEBUG.PUSH_CALL(self, set_method_index)
             local result = set_method(self, value)

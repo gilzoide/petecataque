@@ -76,18 +76,18 @@ function World:remove_postSolve_handler(handler)
     self.postSolveHandlers[handler] = nil
 end
 
-Object.add_getter(World, "xg", function(self)
+World:add_getter("xg", function(self)
     return self.gravity[1]
 end)
-Object.add_getter(World, "yg", function(self)
+World:add_getter("yg", function(self)
     return self.gravity[2]
 end)
 
-Object.add_setter(World, "xg", function(self, xg)
+World:add_setter("xg", function(self, xg)
     local gravity = self.gravity
     self.gravity = { xg, gravity[2] }
 end)
-Object.add_setter(World, "yg", function(self, yg)
+World:add_setter("yg", function(self, yg)
     local gravity = self.gravity
     self.gravity = { gravity[1], yg }
 end)

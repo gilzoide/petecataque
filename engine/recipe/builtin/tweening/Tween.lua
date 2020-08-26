@@ -9,7 +9,7 @@ Tween.from = 0
 Tween.to = 1
 Tween.easing = 'linear'
 
-Object.add_setter(Tween, 'time', function(self, time)
+Tween:add_setter('time', function(self, time)
     if time > self.duration or time < 0 then
         if self.yoyo then
             self.speed = -self.speed
@@ -24,13 +24,13 @@ Object.add_setter(Tween, 'time', function(self, time)
     return time
 end)
 
-Object.add_getter(Tween, 'value', function(self)
+Tween:add_getter('value', function(self)
     local from, to, time, duration = self.from, self.to, self.time, self.duration
     local f = easing[self.easing] or easing.linear
     return f(time, from, to - from, duration)
 end)
 
-Object.add_getter(Tween, 'rewinding', function(self)
+Tween:add_getter('rewinding', function(self)
     return self.speed < 0
 end)
 

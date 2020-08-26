@@ -31,7 +31,7 @@ Controller.device = 0
 -- On keyboard, track scancode instead of key code
 Controller.scancode = false
 
-Object.add_setter(Controller, 'device', function(self, device)
+Controller:add_setter('device', function(self, device)
     if device == 0 then
         Input.events.gamepadpressed:remove(self)
         Input.events.gamepadreleased:remove(self)

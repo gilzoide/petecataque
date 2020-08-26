@@ -62,15 +62,15 @@ function Text:draw()
     love.graphics.draw(self.drawable, 0, self.text_offset_y)
 end
 
-Object.add_setter(Text, 'text', function(self, text)
+Text:add_setter('text', function(self, text)
     if not self.__initialising then
         update_text(self, text)
     end
 end)
-Object.add_getter(Text, 'textWidth', function(self)
+Text:add_getter('textWidth', function(self)
     return self.drawable:getWidth()
 end)
-Object.add_getter(Text, 'textHeight', function(self)
+Text:add_getter('textHeight', function(self)
     return self.drawable:getHeight()
 end)
 

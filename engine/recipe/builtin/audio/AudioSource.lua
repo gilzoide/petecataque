@@ -30,7 +30,7 @@ function AudioSource:create_wrapped()
     end
 end
 
-Object.add_setter(AudioSource, 'playing', function(self, playing)
+AudioSource:add_setter('playing', function(self, playing)
     local source = self.source
     if source then
         if playing then

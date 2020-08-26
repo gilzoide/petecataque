@@ -52,9 +52,9 @@ local function bind_callback_argument_names(self, callback)
     Expression.bind_argument_names(callback, argument_names)
 end
 
-Object.add_setter(CollisionTracker, "beginContact", bind_callback_argument_names)
-Object.add_setter(CollisionTracker, "endContact", bind_callback_argument_names)
-Object.add_setter(CollisionTracker, "preSolve", bind_callback_argument_names)
-Object.add_setter(CollisionTracker, "postSolve", bind_callback_argument_names)
+CollisionTracker:add_setter("beginContact", bind_callback_argument_names)
+CollisionTracker:add_setter("endContact", bind_callback_argument_names)
+CollisionTracker:add_setter("preSolve", bind_callback_argument_names)
+CollisionTracker:add_setter("postSolve", bind_callback_argument_names)
 
 return CollisionTracker
