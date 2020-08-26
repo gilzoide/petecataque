@@ -78,8 +78,8 @@ end`
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
-        beginContact: `do peteca.lastToHit.otherPlayer.takingDamage = true end`
-        endContact: `do peteca.lastToHit.otherPlayer.takingDamage = false end`
+        beginContact: `do set(peteca, 'lastToHit', 'otherPlayer', 'takingDamage', true) end`
+        endContact: `do set(peteca, 'lastToHit', 'otherPlayer', 'takingDamage', false) end`
         postSolve: `do peteca:impulse(contact:getNormal()) end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
@@ -91,9 +91,11 @@ end`
     ]
 ]
 
-[Keyboard id: ACTION
-    pause: `self['return']`
-    toggle_music: `m`
+[InputMap id: ACTION source: `Input.keycode`
+    map: {
+        pause: [return kpenter]
+        toggle_music: [m]
+    }
 ]
 
 [LifeBar anchor: [0 0 0 0.4] margin: [10 10] height: 15

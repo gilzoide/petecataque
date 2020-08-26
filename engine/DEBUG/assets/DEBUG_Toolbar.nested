@@ -20,7 +20,7 @@ togglePause: `do
     Scene.paused = appPaused
 end`
 
-[InputMap id: KEY target: `Input.keycode`
+[InputMap id: KEY source: `Input.keycode`
     map: {
         pan_up: [up w]
         pan_left: [left a]

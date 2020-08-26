@@ -3,23 +3,23 @@ local button_table = require 'input.button_table'
 local InputMap = Recipe.new('InputMap')
 
 function InputMap:init()
-    local target = self.target
-    if not target then
-        target = self:first_parent_of('Controller')
-        self.target = target
-        DEBUG.WARNIF(not target, "Unable to create InputMap without Controller target")
+    local source = self.source
+    if not source then
+        source = self:first_parent_of('Controller')
+        self.source = source
+        DEBUG.WARNIF(not source, "Unable to create InputMap without Controller source")
     end
 
-    self.paused = target == nil
+    self.paused = source == nil
     self:set_method_enabled('update', self.map)
 end
 
 function InputMap:update(dt)
-    local target = self.target
+    local source = self.source
     for k, v in pairs(self.map) do
         local merged = button_table.EMPTY
         for i, name in ipairs(v) do
-            local in_target = target[name]
+            local in_target = source[name]
             if in_target then
                 merged = button_table.merge(merged, in_target)
             end
