@@ -2,39 +2,34 @@ local button_table = require 'input.button_table'
 
 local InputMap = Recipe.new('InputMap')
 
-local function update_actions_from(self, action_map, input, clear)
-    clear = not clear
-    for action_name, key in pairs(action_map) do
-        local action = clear and self[action_name] or button_table.EMPTY
-        if type(key) == 'table' then
-            for i = 1, #key do
-                action = button_table.merge_state(action, input[key[i]])
-            end
-        else
-            action = button_table.merge_state(action, input[key])
-        end
-        self[action_name] = action
-    end
-end
-
 function InputMap:init()
-    self:update()
+    local target = self.target
+    if not target then
+        target = self:first_parent_of('Controller')
+        self.target = target
+        DEBUG.WARNIF(not target, "Unable to create InputMap without Controller target")
+    end
+
+    self.paused = target == nil
+    self:set_method_enabled('update', self.map)
 end
 
 function InputMap:update(dt)
-    local action_map = self.keycode
-    if action_map then update_actions_from(self, action_map, Input.keycode, true) end
-    action_map = self.scancode
-    if action_map then update_actions_from(self, action_map, Input.scancode, false) end
-    action_map = self.gamepad
-    if action_map then
-        for i, gamepad in ipairs(action_map) do
-            local input = Input.joystick[i]
-            if input and input.connected then
-                update_actions_from(self, gamepad, input.button, false)
+    local target = self.target
+    for k, v in pairs(self.map) do
+        local merged = button_table.EMPTY
+        for i, name in ipairs(v) do
+            local in_target = target[name]
+            if in_target then
+                merged = button_table.merge(merged, in_target)
             end
         end
+        self[k] = merged
     end
 end
+
+InputMap:add_setter('map', function(self, value)
+    self:set_method_enabled('update', value)
+end)
 
 return InputMap

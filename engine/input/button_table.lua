@@ -4,12 +4,7 @@ local EMPTY = { down = false, pressed = false, released = false }
 local DOWN = { down = true, pressed = false, released = false }
 local PRESSED = { down = true, pressed = true, released = false }
 local RELEASED = { down = false, pressed = false, released = true }
-button_table.EMPTY = EMPTY
-button_table.DOWN = DOWN
-button_table.PRESSED = PRESSED
-button_table.RELEASED = RELEASED
-
-function button_table.merge_state(a, b)
+function button_table.merge(a, b)
     if a == EMPTY then
         return b
     elseif b == EMPTY then
@@ -26,6 +21,14 @@ function button_table.merge_state(a, b)
         return EMPTY
     end
 end
+
+local mt = {
+    __div = button_table.merge,
+}
+button_table.EMPTY = setmetatable(EMPTY, mt)
+button_table.DOWN = setmetatable(DOWN, mt)
+button_table.PRESSED = setmetatable(PRESSED, mt)
+button_table.RELEASED = setmetatable(RELEASED, mt)
 
 function button_table.new()
     return setmetatable({}, button_table)

@@ -20,8 +20,8 @@ togglePause: `do
     Scene.paused = appPaused
 end`
 
-[InputMap id: KEY
-    keycode: [
+[InputMap id: KEY target: `Input.keycode`
+    map: {
         pan_up: [up w]
         pan_left: [left a]
         pan_down: [down s]
@@ -32,7 +32,7 @@ end`
         dump: [d]
         ctrl_modifier: [lctrl rctrl]
         edit_faster: [lshift rshift]
-    ]
+    }
 
     [When
         "pause.pressed, ctrl_modifier.down": `do root:invoke('togglePause') end`

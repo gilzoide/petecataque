@@ -11,7 +11,11 @@ Frame.anchorBottom = 1
 Frame.anchorRight = 1
 
 function Frame:calculate_layout()
-    local parent_width, parent_height = self.__parent_frame.width, self.__parent_frame.height
+    local parent_frame = self.__parent_frame
+    if parent_frame.dirty then
+        parent_frame:calculate_layout()
+    end
+    local parent_width, parent_height = parent_frame.width, parent_frame.height
     self._top = parent_height * self.anchorTop + self.marginTop
     self._left = parent_width * self.anchorLeft + self.marginLeft
     self._bottom = parent_height * self.anchorBottom + self.marginBottom
@@ -32,9 +36,6 @@ local root_frame = {
 
 function Frame:preinit()
     self.__parent_frame = self:first_parent_of('Frame') or root_frame
-    if self.__parent_frame.dirty then
-        self.__parent_frame:calculate_layout()
-    end
 end
 function Frame:init()
     self:calculate_layout()
