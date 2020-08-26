@@ -78,16 +78,16 @@ end`
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
     [CollisionTracker a: [tag: PETECA] b: [tag: GROUND]
-        beginContact: { peteca.lastToHit.otherPlayer.takingDamage: true  }
-        endContact:   { peteca.lastToHit.otherPlayer.takingDamage: false }
+        beginContact: `do peteca.lastToHit.otherPlayer.takingDamage = true end`
+        endContact: `do peteca.lastToHit.otherPlayer.takingDamage = false end`
         postSolve: `do peteca:impulse(contact:getNormal()) end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: RACKET]
-        postSolve: { a.root.lastToHit: b.root }
+        postSolve: `do a.root.lastToHit = b.root end`
     ]
     [CollisionTracker a: [tag: PETECA] b: [tag: BODY]
-        beginContact: { b.root.takingDamage: true  }
-        endContact:   { b.root.takingDamage: false }
+        beginContact: `do b.root.takingDamage = true end`
+        endContact: `do b.root.takingDamage = false end`
     ]
 ]
 
