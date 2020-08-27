@@ -46,6 +46,9 @@ Object = require 'object'
 Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
+TIME = 0
+dt = 0.016667
+
 get = nested.get
 get_or_create = nested.get_or_create
 set = nested.set
@@ -210,9 +213,6 @@ function iscallable(v)
     end
 end
 
-mouse = {
-    position = { love.mouse.getPosition() }
-}
 Input = require 'input'
 
 Scene = require 'scene'.new()
@@ -223,7 +223,6 @@ R = Resources
 State = {
     scene = Scene,
     resources = Resources,
-    mouse = mouse,
     invoke_queue = InvokeQueue,
 }
 

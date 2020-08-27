@@ -23,14 +23,6 @@ function DEBUG.LOGF(fmt, ...)
     DEBUG.LOG(msg)
 end
 
-function DEBUG.STARTTIMER(name)
-    DEBUG[name] = love.timer.getTime()
-end
-
-function DEBUG.REPORTTIMER(name)
-    DEBUG.LOG('DEBUG.REPORTTIMER', name, love.timer.getTime() - DEBUG[name])
-end
-
 function DEBUG.FILE_LINE(obj)
     local s = {}
     s[1] = obj.__file
@@ -89,9 +81,6 @@ function DEBUG.LOAD(arg)
         table.remove(arg, 1)
         love.event.quit()
     end
-end
-
-function DEBUG.PREUPDATE(dt)
 end
 
 function DEBUG.UPDATE(dt)

@@ -1,3 +1,5 @@
+local button_table = require 'input.button_table'
+
 local MouseArea = Recipe.new('MouseArea')
 
 function MouseArea:init()
@@ -7,39 +9,35 @@ function MouseArea:init()
         self:disable_method('update')
         self:disable_method('draw')
     end
-    self.button = { {}, {}, {} }
+    self.button = button_table.new()
 end
 
-function MouseArea:update(dt)
-    local inside = self.__inside
-    for i, button in ipairs(self.button) do
-        if inside and get(mouse, i, 'pressed') then
-            button.down = true
-            button.pressed = true
-            set_next_frame(button, 'pressed', nil)
-        end
-        if button.down and get(mouse, i, 'released') then
-            button.down = nil
-            button.released = inside and 'inside' or 'outside' 
-            set_next_frame(button, 'released', nil)
-        end
+function MouseArea:mousepressed(x, y, button, istouch, presses)
+    if self.__inside then
+        self.button:pressed(button)
     end
-    self.hover = inside
+end
+
+function MouseArea:mousereleased(x, y, button, istouch, presses)
+    local mouse_buttons = self.button
+    if mouse_buttons[button].down then
+        local f = (self.__inside and button_table.released_inside or button_table.released_outside)
+        f(mouse_buttons, button)
+    end
 end
 
 function MouseArea:draw()
-    local x, y = love.graphics.inverseTransformPoint(unpack(mouse.position))
-    self.__inside = self.target:hitTestFromOrigin(x, y)
+    if Input.mouse.position.changed then
+        local x, y = love.graphics.inverseTransformPoint(unpack(Input.mouse.position))
+        self.__inside = self.target:hitTestFromOrigin(x, y)
+    end
 end
 
+MouseArea:add_getter('hover', function(self)
+    return self.__inside
+end)
 MouseArea:add_getter('mouse', function(self)
-    return _ENV.mouse
-end)
-MouseArea:add_getter('moved', function(self)
-    return self.__inside and _ENV.mouse.moved or nil
-end)
-MouseArea:add_getter('wheelmoved', function(self)
-    return self.__inside and _ENV.mouse.wheelmoved or nil
+    return Input.mouse
 end)
 
 return MouseArea

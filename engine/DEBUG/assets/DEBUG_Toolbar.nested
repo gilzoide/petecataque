@@ -123,8 +123,8 @@ end`
         [When
             button.1.pressed: `do love.mouse.setGrabbed(true); love.mouse.setRelativeMode(true); self.editing = true end`
             button.1.released: `do love.mouse.setGrabbed(false); love.mouse.setRelativeMode(false); self.editing = false end`
-            'editing, mouse.moved': `do DEBUG_TRANSFORM:addTranslation(mouse.moved.dx, mouse.moved.dy) end`
-            'wheelmoved': `do DEBUG_TRANSFORM:addScale(wheelmoved.y) end`
+            'editing, mouse.position.changed': `do DEBUG_TRANSFORM:addTranslation(mouse.position.dx, mouse.position.dy) end`
+            'hover, mouse.wheel.changed': `do DEBUG_TRANSFORM:addScale(mouse.wheel.dy) end`
             'editing, KEY.pan_up.down': `do DEBUG_TRANSFORM:addTranslation(0, 1) end`
             'editing, KEY.pan_left.down': `do DEBUG_TRANSFORM:addTranslation(1, 0) end`
             'editing, KEY.pan_down.down': `do DEBUG_TRANSFORM:addTranslation(0, -1) end`

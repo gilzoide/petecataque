@@ -8,7 +8,6 @@ function love.load(arg)
     local scene = assert(R(initial_scene))()
     addtoscene(scene)
 
-    _ENV.TIME = 0
 end
 
 function love.update(dt)
