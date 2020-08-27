@@ -1,3 +1,5 @@
+local table_stack = require 'table_stack'
+
 local Director = {}
 
 local function iterate_scene(scene, skip_if_field)
@@ -20,25 +22,28 @@ function Director.update(dt, scene)
     end
 end
 
+
+local pop_list = table_stack.new(100)
+pop_list:push(-1)
 function Director.draw(scene)
     scene = scene or Scene
-    local pop_list = { {-1} }
+    pop_list:clear(1)
     for kp, obj in iterate_scene(scene, 'hidden') do
-        while #kp <= pop_list[#pop_list][1] do
-            local t = table.remove(pop_list)
+        while #kp <= pop_list:peek()[1] do
+            pop_list:pop()
             love.graphics.pop()
         end
         if obj.draw then
             if obj.draw_push then
                 love.graphics.push(obj.draw_push)
-                pop_list[#pop_list + 1] = { #kp, obj }
+                pop_list:push(#kp, obj)
             end
             DEBUG.PUSH_CALL(obj, 'draw')
             obj:draw()
             DEBUG.POP_CALL(obj, 'draw')
         end
     end
-    for i = #pop_list, 2, -1 do
+    for i = pop_list.n, 2, -1 do
         love.graphics.pop()
     end
     local stackDepth = love.graphics.getStackDepth()
