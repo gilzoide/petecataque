@@ -1,15 +1,17 @@
 local empty = require 'empty'
+local table_stack = require 'table_stack'
 
 local DEBUG = {
     x = 0, y = 0,
     sx = 1, sy = 1,
     errors = {},
     toolbar_height = 32,
+    enabled = true,
+
+    call_stack = table_stack.new(100),
+    hotreload = require 'DEBUG.hotreload',
 }
 
-DEBUG.hotreload = require 'DEBUG.hotreload'
-
-DEBUG.enabled = true
 
 function DEBUG.LOG(...)
     io.stderr:write(table.concat({ ... }, '\t'))
@@ -49,18 +51,18 @@ end
 
 local function stringified_traceback()
     local msg = { 'recipe traceback:' }
-    for i = #DEBUG, 1, -1 do
-        table.insert(msg, stringify_call(DEBUG[i]))
+    for i = DEBUG.call_stack.n, 1, -1 do
+        table.insert(msg, stringify_call(DEBUG.call_stack[i]))
     end
     return table.concat(msg, '\n')
 end
 
 function DEBUG.PUSH_CALL(recipe, name)
-    table.insert(DEBUG, { recipe, name })
+    DEBUG.call_stack:push(recipe, name)
 end
 
 function DEBUG.POP_CALL(recipe, name)
-    local t = table.remove(DEBUG)
+    local t = DEBUG.call_stack:pop()
     assertf(t and t[1] == recipe and t[2] == name, "FIXME @ %s", stringify_call(t))
 end
 
@@ -87,6 +89,9 @@ function DEBUG.LOAD(arg)
         table.remove(arg, 1)
         love.event.quit()
     end
+end
+
+function DEBUG.PREUPDATE(dt)
 end
 
 function DEBUG.UPDATE(dt)
