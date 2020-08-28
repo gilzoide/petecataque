@@ -1,3 +1,6 @@
+rule lua
+  command = lua engine/BUILD/remove_DEBUG.lua $in $out
+
 build build/exe/love-11.3-win32.zip: download
   url = https$://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip
 

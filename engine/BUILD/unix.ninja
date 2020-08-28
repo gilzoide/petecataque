@@ -1,8 +1,8 @@
 rule copy
   command = cp $in $out
 
-rule zip
-  command = zip -9 $out $in
+rule love
+  command = lua engine/BUILD/call_zip_from_prefix.lua $builddir/ $out $in
 
 rule download
   command = curl -L $url -o $out

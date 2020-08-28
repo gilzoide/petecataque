@@ -1,10 +1,15 @@
 local ninja = require 'BUILD.lib.ninja_syntax'
+local asset_map = require 'resources.asset_map'
 
 local ignore = shallowcopy(ignore_patterns)
 setmetatable(ignore, wildcard_pattern.aggregate)
 ignore:extend("engine/DEBUG", "engine/BUILD", "*.md")
 
 local iswindows = love.system.getOS() == 'Windows'
+
+local default_rules = {
+    ['.lua'] = 'lua',
+}
 
 function generate(output_file)
     local writer = ninja.Writer.new(output_file or 'build.ninja')
@@ -17,17 +22,21 @@ function generate(output_file)
 
     writer:variable('builddir', 'build'):newline()
     local files = {}
+    local build_files = {}
     local source = love.filesystem.getSource()
     for filename, path in iter_file_tree('', ignore) do
         if love.filesystem.getRealDirectory(path):startswith(source) then
             table.insert(files, path)
-            writer:build('build/' .. path, 'copy', path)
+            table.insert(build_files, 'build/' .. path)
+            local basename, ext = asset_map.split_extension(path)
+            local rule = default_rules[ext] or 'copy'
+            writer:build('build/' .. path, rule, path)
         end
     end
 
     local identity = love.filesystem.getIdentity() or 'game'
     local love_file = string.format('build/%s.love', identity)
-    writer:build(love_file, 'zip', files)
+    writer:build(love_file, 'love', build_files)
     writer:default(love_file):newline()
 
     local love_version = '11.3'  -- TODO: use love.getVersion
