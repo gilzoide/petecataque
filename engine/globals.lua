@@ -47,7 +47,6 @@ Recipe = require 'recipe'
 _ENV = _ENV or getfenv()
 
 TIME = 0
-dt = 0.016667
 
 get = nested.get
 get_or_create = nested.get_or_create

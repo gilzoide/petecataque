@@ -19,7 +19,7 @@ function InvokeQueue:queue_after(n, ...)
         self.future_frame[frame_count] = frame_queue
     end
     local t = table_pool:acquire()
-    for i = 1, select('#', ...) + 1 do
+    for i = 1, select('#', ...) do
         t[i] = select(i, ...)
     end
     table.insert(frame_queue, t)

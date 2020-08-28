@@ -48,6 +48,7 @@ end
 local SET_METHOD_PREFIX = 'set '
 local SET_METHOD_PATT = 'set[ \t]+(.+)'
 local SET_METHOD_ARGUMENT_NAMES = { 'value' }
+local UPDATE_METHOD_ARGUMENT_NAMES = { 'dt' }
 function Recipe:add_setter(field_name, function_or_expression)
     Expression.bind_argument_names(function_or_expression, SET_METHOD_ARGUMENT_NAMES)
     rawset(self, SET_METHOD_PREFIX .. field_name, function_or_expression)
@@ -107,6 +108,8 @@ function Recipe:__newindex(index, value)
         elseif Expression.is_getter(value) then
             Recipe.add_getter(self, index, value)
             return
+        elseif index == 'update' then
+            Expression.bind_argument_names(value, UPDATE_METHOD_ARGUMENT_NAMES)
         end
     end
     rawset(self, index, value)
