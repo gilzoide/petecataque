@@ -11,8 +11,8 @@ function love.load(arg)
 end
 
 function love.update(dt)
-    _ENV.dt = dt
-    _ENV.TIME = _ENV.TIME + dt
+    dt = dt
+    TIME = TIME + dt
     Director.update(dt)
     DEBUG.UPDATE(dt)
 end
