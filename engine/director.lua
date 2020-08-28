@@ -46,11 +46,13 @@ function Director.draw(scene)
     for i = pop_list.n, 2, -1 do
         love.graphics.pop()
     end
-    local stackDepth = love.graphics.getStackDepth()
-    if stackDepth ~= 0 then
-        DEBUG.WARN("MISSING POP, stackDepth = %d", stackDepth)
-        for i = 1, stackDepth do love.graphics.pop() end
-    end
+    DEBUG.ONLY(function()
+        local stackDepth = love.graphics.getStackDepth()
+        if stackDepth ~= 0 then
+            DEBUG.WARN("MISSING POP, stackDepth = %d", stackDepth)
+            for i = 1, stackDepth do love.graphics.pop() end
+        end
+    end)
 end
 
 return Director

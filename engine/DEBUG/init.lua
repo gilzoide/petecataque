@@ -98,6 +98,10 @@ function DEBUG.DRAW()
     Director.draw(DEBUG.scene)
 end
 
+function DEBUG.ONLY(f)
+    f()
+end
+
 function DEBUG.WARN(fmt, ...)
     local msg = string.format(fmt, ...)
     local recipe_traceback = stringified_traceback()

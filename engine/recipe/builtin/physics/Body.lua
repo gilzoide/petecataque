@@ -42,11 +42,11 @@ Body.draw_push = 'transform'
 function Body:draw()
     love.graphics.origin()
     local x, y = self.body:getPosition()
-    if DEBUG.enabled then
+    DEBUG.ONLY(function()
         x = x + DEBUG.x
         y = y + DEBUG.y
         love.graphics.scale(DEBUG.sx, DEBUG.sy)
-    end
+    end)
     love.graphics.translate(x, y)
     love.graphics.rotate(self.angle)
 end

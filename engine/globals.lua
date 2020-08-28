@@ -220,20 +220,14 @@ InvokeQueue = require 'invoke_queue'.new()
 Director = require 'director'
 Resources = require 'resources'.new()
 R = Resources
-State = {
-    scene = Scene,
-    resources = Resources,
-    invoke_queue = InvokeQueue,
-}
 
-function dump_state()
-    local s = nested.encode(Scene)
-    if DEBUG.enabled then
-        s = s .. '\n\n' .. nested.encode(DEBUG.scene)
+DEBUG.ONLY(function()
+    function dump_state()
+        local s = nested.encode(Scene) .. '\n\n' .. nested.encode(DEBUG.scene)
+        DEBUG.LOG(s, '\n')
+        love.system.setClipboardText(s)
     end
-    DEBUG.LOG(s, '\n')
-    love.system.setClipboardText(s)
-end
+end)
 
 function set_after_frames(n, ...)
     InvokeQueue:queue_after(n, set, ...)
