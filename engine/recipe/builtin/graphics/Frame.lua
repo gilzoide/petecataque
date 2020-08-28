@@ -124,10 +124,12 @@ Frame:add_setter('marginY', function(self, value)
     return Object.NO_RAWSET
 end)
 
-Frame.draw_push = 'transform'
 function Frame:draw()
+    love.graphics.push()
     love.graphics.translate(self.left, self.top)
 end
+
+Frame.late_draw = love.graphics.pop
 
 function Frame:hitTestFromOrigin(x, y)
     return x >= 0 and x <= self.width

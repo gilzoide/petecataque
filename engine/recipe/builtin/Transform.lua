@@ -23,10 +23,11 @@ function Transform:update(dt)
     self.transform:setTransformation(self.x, self.y, self.angle, self.sx, self.sy, self.ox, self.oy, self.kx, self.ky)
 end
 
-Transform.draw_push = 'transform'
-
 function Transform:draw()
+    love.graphics.push()
     love.graphics.applyTransform(self.transform)
 end
+
+Transform.late_draw = love.graphics.pop
 
 return Transform

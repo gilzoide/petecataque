@@ -2,27 +2,24 @@ local Rectangle = Recipe.new('Rectangle', 'Frame')
 
 -- rx = nil, ry = nil, segments = nil,
 
-local function draw_rectangle(self, drawmode, x, y)
+local function draw_rectangle(self, drawmode)
     if self.rx then
-        love.graphics.rectangle(drawmode, x, y, self.width, self.height, self.rx, self.ry, self.segments)
+        love.graphics.rectangle(drawmode, 0, 0, self.width, self.height, self.rx, self.ry, self.segments)
     else
-        love.graphics.rectangle(drawmode, x, y, self.width, self.height)
+        love.graphics.rectangle(drawmode, 0, 0, self.width, self.height)
     end
 end
 
-Rectangle.draw_push = 'all'
 function Rectangle:draw()
     Rectangle:invoke_super('draw', self)
     
-    local fillColor = self.fillColor
-    if fillColor then
-        love.graphics.setColor(fillColor)
-        draw_rectangle(self, 'fill', 0, 0)
+    if ColorStack:push(self.fillColor) then
+        draw_rectangle(self, 'fill')
+        ColorStack:pop()
     end
-    local lineColor = self.lineColor
-    if lineColor then
-        love.graphics.setColor(lineColor)
-        draw_rectangle(self, 'line', 0, 0)
+    if ColorStack:push(self.lineColor) then
+        draw_rectangle(self, 'line')
+        ColorStack:pop()
     end
 end
 

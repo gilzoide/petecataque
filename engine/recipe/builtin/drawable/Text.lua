@@ -15,6 +15,7 @@ local Text = Recipe.wrapper.new('Text', {
 local fallback_font = love.graphics.newFont()
 Text.align = 'left'
 Text.valign = 'top'
+Text.color = { 1, 1, 1 }
 
 function Text:__init_recipe(recipe)
     local text = recipe.text
@@ -50,16 +51,13 @@ function Text:update(dt)
     update_text(self, self.text)
 end
 
-Text.draw_push = 'all'
 function Text:draw()
     Text:invoke_super('draw', self)
 
-    local color = self.color
-    if color then
-        love.graphics.setColor(color)
+    if ColorStack:push(self.color) then
+        love.graphics.draw(self.drawable, 0, self.text_offset_y)
+        ColorStack:pop()
     end
-
-    love.graphics.draw(self.drawable, 0, self.text_offset_y)
 end
 
 Text:add_setter('text', function(self, text)

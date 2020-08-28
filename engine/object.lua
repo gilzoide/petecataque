@@ -1,4 +1,5 @@
 local Expression = require 'expression'
+local table_pool = require 'table_pool'.raw
 
 local Object = {}
 
@@ -9,7 +10,7 @@ function Object.is_object(v)
 end
 
 local function apply_initial_setters(recipe, obj)
-    local already_processed = {}
+    local already_processed = table_pool:acquire()
     while recipe.__super do
         for k, v in nested.kpairs(recipe) do
             if not already_processed[k] and type(k) == 'string' and recipe:setter_for(k) then
@@ -24,7 +25,7 @@ local function apply_initial_setters(recipe, obj)
         end
         recipe = recipe.__super
     end
-
+    table_pool:release(already_processed)
     Input.register_events(obj)
 end
 
@@ -113,7 +114,7 @@ function Object:__index(index)
             return _value
         elseif value_in_recipe ~= nil then
             return value_in_recipe
-        elseif index ~= 'update' and index ~= 'draw' and index ~= 'draw_push' and index ~= 'hidden' then
+        elseif index ~= 'update' and index ~= 'draw' and index ~= 'late_draw' and index ~= 'hidden' then
             local root = rawget(self, '__root')
             return root and root[index]
         end

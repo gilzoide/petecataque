@@ -14,19 +14,16 @@ function CircleShape:create_wrapped()
     return love.physics.newCircleShape(self.radius or default_radius)
 end
 
-CircleShape.draw_push = 'all'
-
 function CircleShape:draw()
     local x, y = unpack(self.point)
-    local fillColor = self.fillColor
-    if fillColor then
-        love.graphics.setColor(fillColor)
+
+    if ColorStack:push(self.fillColor) then
         love.graphics.circle('fill', x, y, self.radius, self.segments)
+        ColorStack:pop()
     end
-    local lineColor = self.lineColor
-    if lineColor then
-        love.graphics.setColor(lineColor)
+    if ColorStack:push(self.lineColor) then
         love.graphics.circle('line', x, y, self.radius, self.segments)
+        ColorStack:pop()
     end
 end
 

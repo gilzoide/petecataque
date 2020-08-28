@@ -1,3 +1,5 @@
+local table_pool = require 'table_pool'.raw
+
 local InvokeQueue = {}
 InvokeQueue.__index = InvokeQueue
 
@@ -10,8 +12,17 @@ end
 
 function InvokeQueue:queue_after(n, ...)
     assertf(iscallable(...), "Queued invocation must be callable, got %s", type(...))
-    local frame_queue = nested.get_or_create(self.future_frame, self.frame_count + n)
-    table.insert(frame_queue, { ... })
+    local frame_count = self.frame_count + n
+    local frame_queue = self.future_frame[frame_count]
+    if not frame_queue then
+        frame_queue = table_pool:acquire()
+        self.future_frame[frame_count] = frame_queue
+    end
+    local t = table_pool:acquire()
+    for i = 1, select('#', ...) + 1 do
+        t[i] = select(i, ...)
+    end
+    table.insert(frame_queue, t)
 end
 
 function InvokeQueue:queue(...)
@@ -27,9 +38,13 @@ end
 function InvokeQueue:frame_ended()
     local this_frame = self.this_frame
     if this_frame then
-        for i, cmd in ipairs(this_frame) do
+        for i = 1, #this_frame do
+            local cmd = this_frame[i]
             cmd[1](unpack(cmd, 2))
+            table_pool:release(cmd)
+            this_frame[i] = nil
         end
+        table_pool:release(this_frame)
         self.this_frame = nil
     end
 end

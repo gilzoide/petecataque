@@ -23,29 +23,30 @@ function Director.update(dt, scene)
 end
 
 
-local pop_list = table_stack.new(100)
+local pop_list = table_stack.new()
 pop_list:push(-1)
+function pop_list:pop_until(depth)
+    while depth <= self:peek()[1] do
+        local method, obj = unpack(self:pop(), 2)
+        method(obj)
+    end
+end
+
 function Director.draw(scene)
     scene = scene or Scene
     pop_list:clear(1)
     for kp, obj in iterate_scene(scene, 'hidden') do
-        while #kp <= pop_list:peek()[1] do
-            pop_list:pop()
-            love.graphics.pop()
-        end
-        if obj.draw then
-            if obj.draw_push then
-                love.graphics.push(obj.draw_push)
-                pop_list:push(#kp, obj)
-            end
-            DEBUG.PUSH_CALL(obj, 'draw')
-            obj:draw()
-            DEBUG.POP_CALL(obj, 'draw')
+        local depth = #kp
+        pop_list:pop_until(depth)
+        
+        obj:invoke('draw')
+
+        local late_draw = obj.late_draw
+        if late_draw then
+            pop_list:push(depth, late_draw, obj)
         end
     end
-    for i = pop_list.n, 2, -1 do
-        love.graphics.pop()
-    end
+    pop_list:pop_until(0)
     DEBUG.ONLY(function()
         local stackDepth = love.graphics.getStackDepth()
         if stackDepth ~= 0 then

@@ -14,13 +14,10 @@ function EdgeShape:create_wrapped()
     return love.physics.newEdgeShape(unpack(self.points or default_points))
 end
 
-EdgeShape.draw_push = 'all'
-
 function EdgeShape:draw()
-    local lineColor = self.lineColor
-    if lineColor then
-        love.graphics.setColor(lineColor)
+    if ColorStack:push(self.lineColor) then
         love.graphics.line(self.points)
+        ColorStack:pop()
     end
 end
 

@@ -37,9 +37,8 @@ function Body:create_wrapped()
     end
 end
 
-Body.draw_push = 'transform'
-
 function Body:draw()
+    love.graphics.push()
     love.graphics.origin()
     local x, y = self.body:getPosition()
     DEBUG.ONLY(function()
@@ -50,6 +49,8 @@ function Body:draw()
     love.graphics.translate(x, y)
     love.graphics.rotate(self.angle)
 end
+
+Body.late_draw = love.graphics.pop
 
 Body.__copy_state = {
     'active', 'position', 'angle', 'angularVelocity', 'linearVelocity'

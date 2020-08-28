@@ -14,18 +14,14 @@ function PolygonShape:create_wrapped()
     return love.physics.newPolygonShape(self.points or default_points)
 end
 
-PolygonShape.draw_push = 'all'
-
 function PolygonShape:draw()
-    local fillColor = self.fillColor
-    if fillColor then
-        love.graphics.setColor(fillColor)
+    if ColorStack:push(self.fillColor) then
         love.graphics.polygon('fill', self.points)
+        ColorStack:pop()
     end
-    local lineColor = self.lineColor
-    if lineColor then
-        love.graphics.setColor(lineColor)
+    if ColorStack:push(self.lineColor) then
         love.graphics.polygon('line', self.points)
+        ColorStack:pop()
     end
 end
 

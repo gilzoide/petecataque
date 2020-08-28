@@ -1,15 +1,17 @@
 local table_stack = {}
 
 local weak_mt = { __mt = 'kv' }
-function table_stack.new(max)
-    local new_stack = setmetatable({ n = 0 }, table_stack)
-    for i = 1, max do new_stack[i] = setmetatable({}, weak_mt) end
-    return new_stack
+function table_stack.new()
+    return setmetatable({ n = 0 }, table_stack)
 end
 
 function table_stack:push(...)
     self.n = self.n + 1
     local entry = self[self.n]
+    if not entry then
+        entry = setmetatable({}, weak_mt)
+        self[self.n] = entry
+    end
     for i = 1, select('#', ...) do
         entry[i] = select(i, ...)
     end

@@ -103,7 +103,13 @@ function string.endswith(s, suffix)
     return s:sub(- #suffix) == suffix
 end
 
-function table_extend(t, other)
+table.clear = table.clear or function(t)
+    for k, v in rawpairs(t) do
+        t[k] = nil
+    end
+end
+
+function table_iextend(t, other)
     if other then
         local n = #t
         for i, v in ipairs(other) do
@@ -210,6 +216,23 @@ function iscallable(v)
     else
         local mt = getmetatable(v)
         return mt and mt.__call
+    end
+end
+
+do
+    local table_stack = require 'table_stack'
+    ColorStack = table_stack.new()
+    function ColorStack:push(color)
+        if color then
+            table_stack.push(self, love.graphics.getColor())
+            love.graphics.setColor(color)
+            return true
+        else
+            return false
+        end
+    end
+    function ColorStack:pop()
+        love.graphics.setColor(table_stack.pop(self))
     end
 end
 

@@ -10,12 +10,11 @@ currentLife: 1
 maxLife: 1
 lifePercent: `currentLife / maxLife`
 
-draw: `do
-    love.graphics.translate(x, y)
+[Node draw: `do
     love.graphics.setColor(takingDamage and damageBgColor or bgColor)
     love.graphics.rectangle('fill', 0, 0, width, height)
     love.graphics.setColor(takingDamage and damageColor or color)
     love.graphics.rectangle('fill', 0, 0, width * lifePercent, height)
     love.graphics.setColor(borderColor)
     love.graphics.rectangle('line', 0, 0, width, height)
-end`
+end`]

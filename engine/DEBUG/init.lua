@@ -8,7 +8,7 @@ local DEBUG = {
     toolbar_height = 32,
     enabled = true,
 
-    call_stack = table_stack.new(100),
+    call_stack = table_stack.new(),
     hotreload = require 'DEBUG.hotreload',
 }
 

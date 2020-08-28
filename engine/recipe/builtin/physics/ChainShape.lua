@@ -18,13 +18,10 @@ function ChainShape:create_wrapped()
     return love.physics.newChainShape(self.loop, self.points or default_points)
 end
 
-ChainShape.draw_push = 'all'
-
 function ChainShape:draw()
-    local lineColor = self.lineColor
-    if lineColor then
-        love.graphics.setColor(lineColor)
+    if ColorStack:push(self.lineColor) then
         love.graphics.line(self.points)
+        ColorStack:pop()
     end
 end
 
