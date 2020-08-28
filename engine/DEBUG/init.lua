@@ -98,8 +98,8 @@ function DEBUG.DRAW()
     Director.draw(DEBUG.scene)
 end
 
-function DEBUG.ONLY(f)
-    f()
+function DEBUG.ONLY(f, ...)
+    f(...)
 end
 
 function DEBUG.WARN(fmt, ...)

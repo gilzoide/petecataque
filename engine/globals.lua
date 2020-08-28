@@ -28,7 +28,7 @@ wildcard_pattern = require 'wildcard_pattern'
 
 do
     local gitignore = io.open(".gitignore")
-    ignore_patterns = gitignore and wildcard_pattern.aggregate.from(io.lines(".gitignore")) or wildcard_pattern.aggregate.new()
+    ignore_patterns = gitignore and wildcard_pattern.aggregate.from(gitignore) or wildcard_pattern.aggregate.new()
     ignore_patterns:extend(".*")
     if gitignore then gitignore:close() end
 end
