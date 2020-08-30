@@ -141,8 +141,3 @@ end`
     text: `string.format("FPS: %d", love.timer.getFPS())`
     align: right valign: center
 ]
-
-[Graphics draw: `do
-    love.graphics.setColor(root.fgColor)
-    love.graphics.line(0, 0, self.width, 0)
-end`]
