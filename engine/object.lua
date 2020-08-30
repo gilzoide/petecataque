@@ -71,7 +71,7 @@ function Object.new(recipe, obj, parent, root_param)
     return obj
 end
 
-local release_iterator_flags = { order = nested.POSTORDER, table_only = true }
+local release_iterator_flags = { postorder = 'only', table_only = true }
 function Object:release()
     self.disabled = true
     for kp, obj, parent in nested.iterate(self, release_iterator_flags) do
