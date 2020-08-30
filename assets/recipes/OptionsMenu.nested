@@ -21,10 +21,22 @@ message: "MESSAGE"
     [OptionsMenuControls anchor: [0 0 0 1]
         title: "Player 1"
         marginTop: 60
+        device: `options.P1_DEVICE`
+        onchange: `do
+            local self, value = ...
+            options.P1_DEVICE = value
+            options:save()
+        end`
     ]
     [OptionsMenuControls anchor: [0 0 0 1]
         title: "Player 2"
         marginTop: 100
+        device: `options.P2_DEVICE`
+        onchange: `do
+            local self, value = ...
+            options.P2_DEVICE = value
+            options:save()
+        end`
     ]
 
     [Text id: MESSAGE text: `root.message`

@@ -1,4 +1,3 @@
-# Rectangle lineColor: [1 1 1]
 Frame
 
 height: 32
@@ -10,4 +9,32 @@ title: "Player X"
     valign: center
 ]
 
-[ControlChooser anchorX: [0.3 1]]
+device: 0
+"set device": `do
+    local joystickCount = love.joystick.getJoystickCount()
+    if value < 0 then
+        value = joystickCount
+    elseif value > joystickCount then
+        value = 0
+    end
+
+    if value ~= self._device then
+        self:invoke('onchange', value)
+    end
+    return value
+end`
+
+selectNext: `do self.device = self.device + 1 end`
+selectPrevious: `do self.device = self.device - 1 end`
+
+[Frame anchorX: [0.4 1]
+    [Text text: < align: left valign: center anchorX: [0 0.5]
+        [MouseArea [When "button.1.released: inside": `do root:selectPrevious() end`]]
+    ]
+    [Text text: > align: right valign: center anchorX: [0.5 1]
+        [MouseArea [When "button.1.released: inside": `do root:selectNext() end`]]
+    ]
+    [Text id: TITLE align: center valign: center
+        text: `root.device == 0 and "keyboard" or string.format("gamepad %d", root.device)`
+    ]
+]
