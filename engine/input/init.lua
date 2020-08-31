@@ -11,22 +11,23 @@ local Input = {
 }
 
 Input.events = {
-    keypressed = event_listener.new(),
-    keyreleased = event_listener.new(),
-    mousemoved = event_listener.new(),
-    mousepressed = event_listener.new(),
-    mousereleased = event_listener.new(),
-    wheelmoved = event_listener.new(),
-    joystickadded = event_listener.new(),
-    joystickremoved = event_listener.new(),
-    gamepadpressed = event_listener.new(),
-    gamepadreleased = event_listener.new(),
-    gamepadaxis = event_listener.new(),
+    keypressed = event_listener.new('keypressed'),
+    keyreleased = event_listener.new('keyreleased'),
+    mousemoved = event_listener.new('mousemoved'),
+    mousepressed = event_listener.new('mousepressed'),
+    mousereleased = event_listener.new('mousereleased'),
+    wheelmoved = event_listener.new('wheelmoved'),
+    joystickadded = event_listener.new('joystickadded'),
+    joystickremoved = event_listener.new('joystickremoved'),
+    gamepadpressed = event_listener.new('gamepadpressed'),
+    gamepadreleased = event_listener.new('gamepadreleased'),
+    gamepadaxis = event_listener.new('gamepadaxis'),
 }
 
 function Input.register_events(obj)
+    local recipe = rawget(obj, '__recipe')
     for k, listener in pairs(Input.events) do
-        local callback = obj[k]
+        local callback = recipe[k]
         if callback then
             listener:add(obj, callback)
         end

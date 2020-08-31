@@ -1,7 +1,14 @@
 local event_listener = {}
 
+DEBUG.ONLY(function()
+    event_listener.names = {}
+end)
 function event_listener.new(name)
-    return setmetatable({ __name = name }, event_listener)
+    local new_listener = setmetatable({}, event_listener)
+    DEBUG.ONLY(function()
+        if name then event_listener.names[new_listener] = name end
+    end)
+    return new_listener
 end
 
 function event_listener:add(obj, callback)
@@ -14,9 +21,9 @@ end
 
 function event_listener:emit(...)
     for obj, callback in pairs(self) do
-        DEBUG.PUSH_CALL(obj, self.__name)
+        DEBUG.PUSH_CALL(obj, event_listener.names[self])
         callback(obj, ...)
-        DEBUG.POP_CALL(obj, self.__name)
+        DEBUG.POP_CALL(obj, event_listener.names[self])
     end
 end
 
@@ -28,6 +35,5 @@ local methods = {
 event_listener.__index = methods
 event_listener.__mode = 'k'
 event_listener.__call = event_listener.emit
-event_listener.__pairs = default_object_pairs
 
 return event_listener

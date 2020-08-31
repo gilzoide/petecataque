@@ -79,14 +79,13 @@ gamepadpressed: `do
 end`
 
 togglepause: `do
+    if not OPTIONS_MENU.isOpen then
+        OPTIONS_MENU.message = messages.pauseText
+    end
+    OPTIONS_MENU:toggleCollapsed()
     if self.gameover then
         self:reset()
         self.gameover = false
-    else
-        if not OPTIONS_MENU.isOpen then
-            OPTIONS_MENU.message = messages.pauseText
-        end
-        OPTIONS_MENU:toggleCollapsed()
     end
 end`
 
