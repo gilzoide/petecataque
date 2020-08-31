@@ -26,7 +26,7 @@ end
 
 -- Iteration and caching
 local iterator_flags = { skip_root = true, postorder = true, table_only = true }
-local function iterate_all_and_cache(scene, update_or_draw, skip_if_field)
+local function iterate_all_and_cache(scene, update_or_draw, skip_if_field, dt_on_update)
     scene.dirty = false
     local update = scene.update; update:clear()
     local draw = scene.draw; draw:clear()
@@ -35,23 +35,27 @@ local function iterate_all_and_cache(scene, update_or_draw, skip_if_field)
     local draw_previous = table_pool:acquire()
     local skipping_object = false
 
-    local function process_obj_going_down(obj, method, stack, previous_cache, maybe_yield)
+    local function process_obj_going_down(obj, method, stack, previous_cache, maybe_call)
         if method then
             previous_cache[obj] = stack:push(method, obj, stack.n + 1)
-            if maybe_yield and not skipping_object then
+            if maybe_call and not skipping_object then
                 if obj[skip_if_field] then
                     skipping_object = obj
                 else
-                    coroutine.yield(method, obj)
+                    DEBUG.PUSH_CALL(obj, update_or_draw)
+                    method(obj, dt_on_update)
+                    DEBUG.POP_CALL(obj, update_or_draw)
                 end
             end
         end
     end
-    local function process_obj_going_up(obj, method, stack, previous_cache, maybe_yield)
+    local function process_obj_going_up(obj, method, stack, previous_cache, maybe_call)
         if method then
             stack:push(method, obj, 0)
-            if maybe_yield and not skipping_object then
-                coroutine.yield(method, obj)
+            if maybe_call and not skipping_object then
+                DEBUG.PUSH_CALL(obj, update_or_draw)
+                method(obj, dt_on_update)
+                DEBUG.POP_CALL(obj, update_or_draw)
             end
         end
         if previous_cache[obj] then
@@ -79,13 +83,13 @@ local function iterate_all_and_cache(scene, update_or_draw, skip_if_field)
     table_pool:release(draw_previous)
 end
 
-local function iterate_cached(scene, update_or_draw, skip_if_field)
+local function iterate_cached(scene, update_or_draw, skip_if_field, ...)
     local cache = scene[update_or_draw]
     local i = 1
     while i <= cache.n do
         local method, obj, children = unpack(cache[i])
         if not obj[skip_if_field] then
-            coroutine.yield(method, obj)
+            method(obj, ...)
             i = i + 1
         else
             i = i + 1 + children
@@ -93,14 +97,14 @@ local function iterate_cached(scene, update_or_draw, skip_if_field)
     end
 end
 
-function Scene:iterate_update()
+function Scene:call_update(...)
     local iterator_function = self.dirty and iterate_all_and_cache or iterate_cached
-    return coroutine.wrap(function() iterator_function(self, 'update', 'paused') end)
+    iterator_function(self, 'update', 'paused', ...)
 end
 
-function Scene:iterate_draw()
+function Scene:call_draw(...)
     local iterator_function = self.dirty and iterate_all_and_cache or iterate_cached
-    return coroutine.wrap(function() iterator_function(self, 'draw', 'hidden') end)
+    iterator_function(self, 'draw', 'hidden', ...)
 end
 
 function Scene:iterate()
