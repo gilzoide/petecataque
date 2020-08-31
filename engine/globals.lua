@@ -218,6 +218,14 @@ function iscallable(v)
     end
 end
 
+function merge_axis(...)
+    local value = 0
+    for i = 1, select('#', ...) do
+        value = value + (select(i, ...) or 0)
+    end
+    return clamp(value, -1, 1)
+end
+
 do
     local table_stack = require 'table_stack'
     ColorStack = table_stack.new()

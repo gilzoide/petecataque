@@ -26,6 +26,7 @@ message: "MESSAGE"
             local self, value = ...
             options.P1_DEVICE = value
             options:save()
+            root:invoke("oncontrollerchange")
         end`
     ]
     [OptionsMenuControls anchor: [0 0 0 1]
@@ -36,6 +37,7 @@ message: "MESSAGE"
             local self, value = ...
             options.P2_DEVICE = value
             options:save()
+            root:invoke("oncontrollerchange")
         end`
     ]
 

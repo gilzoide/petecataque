@@ -1,0 +1,12 @@
+Controller
+
+scheme: keyboard1
+
+keyboard: `merge_axis(device.a ^ device.d, device.left ^ device.right, device.kpleft ^ device.kpright)`
+keyboard1: `device.a ^ device.d`
+keyboard2: `device.left ^ device.right`
+gamepad: `merge_axis(device.leftx, device.dpleft ^ device.dpright, device.x ^ device.b, device.leftshoulder ^ device.rightshoulder, device.triggerleft, device.triggerright)`
+gamepad1: `merge_axis(device.leftx, device.dpleft ^ device.dpright)`
+gamepad2: `merge_axis(device.rightx, device.x ^ device.b)`
+
+value: `self[scheme]`

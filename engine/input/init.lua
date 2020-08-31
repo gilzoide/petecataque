@@ -75,12 +75,12 @@ end
 
 -- Gamepad
 function Input.joystickadded(joystick)
-    Input.joystick[joystick:getConnectedIndex()] = gamepad.new()
+    Input.joystick[joystick:getID()] = gamepad.new()
     Input.events.joystickadded(joystick)
 end
 
 function Input.joystickremoved(joystick)
-    Input.joystick[joystick:getConnectedIndex()] = nil
+    Input.joystick[joystick:getID()] = nil
     Input.events.joystickremoved(joystick)
 end
 
@@ -95,6 +95,7 @@ function Input.gamepadreleased(joystick, button)
 end
 
 function Input.gamepadaxis(joystick, axis, value)
+    Input.joystick[joystick:getID()]:axis(axis, value)
     Input.events.gamepadaxis(joystick, axis, value)
 end
 

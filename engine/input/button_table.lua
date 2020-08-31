@@ -24,8 +24,16 @@ function button_table.merge(a, b)
     end
 end
 
+function button_table.as_axis(a, b)
+    local negative = (a or EMPTY).down and 1 or 0
+    local positive = (b or EMPTY).down and 1 or 0
+    return positive - negative
+end
+
+
 local mt = {
     __div = button_table.merge,
+    __pow = button_table.as_axis,
 }
 button_table.EMPTY = setmetatable(EMPTY, mt)
 button_table.DOWN = setmetatable(DOWN, mt)
@@ -67,6 +75,5 @@ local methods = {
 function button_table:__index(index)
     return methods[index] or EMPTY
 end
-button_table.__pairs = default_object_pairs
 
 return button_table

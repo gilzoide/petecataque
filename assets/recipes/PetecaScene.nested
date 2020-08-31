@@ -15,6 +15,23 @@ refreshMusic: `do
     BGM.playing = options.MUSIC
 end`
 
+refreshcontroller: `do
+    local p1, p2 = options.P1_DEVICE, options.P2_DEVICE
+    if p1 == 0 then
+        P1_CONTROLLER.scheme = p1 == p2 and 'keyboard1' or 'keyboard'
+    else
+        P1_CONTROLLER.scheme = p1 == p2 and 'gamepad1' or 'gamepad'
+    end
+    P1_CONTROLLER.device_index = p1
+
+    if p2 == 0 then
+        P2_CONTROLLER.scheme = p1 == p2 and 'keyboard2' or 'keyboard'
+    else
+        P2_CONTROLLER.scheme = p1 == p2 and 'gamepad2' or 'gamepad'
+    end
+    P2_CONTROLLER.device_index = p2
+end`
+
 preinit: `do
     love.physics.setMeter(metersByPixel)
 end`
@@ -45,6 +62,34 @@ reset: `do
     player2:reset()
 end`
 
+keypressed: `do
+    local self, key, scancode, isrepeat = ...
+    if key == 'm' then
+        OPTIONS_MENU.MENU.MUSIC:toggle()
+    elseif key == 'return' or key == 'kpenter' then
+        self:togglepause()
+    end
+end`
+
+gamepadpressed: `do
+    local self, joystick, button = ...
+    if button == 'start' then
+        self:togglepause()
+    end
+end`
+
+togglepause: `do
+    if self.gameover then
+        self:reset()
+        self.gameover = false
+    else
+        if not OPTIONS_MENU.isOpen then
+            OPTIONS_MENU.message = messages.pauseText
+        end
+        OPTIONS_MENU:toggleCollapsed()
+    end
+end`
+
 setPlayerWon: `do
     local self, winning = ...
     self.gameover = true
@@ -61,19 +106,19 @@ end`
     paused: `root.gamepaused or root.gameover`
 
     [Arena id: arena]
+
+    [PlayerController id: P1_CONTROLLER]
+    [PlayerController id: P2_CONTROLLER]
+
     [Player id: player1 color: [0 1 0]
-        rotateValue: `P1_CONTROLLER:button_to_axis(unpack(controlMap.P1AXIS))`
+        rotateValue: `P1_CONTROLLER.value`
         otherPlayer: `player2`
         "set gameover": `do if value then root:setPlayerWon(2) end end`
-
-        [Controller id: P1_CONTROLLER device: `controlMap.P1DEVICE`]
     ]
     [Player id: player2 color: [1 1 0] flipX: true
-        rotateValue: `P2_CONTROLLER:button_to_axis(unpack(controlMap.P2AXIS))`
+        rotateValue: `P2_CONTROLLER.value`
         otherPlayer: `player1`
         "set gameover": `do if value then root:setPlayerWon(1) end end`
-
-        [Controller id: P2_CONTROLLER device: `controlMap.P2DEVICE`]
     ]
     [Peteca id: peteca x: `petecaX` y: `petecaY`]
 
@@ -89,13 +134,6 @@ end`
         beginContact: `do b.root.takingDamage = true end`
         endContact: `do b.root.takingDamage = false end`
     ]
-]
-
-[InputMap id: ACTION source: `Input.keycode`
-    map: {
-        pause: [return kpenter]
-        toggle_music: [m]
-    }
 ]
 
 [LifeBar anchor: [0 0 0 0.4] margin: [10 10] height: 15
@@ -116,21 +154,6 @@ end`
 [CollapsableOptionsMenu id: OPTIONS_MENU
     message: `messages.initialText`
     ontogglemusic: `root.refreshMusic`
-]
-
-[When
-    'ACTION.pause.pressed': `do
-        if not OPTIONS_MENU.isOpen then
-            OPTIONS_MENU.message = messages.pauseText
-        end
-        OPTIONS_MENU:toggleCollapsed()
-    end`
-
-    'gameover, ACTION.pause.pressed': `do
-        self:reset()
-        self.gameover = false
-    end`
-
-    'ACTION.toggle_music.pressed': `do OPTIONS_MENU.MENU.MUSIC:toggle() end`
+    oncontrollerchange: `root.refreshcontroller`
 ]
 
