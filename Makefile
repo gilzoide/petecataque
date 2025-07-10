@@ -10,3 +10,6 @@ petecataque.love: $(SRC)
 
 build/index.html: petecataque.love
 	npx love.js $< $(@D) -t petecataque -c
+
+petecataque-web.zip: build/index.html
+	zip $@ build/*
