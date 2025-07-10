@@ -19,16 +19,16 @@ function love.conf(t)
     t.window.icon = 'assets/icon.png'
     t.window.highdpi = true
     t.window.msaa = 16
-    
+
     t.releases = {
         title = 'PETECATAQUE',              -- The project title (string)
         package = 'petecataque',            -- The project command and package name (string)
-        loveVersion = '11.3',        -- The project LÖVE version
+        loveVersion = '11.5',        -- The project LÖVE version
         version = '0.2',            -- The project version
         author = 'gilzoide',             -- Your name (string)
         email = 'gilzoide@gmail.com',              -- Your email (string)
         description = nil,        -- The project description (string)
-        homepage = 'https://github.com/gilzoide/love-nested-test-game',           -- The project homepage (string)
+        homepage = 'https://github.com/gilzoide/petecataque',           -- The project homepage (string)
         identifier = 'com.gilzoide.petecataque',         -- The project Uniform Type Identifier (string)
         excludeFileList = {'.DS_Store', 'TODO', 'tools/', 'engine/DEBUG/', 'engine/*.md'},     -- File patterns to exclude. (string list)
         releaseDirectory = 'release',   -- Where to store the project releases (string)
