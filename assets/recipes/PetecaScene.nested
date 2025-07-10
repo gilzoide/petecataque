@@ -97,7 +97,7 @@ setPlayerWon: `do
 end`
 
 [AudioSource id: BGM
-    source: `R("Stack - fase.ogg")`
+    source: `R("Stack-fase.ogg")`
     playing: `options.MUSIC` looping: true
 ]
 
