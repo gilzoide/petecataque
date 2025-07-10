@@ -1,8 +1,7 @@
-local event_listener = {}
+local event_listener = {
+    names = {}
+}
 
-DEBUG.ONLY(function()
-    event_listener.names = {}
-end)
 function event_listener.new(name)
     local new_listener = setmetatable({}, event_listener)
     DEBUG.ONLY(function()
