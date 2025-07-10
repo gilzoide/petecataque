@@ -3,6 +3,10 @@ local decode_options = {
 }
 
 local function load_nested_data(filename)
+    if not love.filesystem.getInfo(filename) then
+        return nil
+    end
+
     local contents, msg = love.filesystem.read(filename)
     if contents then
         return nested.decode(contents, decode_options)
